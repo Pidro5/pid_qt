@@ -8,6 +8,9 @@ using namespace std;
 class Log
 {
 public:
+   Log(const Log&) = delete;
+   Log& operator = (const Log&) = delete;
+
    static Log& instance()
    {
       static Log _instance;
@@ -27,9 +30,6 @@ public:
 private:
    Log() {}             // verhindert, dass ein Objekt von außerhalb von Log erzeugt wird.
                         // protected, wenn man von der Klasse noch erben möchte
-   Log( const Log& );   /* verhindert, dass eine weitere Instanz via
-                         Kopier-Konstruktor erstellt werden kann */
-   Log & operator = (const Log &);    //Verhindert weitere Instanz durch Kopie
 };
 
 
