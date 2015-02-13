@@ -29,7 +29,7 @@ void Player::attached_to_game(Game * g, int position, bool rotate_to_south)
 
 }
 
-bool Player::inform_event(event_type et){
+bool Player::inform_event(event_type /*et*/){
     // this event gets
     // GAME_INIT
     // BEGIN_PLAY           just before the play begins - clear tables
@@ -43,14 +43,14 @@ bool Player::inform_event(event_type et){
 }
 
 
-bool Player::inform_event(event_type et, int position){
+bool Player::inform_event(event_type /*et*/, int /*position*/){
     // this event gets
     // ROUND_INIT
     // ASK_FOR_BID   - this tells who is bidding
     return true;    //  true means continue game
 }
 
-bool Player::inform_event(event_type et, int position, int value){
+bool Player::inform_event(event_type /*et*/, int /*position*/, int /*value*/){
     // this event gets
     // DEAL_CARD  - when sombedy else gets cards dealt into their hand
     // BID_PLACED  - who(position), the bid (value )
@@ -60,7 +60,7 @@ bool Player::inform_event(event_type et, int position, int value){
 }
 
 
-bool Player::inform_event(event_type et, int position, list<Card *>& cards){
+bool Player::inform_event(event_type /*et*/, int /*position*/, list<Card *>& /*cards*/){
     // this event gets
     // DEAL_CARD  -  I GOT CARDS dealt to my hand
     // PUT_CARDS_ON_TABLE    - somebody put one or more cards on the table..

@@ -1,3 +1,4 @@
+#include <cassert>
 #include <string.h>
 #include <stdlib.h>
 
@@ -47,9 +48,9 @@ namespace std {
 				if (_stricmp(line.c_str(), "RULE") == 0) 
 					ruleProcessing(bidrulesfile);
 				else {
-					int c1 = line.find(',', 0); // find occurence of first comma
+                    auto c1 = line.find(',', 0); // find occurence of first comma
 					if (c1 == string::npos) goto readnext; // if there's no comma in the line, skip to the next line
-					int c2 = line.find(',', c1 + 1); // find occurence of second comma
+                    auto c2 = line.find(',', c1 + 1); // find occurence of second comma
 					if (c2 == string::npos) goto readnext; // if there's no second comma in the line, skip to the next line
 					{
 						string s1 = line.substr(0, c1);
@@ -68,6 +69,8 @@ namespace std {
 			if (e==1) cout << "bid rules File was not found";
 		}
 
+        assert(!true); // An error if we arrive here?
+        return false;
 	}
 
 	void EA::ruleProcessing(ifstream& infile) {
@@ -91,7 +94,7 @@ namespace std {
 				rules.push_back(thisRule);
 				return;
 			}
-			int c1 = line.find(',', 0); // find occurrence of first comma
+            auto c1 = line.find(',', 0); // find occurrence of first comma
 			if (c1 == string::npos) // if there's no comma in the line, only accept the EXECUTES keyword
 			{
 				if (_stricmp(line.c_str(), "executes") == 0) {
@@ -101,7 +104,7 @@ namespace std {
 
 			} else {
 				// we have at least one comma in the line
-				int c2 = line.find(',', c1 + 1); // search for second comma
+                auto c2 = line.find(',', c1 + 1); // search for second comma
 				if (c2 == string::npos) { // if there is only one comma in the line, only accept Name and Probability
 					string s1 = line.substr(0, c1);
 					string s2 = line.substr(c1 + 1);
@@ -177,8 +180,8 @@ namespace std {
 		{
 			if (line.find('<') != string::npos) {
 				// line contains "<" (i.e. it's a new number of cards)
-				int startpos = line.find('<');
-				int endpos = line.find('>');
+                auto startpos = line.find('<');
+                auto endpos = line.find('>');
 				string cardsStr = line.substr(startpos + 1, endpos - startpos);
 				cardcount cc;
 				// check if there's a _ sign
@@ -194,7 +197,7 @@ namespace std {
 				while (line.find('<') == string::npos) {
 					char cardsConfig1[20], cardsConfig2[20], cardsConfig3[20];
 					char s1[20],s2[20],s3[20],s4[20],s5[20],s6[20],s7[20],s8[20],s9[20],s10[20];
-					float f1, f2, f3, f4, f5, f6, f7, f8, f9, f10;
+                    // float f1, f2, f3, f4, f5, f6, f7, f8, f9, f10;
 					sscanf(line.c_str(), "%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,]", cardsConfig1,s1,s2,s3,s4,s5,s6,s7,s8,s9,s10);
 					oneHand oh;
 					oh.set_eaNB((float)atof(s1));
@@ -256,6 +259,9 @@ namespace std {
 		}
 	}
 	if (found) { return cc->cardCombos[cardsConfig].get_eavalue(bid); }
+
+    assert(!true); // An error if we arrive here?
+    return false;
 }
 
 	EA::oneHand *EA::getEAstruct(int cardsCount, int nonImportant, string cardsConfig) {
