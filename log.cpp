@@ -1,49 +1,46 @@
 #include "log.h"
+#include <cassert>
 #include <iostream>
-
 
 using namespace std;
 
-void Log::println()
+namespace
 {
-    cout << endl;
+
+ostream* u_pLogStream = &cout;
+
 }
 
-
-void Log::print(string str )
+ostream& Log::stream()
 {
-    cout << str ;
+    assert(u_pLogStream);
+
+    return *u_pLogStream;
+};
+
+void Log::setStream(std::ostream *pLogStream)
+{
+    assert(pLogStream);
+
+    u_pLogStream = pLogStream;
 }
 
-void Log::println(string str )
+const char* Log::toString(Log::Entry entry)
 {
-    cout << str << endl;
-}
+    switch (entry) {
+    case Log::DEBUG:
+        return "D";
 
-void Log::print(int i )
-{
+    case Log::WARNING:
+        return "W";
 
-    char buf[10];
+    case Log::ERROR:
+        return "E";
 
-    sprintf(buf,"%d",i);
-    cout << buf ;
-}
+    case Log::FATAL:
+        return "F";
+    }
 
-void Log::println(int i )
-{
-    char buf[10];
-
-    sprintf(buf,"%d",i);
-    cout << buf << endl;
-}
-
-
-void Log::print(ostream str )
-{
-    cout << str ;
-}
-
-void Log::println(ostream str )
-{
-    cout << str << endl;
+    assert(!true);
+    return "U"; // As in unknown.
 }

@@ -45,7 +45,7 @@ void Game::register_with_game(Player * pl, bool turn_my_view_to_the_south){
         no_of_players_registered++;
     }
     else {
-        Log::instance().println("Game::register_with_game - Too many players registered.");
+        LOG_E("Game::register_with_game - Too many players registered.");
         throw std::runtime_error("Too many players registered.");
     }
 
@@ -58,7 +58,7 @@ void Game::run_game() {
     if(no_of_players_registered !=4){
 
         // Not 4 players registered in this game - do nothing
-        Log::instance().println("GAME: Not enough players - cannot start! ");
+        LOG_E("GAME: Not enough players - cannot start! ");
 
         return;
     }
@@ -75,7 +75,7 @@ void Game::run_game() {
         // Game init
         // ==========================================================================
 
-        //Log::instance().println("GAME: Call Game Init ");
+        //LOG_D("GAME: Call Game Init ");
         game_init();
         post_event(GAME_INIT);
         if(!b_continue_game){return;}
@@ -87,7 +87,7 @@ void Game::run_game() {
             // Round init
             // ==========================================================================
 
-            //Log::instance().println("GAME: Call Round Init ");
+            //LOG_D("GAME: Call Round Init ");
             round_init();
             post_event(ROUND_INIT, who_has_deck.get_position());
             if(!b_continue_game){return;}
@@ -106,7 +106,7 @@ void Game::run_game() {
 
 
                     if(my_deck.deal_cards_to_hand(3,tmp_list_of_cards) != 3){
-                        Log::instance().println("Something wrong with dealing cards.");
+                        LOG_W("Something wrong with dealing cards.");
                         throw std::runtime_error("Something wrong with dealing cards.");
                     }
                     //tmp_list_of_cards  has 3 cards
@@ -155,7 +155,9 @@ void Game::run_game() {
                     bid_ok = check_if_bid_is_valid(bids[who_bids.get_position()], higest_bid);
 
                     if (!bid_ok && i_try>=3) {
-                        Log::instance().println("Player "+ game_player[who_bids.get_position()]->get_name()+" gave 3 wrong bids. Kick him!");
+		      LOG_W("Player "
+			    << game_player[who_bids.get_position()]->get_name()
+			    << " gave 3 wrong bids. Kick him!");
                         throw std::runtime_error("Player bid not allowed");
                     }
                 }
@@ -208,7 +210,9 @@ void Game::run_game() {
                 }
 
                 if (!bid_ok && i_try>=3) {
-                    Log::instance().println("Player "+ game_player[who_has_higest_bid]->get_name()+" gave 3 wrong colors. Kick him!");
+		    LOG_E("Player "
+			  << game_player[who_has_higest_bid]->get_name()
+			  << " gave 3 wrong colors. Kick him!");
                     throw std::runtime_error("Player color not allowed");
                 }
             }
@@ -242,7 +246,7 @@ void Game::run_game() {
                 int how_many_cards =6 - cards_in_hands[r.get_position()].size();
                 if (how_many_cards > 0) {
                     if(my_deck.deal_cards_to_hand(how_many_cards,tmp_list_of_cards) != how_many_cards){
-                        Log::instance().println("Something wrong with dealing cards.");
+                        LOG_E("Something wrong with dealing cards.");
                         throw std::runtime_error("Something wrong with dealing cards.");
                     }
                     //  add to hand
@@ -265,7 +269,7 @@ void Game::run_game() {
             int how_many_cards = my_deck.cards_left_in_deck();
             if (how_many_cards > 0) {
                 if(my_deck.deal_cards_to_hand(how_many_cards,tmp_list_of_cards) != how_many_cards){
-                    Log::instance().println("Something wrong with dealing cards.");
+                    LOG_E("Something wrong with dealing cards.");
                     throw std::runtime_error("Something wrong with dealing cards.");
                 }
                 //  add to hand
@@ -348,7 +352,9 @@ void Game::run_game() {
                             }
 
                             if (!play_ok && i_try>=3) {
-                                Log::instance().println("Player "+ game_player[r.get_position()]->get_name()+" played 3 wrong cards. Kick him!");
+			        LOG_W("Player "
+				      << game_player[r.get_position()]->get_name()
+				      << " played 3 wrong cards. Kick him!");
                                 throw std::runtime_error("Player card not allowed");
                             }
                         }
@@ -601,7 +607,7 @@ void Game::throw_worthless_cards_on_the_table_do_not_keep_more_than_six(int who,
 
             if ( i_rank_to_remove > 15)
             {
-                Log::instance().println("GAME - ERROR in removing cards > 6");
+                LOG_E("GAME - ERROR in removing cards > 6");
                 throw std::runtime_error("ERROR in removing cards > 6");
             }
         }
@@ -695,7 +701,7 @@ int Game::get_game_our_points(Player * pl){
     }
     else {
         if ((who != 1) || (who != 3)) {
-            Log::instance().println("Game::get_game_our_points - could not identify plyer");
+            LOG_E("Game::get_game_our_points - could not identify plyer");
             throw std::runtime_error("Game::get_game_our_points - could not identify plyer");
         }
         return  game_east_west_points;
@@ -711,7 +717,7 @@ int Game::get_game_their_points(Player * pl){
     }
     else {
         if ((who != 1) || (who != 3)) {
-            Log::instance().println("Game::get_game_their_points - could not identify plyer");
+            LOG_E("Game::get_game_their_points - could not identify plyer");
             throw std::runtime_error("Game::get_game_their_points - could not identify plyer");
         }
 
@@ -852,7 +858,7 @@ list<Card *>  Game::get_my_cards_in_hand(Player * pl){
         return cards_in_hands[who];
     }
     else {
-        Log::instance().println("GAME::get_my_cards_in_hand:  No Player Authorised");
+        LOG_E("GAME::get_my_cards_in_hand:  No Player Authorised");
         throw std::runtime_error("Trying to access wrong player");
     }
 }
@@ -863,7 +869,7 @@ list<Card *> Game::get_cards_on_the_table(int pos){
         return cards_on_table[pos];
     }
     else {
-        Log::instance().println("GAME::get_cards_on_the_table: Asking for a player other than 0..3");
+        LOG_E("GAME::get_cards_on_the_table: Asking for a player other than 0..3");
         throw std::runtime_error("Trying to access wrong player");
     }
 
@@ -879,7 +885,7 @@ int Game::get_how_many_cards_in_hand_pos_relative_to_me(Player * pl, int pos){
         return cards_in_hands[pos].size();
     }
     else {
-        Log::instance().println("GAME::get_how_many_cards_in_hand_pos_relative_to_me:  No Player Authorised");
+        LOG_E("GAME::get_how_many_cards_in_hand_pos_relative_to_me:  No Player Authorised");
         throw std::runtime_error("Trying to access wrong player");
     }
 

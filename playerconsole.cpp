@@ -20,9 +20,7 @@ void PlayerConsole::attached_to_game(Game * g, int position, bool rotate_to_sout
     my_position = position;
     my_rotate_to_south = rotate_to_south;
 
-    Log::instance().print(get_name() +  " was attached to game.. position: " );
-    Log::instance().println(my_position );
-
+    LOG_D(get_name() << " was attached to game.. position: " << my_position);
 }
 
 

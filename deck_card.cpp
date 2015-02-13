@@ -228,8 +228,7 @@ void Deck::deck_delete()
         c = list_of_all_cards.front();
         list_of_all_cards.pop_front();
 
-        //Log::instance().print("Deleting card: ");
-        //Log::instance().println(c->card_suit() + " " + c->card_face_value());
+        //LOG_D("Deleting card: " << c->card_suit() << " " << c->card_face_value());
         delete c;
     }
 }

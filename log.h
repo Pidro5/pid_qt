@@ -2,35 +2,35 @@
 #define LOG_H
 
 #include <string>
+#include <cstdlib>
 
-using namespace std;
-
-class Log
+namespace Log
 {
-public:
-   Log(const Log&) = delete;
-   Log& operator = (const Log&) = delete;
+    enum Entry
+    {
+        DEBUG,
+        WARNING,
+        ERROR,
+        FATAL
+    };
 
-   static Log& instance()
-   {
-      static Log _instance;
-      return _instance;
-   }
-   ~Log() {}
-   void println();
+    const char* toString(Entry entry);
 
-   void print(string str);
-   void println(string str);
-   void print(int i);
-   void println(int i);
+    std::ostream& stream();
+    void setStream(std::ostream* pStream);
+}
 
-   void print(ostream str);
-   void println(ostream str);
+#define LOG(kind, expression)\
+    do {\
+        Log::stream() << Log::toString(kind) << __FILE__ << "(" << __LINE__ << "): " << expression << std::endl;\
+        if (kind == Log::Entry::FATAL) {\
+            abort();\
+        }\
+    } while (false)
 
-private:
-   Log() {}             // verhindert, dass ein Objekt von außerhalb von Log erzeugt wird.
-                        // protected, wenn man von der Klasse noch erben möchte
-};
-
+#define LOG_D(expression) LOG(Log::DEBUG, expression)
+#define LOG_W(expression) LOG(Log::WARNING, expression)
+#define LOG_E(expression) LOG(Log::ERROR, expression)
+#define LOG_F(expression) LOG(Log::FATAL, expression)
 
 #endif // LOG_H

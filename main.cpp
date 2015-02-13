@@ -23,7 +23,7 @@ void TEST_EA()
 
 
 
-    Log::instance().println();
+    LOG_D("");
 
     g.register_with_game(&p1);
     g.register_with_game(&p2);
@@ -47,7 +47,7 @@ void TEST_PATRIK() {
     Player p3("Cedric");
     Player p4("Diane");
 
-    Log::instance().println();
+    LOG_D("");
 
     g.register_with_game(&p1);
     g.register_with_game(&p2,true);
@@ -66,12 +66,12 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-     //TEST_EA();
-     TEST_PATRIK();
+    //TEST_EA();
+    TEST_PATRIK();
 
 
-    Log::instance().println();
-    Log::instance().println("MAIN DONE!" );
+    LOG_D("");
+    LOG_D("MAIN DONE!");
 
     return a.exec();
 }
