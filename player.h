@@ -27,10 +27,10 @@ public:
     virtual void attached_to_game(Game * g, int position, bool rotate_to_south);
 
     // these methods are called when the Player should update his UI
-    virtual bool inform_event(event_type et);
-    virtual bool inform_event(event_type et, int position);
-    virtual bool inform_event(event_type et, int position, int value);
-    virtual bool inform_event(event_type et, int position, list<Card *>& cards);
+    virtual bool inform_event(Event et);
+    virtual bool inform_event(Event et, int position);
+    virtual bool inform_event(Event et, int position, int value);
+    virtual bool inform_event(Event et, int position, list<Card *>& cards);
 
     virtual int give_bid(int minimum);
     virtual int give_color();

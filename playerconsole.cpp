@@ -40,21 +40,21 @@ bool PlayerConsole::is_this_me(int position){
 
 
 
-bool PlayerConsole::inform_event(event_type et){
-    if (et == GAME_INIT) {    }
-    if (et == BEGIN_PLAY) {
+bool PlayerConsole::inform_event(Event et){
+    if (et == Event::GAME_INIT) {    }
+    if (et == Event::BEGIN_PLAY) {
 
         for (int i =0; i<4; i++){
             my_view_on_tables[i] ="";
         }
         draw_table();
     }
-    if (et == PLAY_ROUND_FINISH) {
+    if (et == Event::PLAY_ROUND_FINISH) {
        // cout <<  "We got: " << my_game->get_round_our_points(this, 6) << " points ";
        // cout <<  "They got: " << my_game->get_round_their_points(this, 6) << " points " << endl<< endl;
        // cin.get();
     }
-    if (et == ROUND_OVER) {
+    if (et == Event::ROUND_OVER) {
        cout <<  " Our Points: " << my_game->get_roundstat_our_points(this);
        cout <<  "  Their Points: " << my_game->get_roundstat_their_points(this);
        cout <<  " BID: " << my_game->get_roundstat_bid();
@@ -63,7 +63,7 @@ bool PlayerConsole::inform_event(event_type et){
        cin.get();
 
     }
-    if (et == GAME_OVER) {
+    if (et == Event::GAME_OVER) {
         if ( my_game->get_game_winner(this)) {
             cout <<  "WE WON !!!";
         }
@@ -77,8 +77,8 @@ bool PlayerConsole::inform_event(event_type et){
 }
 
 
-bool PlayerConsole::inform_event(event_type et, int position){
-    if (et == ROUND_INIT) {
+bool PlayerConsole::inform_event(Event et, int position){
+    if (et == Event::ROUND_INIT) {
         // INIT my internal DATA
         who_has_deck = position;
         for (int i =0; i<4; i++){
@@ -87,7 +87,7 @@ bool PlayerConsole::inform_event(event_type et, int position){
             my_view_on_discarded_cards[i]="";
         }
     }
-    if (et == ASK_FOR_BID) {
+    if (et == Event::ASK_FOR_BID) {
         my_view_on_tables[position] += "BIDS";
     }
 
@@ -98,15 +98,15 @@ bool PlayerConsole::inform_event(event_type et, int position){
 
 }
 
-bool PlayerConsole::inform_event(event_type et, int position, int value){
+bool PlayerConsole::inform_event(Event et, int position, int value){
 
-    if (et == DEAL_CARD) {
+    if (et == Event::DEAL_CARD) {
         for (int i =0; i<value; i++){
             my_view_on_hands[position] +=" XX";
         }
     }
 
-    if (et == BID_PLACED) {
+    if (et == Event::BID_PLACED) {
         if (value == 0) {
             my_view_on_tables[position] += " -PASS";
         }
@@ -118,7 +118,7 @@ bool PlayerConsole::inform_event(event_type et, int position, int value){
         }
     }
 
-    if (et == GOT_BID) {
+    if (et == Event::GOT_BID) {
 
         char buffer [3];
         itoa(value,buffer,10);
@@ -128,7 +128,7 @@ bool PlayerConsole::inform_event(event_type et, int position, int value){
     }
 
 
-    if (et == COLOR_SELECTED) {
+    if (et == Event::COLOR_SELECTED) {
 
         char buffer [3];
         itoa(value,buffer,10);
@@ -145,9 +145,9 @@ bool PlayerConsole::inform_event(event_type et, int position, int value){
 }
 
 
-bool PlayerConsole::inform_event(event_type et, int position, list<Card *>& cards){
+bool PlayerConsole::inform_event(Event et, int position, list<Card *>& cards){
 
-    if (et == DEAL_CARD) {
+    if (et == Event::DEAL_CARD) {
 
         list<Card *>::iterator it;
         for (it = cards.begin(); it!=cards.end(); ++it) {
@@ -155,7 +155,7 @@ bool PlayerConsole::inform_event(event_type et, int position, list<Card *>& card
         }
     }
 
-    if (et == PUT_CARDS_ON_TABLE) {
+    if (et == Event::PUT_CARDS_ON_TABLE) {
 
         list<Card *>::iterator it;
         my_view_on_tables[position]="";   // clear info on the table first
@@ -164,7 +164,7 @@ bool PlayerConsole::inform_event(event_type et, int position, list<Card *>& card
         }
     }
 
-    if (et == PLAY_CARD) {
+    if (et == Event::PLAY_CARD) {
 
         list<Card *>::iterator it;
        // my_view_on_tables[position]="";   // clear info on the table first
@@ -173,7 +173,7 @@ bool PlayerConsole::inform_event(event_type et, int position, list<Card *>& card
         }
     }
 
-    if (et == KILL_CARD) {
+    if (et == Event::KILL_CARD) {
 
         list<Card *>::iterator it;
         my_view_on_discarded_cards[position]="KILL: ";   // clear info on the table first
@@ -182,7 +182,10 @@ bool PlayerConsole::inform_event(event_type et, int position, list<Card *>& card
         }
     }
 
-    if (et == PUT_CARDS_ON_TABLE || et == KILL_CARD || et == PLAY_CARD || et == PLAYER_COLD) {
+    if (et == Event::PUT_CARDS_ON_TABLE ||
+            et == Event::KILL_CARD ||
+            et == Event::PLAY_CARD ||
+            et == Event::PLAYER_COLD) {
 
         // I need to refresh the remaining cards in hand
         my_view_on_hands[position] = "";
@@ -249,7 +252,7 @@ int PlayerConsole::give_color(){
 
 }
 
-Card* PlayerConsole::play_card(int color){
+Card* PlayerConsole::play_card(int /*color*/){
     int mycard;
     list<Card *> tmp_list_of_cards = my_game->get_my_cards_in_hand(this);
     list<Card *>::iterator it;

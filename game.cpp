@@ -77,7 +77,7 @@ void Game::run_game() {
 
         //LOG_D("GAME: Call Game Init ");
         game_init();
-        post_event(GAME_INIT);
+        post_event(Event::GAME_INIT);
         if(!b_continue_game){return;}
 
         b_game_over = false;     // we are still not finished with this one game
@@ -89,7 +89,7 @@ void Game::run_game() {
 
             //LOG_D("GAME: Call Round Init ");
             round_init();
-            post_event(ROUND_INIT, who_has_deck.get_position());
+            post_event(Event::ROUND_INIT, who_has_deck.get_position());
             if(!b_continue_game){return;}
 
             // ==========================================================================
@@ -115,7 +115,7 @@ void Game::run_game() {
                     for (it = tmp_list_of_cards.begin(); it!=tmp_list_of_cards.end(); ++it) {
                         cards_in_hands[r.get_position()].push_back(*it);
                     }
-                    post_event(DEAL_CARD, r.get_position(),tmp_list_of_cards);
+                    post_event(Event::DEAL_CARD, r.get_position(),tmp_list_of_cards);
                     if(!b_continue_game){return;}
 
                     // Empty the tmp list afterwards
@@ -133,7 +133,7 @@ void Game::run_game() {
 
             for (int i=0;i<4;i++){
                 who_bids++;  // Start with the one after deck
-                post_event(ASK_FOR_BID, who_bids.get_position());
+                post_event(Event::ASK_FOR_BID, who_bids.get_position());
                 if(!b_continue_game){return;}
 
                 // call the players
@@ -176,7 +176,7 @@ void Game::run_game() {
                 }
 
                 // tell everybody about the Bid
-                post_event(BID_PLACED, who_bids.get_position(), bids[who_bids.get_position()]);
+                post_event(Event::BID_PLACED, who_bids.get_position(), bids[who_bids.get_position()]);
                 if(!b_continue_game){return;}
 
             }  // ends the Bidding
@@ -185,7 +185,7 @@ void Game::run_game() {
             // Now inform about the winner
             // ==========================================================================
 
-            post_event(GOT_BID, who_has_higest_bid, higest_bid);
+            post_event(Event::GOT_BID, who_has_higest_bid, higest_bid);
             if(!b_continue_game){return;}
 
 
@@ -217,7 +217,7 @@ void Game::run_game() {
                 }
             }
 
-            post_event(COLOR_SELECTED, who_has_higest_bid, selected_color);
+            post_event(Event::COLOR_SELECTED, who_has_higest_bid, selected_color);
             if(!b_continue_game){return;}
 
             // ==========================================================================
@@ -253,7 +253,7 @@ void Game::run_game() {
                     for (it = tmp_list_of_cards.begin(); it!=tmp_list_of_cards.end(); ++it) {
                         cards_in_hands[r.get_position()].push_back(*it);
                     }
-                    post_event(DEAL_CARD, r.get_position(),tmp_list_of_cards);
+                    post_event(Event::DEAL_CARD, r.get_position(),tmp_list_of_cards);
                     if(!b_continue_game){return;}
 
                     // Empty the tmp list afterwards
@@ -276,7 +276,7 @@ void Game::run_game() {
                 for (it = tmp_list_of_cards.begin(); it!=tmp_list_of_cards.end(); ++it) {
                     cards_in_hands[who_has_deck.get_position()].push_back(*it);
                 }
-                post_event(DEAL_CARD, who_has_deck.get_position(),tmp_list_of_cards);
+                post_event(Event::DEAL_CARD, who_has_deck.get_position(),tmp_list_of_cards);
                 if(!b_continue_game){return;}
 
                 // Empty the tmp list afterwards
@@ -293,7 +293,7 @@ void Game::run_game() {
             // PLAY begins
             // ==========================================================================
 
-            post_event(BEGIN_PLAY);
+            post_event(Event::BEGIN_PLAY);
             if(!b_continue_game){return;}
 
             // ==========================================================================
@@ -322,7 +322,8 @@ void Game::run_game() {
                         }
 
                         // Inform
-                        post_event(PLAYER_COLD, who_plays.get_position(),  cards_in_hands[who_plays.get_position()]);
+                        post_event(Event::PLAYER_COLD, who_plays.get_position(),
+                                   cards_in_hands[who_plays.get_position()]);
                         if(!b_continue_game){return;}
 
                         // Empty the tmp list afterwards
@@ -370,7 +371,7 @@ void Game::run_game() {
                         list<Card *> tmp_list_of_cards;
                         tmp_list_of_cards.push_back(c);
 
-                        post_event(PLAY_CARD, who_plays.get_position(), tmp_list_of_cards);
+                        post_event(Event::PLAY_CARD, who_plays.get_position(), tmp_list_of_cards);
                         if(!b_continue_game){return;}
 
                         // Empty the tmp list afterwards
@@ -382,7 +383,7 @@ void Game::run_game() {
                 }
                 // Check who has the higest card in round
 
-                if(a_card_played) {post_event(PLAY_ROUND_FINISH);}
+                if(a_card_played) {post_event(Event::PLAY_ROUND_FINISH);}
                 if(!b_continue_game){return;}
 
                 who_plays.set_position(who_had_the_higest_card_in_round(i_round, selected_color));
@@ -425,7 +426,7 @@ void Game::run_game() {
             rr->points_east_west = game_east_west_points;
 
             // Inform
-            post_event(ROUND_OVER);
+            post_event(Event::ROUND_OVER);
             if(!b_continue_game){return;}
 
             // ==========================================================================
@@ -451,7 +452,7 @@ void Game::run_game() {
 
                 b_game_over = true;
                 // Inform
-                post_event(GAME_OVER);
+                post_event(Event::GAME_OVER);
                 if(!b_continue_game){return;}
             }
 
@@ -573,7 +574,7 @@ void Game::throw_worthless_cards_on_the_table_do_not_keep_more_than_six(int who,
     }
 
     //Inform
-    post_event(PUT_CARDS_ON_TABLE, who,tmp_list_of_cards);
+    post_event(Event::PUT_CARDS_ON_TABLE, who,tmp_list_of_cards);
     if(!b_continue_game){return;}
 
     // Empty the tmp lists afterwards
@@ -613,7 +614,7 @@ void Game::throw_worthless_cards_on_the_table_do_not_keep_more_than_six(int who,
         }
 
         //Inform
-        post_event(KILL_CARD, who,tmp_list_of_cards);
+        post_event(Event::KILL_CARD, who,tmp_list_of_cards);
         if(!b_continue_game){return;}
 
     }   //  end of > 6 cards
@@ -893,7 +894,7 @@ int Game::get_how_many_cards_in_hand_pos_relative_to_me(Player * pl, int pos){
 
 
 
-void Game::post_event(event_type et){
+void Game::post_event(Event et){
     Rotator r;
     r = who_has_deck;
 
@@ -908,7 +909,7 @@ void Game::post_event(event_type et){
 }
 
 
-void Game::post_event(event_type et, int abs_position){
+void Game::post_event(Event et, int abs_position){
     Rotator r;
     int pos;
 
@@ -929,7 +930,7 @@ void Game::post_event(event_type et, int abs_position){
     }
 }
 
-void Game::post_event(event_type et, int abs_position, int value){
+void Game::post_event(Event et, int abs_position, int value){
     Rotator r;
     int pos;
 
@@ -949,7 +950,7 @@ void Game::post_event(event_type et, int abs_position, int value){
     }
 }
 
-void Game::post_event(event_type et, int abs_position, list<Card *>& cards ){
+void Game::post_event(Event et, int abs_position, list<Card *>& cards ){
     Rotator r;
     int pos;
     int how_many = cards.size();
@@ -967,13 +968,16 @@ void Game::post_event(event_type et, int abs_position, list<Card *>& cards ){
             pos = (abs_position + 4 - r.get_position()) % 4;
         }
 
-        if (et == PUT_CARDS_ON_TABLE || et == KILL_CARD || et == PLAY_CARD || et == PLAYER_COLD) {  //this goes to everybody
+        if (et == Event::PUT_CARDS_ON_TABLE ||
+            et == Event::KILL_CARD ||
+            et == Event::PLAY_CARD ||
+            et == Event::PLAYER_COLD) {  //this goes to everybody
             if (game_player[r.get_position()]->inform_event(et,pos,cards)== false){
                 quit_game();
             }
         }
 
-        if (et == DEAL_CARD) {
+        if (et == Event::DEAL_CARD) {
             if (abs_position == r.get_position()){  //this one can see his cards. the other get the number only
                 if (game_player[r.get_position()]->inform_event(et,pos,cards)== false){
                     quit_game();

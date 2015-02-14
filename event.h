@@ -2,7 +2,7 @@
 #define EVENT_H
 
 
-enum event_type
+enum class Event
 {
     GAME_INIT = 0,
     ROUND_INIT,

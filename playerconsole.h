@@ -24,10 +24,10 @@ public:
     void attached_to_game(Game * g, int position, bool rotate_to_south);
 
     // these methods are called when the Player should update his UI
-    bool inform_event(event_type et);
-    bool inform_event(event_type et, int position);
-    bool inform_event(event_type et, int position, int value);
-    bool inform_event(event_type et, int position, list<Card *>& cards);
+    bool inform_event(Event et);
+    bool inform_event(Event et, int position);
+    bool inform_event(Event et, int position, int value);
+    bool inform_event(Event et, int position, list<Card *>& cards);
 
     int give_bid(int minimum);
     int give_color();

@@ -56,10 +56,10 @@ class Game
 
 
     void delete_round_events();
-    void post_event(event_type et);
-    void post_event(event_type et, int position);
-    void post_event(event_type et, int position, int value);
-    void post_event(event_type et, int position, list<Card *>& cards);
+    void post_event(Event et);
+    void post_event(Event et, int position);
+    void post_event(Event et, int position, int value);
+    void post_event(Event et, int position, list<Card *>& cards);
 
     // each bid pro round. -1 if no bid placed
     int bids[4];
