@@ -63,6 +63,7 @@ void Game::run_game() {
         return;
     }
 
+
     // Initial setting of deck position
     who_has_deck.set_position(0);
     who_has_deck--;              // Decrement to "-1" because before each round starts the deck moves ++
@@ -91,6 +92,7 @@ void Game::run_game() {
             round_init();
             post_event(Event::ROUND_INIT, who_has_deck.get_position());
             if(!b_continue_game){return;}
+
 
             // ==========================================================================
             // Now deal the cards 3 x 3 for each Player
@@ -485,7 +487,7 @@ void Game::register_card_as_played(Card * c, int who, int round){
     played_in_round[played_idx] = round;
 }
 
-int Game::sum_round_points(bool NS_or_WE,int including_round){
+int Game::sum_round_points(bool NS_or_WE,int including_round) const {
     //NS_or_WE  - true calculates the North-South points together. Otherwise West-East
     int sum_ns = 0;
     int sum_we = 0;
@@ -530,7 +532,7 @@ int Game::sum_round_points(bool NS_or_WE,int including_round){
 }
 
 
-int Game::who_had_the_higest_card_in_round(int round, int color){
+int Game::who_had_the_higest_card_in_round(int round, int color) const {
     int highest = -1;
     int retval = -1;
 
@@ -625,7 +627,7 @@ void Game::throw_worthless_cards_on_the_table_do_not_keep_more_than_six(int who,
 }
 
 
-int Game::authorise_player(Player * pl){
+int Game::authorise_player(Player * pl) const {
     int i;
 
     i = -1;
@@ -738,7 +740,7 @@ bool Game::get_game_winner(Player * pl){
 
 }
 
-int Game::get_round_our_points(Player * pl, int including_round){
+int Game::get_round_our_points(Player * pl, int including_round) const{
     int who = authorise_player(pl);
     if (who == 0 or who == 2){
         return sum_round_points(true,including_round);  // north south
@@ -748,7 +750,7 @@ int Game::get_round_our_points(Player * pl, int including_round){
     }
 }
 
-int Game::get_round_their_points(Player * pl, int including_round){
+int Game::get_round_their_points(Player * pl, int including_round) const{
     int who = authorise_player(pl);
     if (who == 0 or who == 2){
         return sum_round_points(false,including_round);
@@ -1031,20 +1033,23 @@ void Game::quit_game(){
 
 
 
+void Game::print(ostream& o) const {
+    list<Card *>::const_iterator it;
 
-void Game::TEST_SHOW_HANDS(){
-    list<Card *>::iterator it;
+    o << endl;
+    o << "The Deck left:" << endl;
+    o << my_deck;
 
     for (int i = 0; i<4; i++){
-        /*
-        cout <<" Hand: " << i <<"  ";
-        for (it = cards_in_hands[i].begin(); it!=cards_in_hands[i].end(); ++it) {
-            cout << (*it)->card_suit_short()  << "_"<<  (*it)->card_face_value()<<  " ";
-        }
-        cout << endl;
-*/
 
-        cout << "round: " << i+1 << " Points NS " << sum_round_points(true,i+1)<<" Points WE " << sum_round_points(false,i+1) << endl;
+        o <<"Hand (" << i << "):   ";
+        for (it = cards_in_hands[i].begin(); it!=cards_in_hands[i].end(); ++it) {
+            o << **it ;
+        }
+        o << endl ;
     }
+
+    o << "Points North-South " << sum_round_points(true,6)<<" Points East-west " << sum_round_points(false,6) << endl;
+
 }
 

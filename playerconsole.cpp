@@ -207,6 +207,8 @@ bool PlayerConsole::inform_event(Event et, int position, list<Card *>& cards){
     }
 
     draw_table();
+    cout << *my_game;
+
     cin.get();
 
     return true;    //  true means continue game
