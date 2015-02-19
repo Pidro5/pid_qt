@@ -24,7 +24,7 @@ Card::Card(int suit, int value)
     };
 }
 
-string Card::card_face_value()
+string Card::card_face_value() const
 {
     char buf[5];
     string str;
@@ -41,7 +41,7 @@ string Card::card_face_value()
 
 };
 
-string Card::card_suit()
+string Card::card_suit() const
 {
     // 0..3, 0-Spades, 1-Clubs, 2-Hearts, 3-Diamonds
     string str;
@@ -54,7 +54,7 @@ string Card::card_suit()
 
 };
 
-string Card::card_suit_short()
+string Card::card_suit_short() const
 {
     // 0..3, 0-Spades, 1-Clubs, 2-Hearts, 3-Diamonds
     string str;
@@ -67,7 +67,7 @@ string Card::card_suit_short()
 
 };
 
-int Card::card_ranking(int suit){
+int Card::card_ranking(int suit) const {
 
     int ret_val = 0;
 
@@ -89,7 +89,7 @@ int Card::card_ranking(int suit){
 }
 
 
-string Card::card_ranking_name(int suit){
+string Card::card_ranking_name(int suit) const {
 
     string ret_val = "";
 
@@ -108,6 +108,11 @@ string Card::card_ranking_name(int suit){
         }
 
     return ret_val;
+}
+
+void Card::print(ostream& o) const
+{
+        o << this->card_suit_short() << "_" << this->card_face_value() << " ";
 }
 
 //
@@ -218,6 +223,22 @@ void Deck::TEST_TWEAK_mix_deck()
     }
 }
 
+void Deck::print(ostream& o) const {
+    list<Card *>::const_iterator it;
+    int i =0;
+
+    for (it = list_of_mixed_cards.begin(); it!=list_of_mixed_cards.end(); ++it) {
+       o << **it ;
+       i++;
+       if (i==10){
+           i =0;
+           o << endl;
+       }
+    }
+    o << endl;
+
+
+}
 
 
 void Deck::deck_delete()

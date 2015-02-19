@@ -48,7 +48,6 @@ void TEST_PATRIK() {
     PlayerComputer p3("Cedric");
     Player p4("Diane");
 
-    LOG_D("");
 
     g.register_with_game(&p1);
     g.register_with_game(&p2,true);
@@ -56,7 +55,6 @@ void TEST_PATRIK() {
     g.register_with_game(&p4);
 
     g.run_game();
-
 
 }
 

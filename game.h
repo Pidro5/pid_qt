@@ -88,8 +88,8 @@ class Game
     //  ----------------------
 
     void register_card_as_played(Card * c,int who, int round);
-    int who_had_the_higest_card_in_round(int round, int color);
-    int sum_round_points(bool NS_or_WE, int up_to_round);
+    int who_had_the_higest_card_in_round(int round, int color) const;
+    int sum_round_points(bool NS_or_WE, int up_to_round) const;
 
     // ==================================================================================
     // ==================          OTHER             ====================================
@@ -97,7 +97,7 @@ class Game
 
     void game_init();
     void round_init();
-    int authorise_player(Player * pl);
+    int authorise_player(Player * pl) const;
 
 public:
     Game();
@@ -116,8 +116,8 @@ public:
     int get_game_their_points(Player * pl);   // DE
     bool get_game_winner(Player * pl);      // If player is on the winning team - true. Else - false
 
-    int get_round_our_points(Player * pl, int including_round);
-    int get_round_their_points(Player * pl, int including_round);
+    int get_round_our_points(Player * pl, int including_round) const;
+    int get_round_their_points(Player * pl, int including_round) const;
 
     int get_roundstat_our_points(Player * pl);
     int get_roundstat_their_points(Player * pl);
@@ -141,9 +141,12 @@ public:
 
     // ==================================================================================
 
-    void TEST_SHOW_HANDS();
-
+      void print(ostream& o) const;
 
 };
 
+inline ostream& operator << (ostream& out, const Game& x) {
+    x.print(out);
+    return out;
+}
 #endif // GAME_H
