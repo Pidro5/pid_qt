@@ -11,6 +11,7 @@ class Game;
 class Player
 {
     // these variable are used to access the game and tells in which position the player is in the game
+protected:
     Game* my_game;
     int  my_position;
     bool my_rotate_to_south;

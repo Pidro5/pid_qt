@@ -8,43 +8,44 @@
 #include "playerconsole.h"
 #include "rotator.h"
 #include "ea/ea.h"
+#include "playercomputer.h"
 
 
 using namespace std;
 
 
-void TEST_EA()
-{
-    Game g;
-    Player p1("Alice");
-    Player p2("Bob");
-    Player p3("Cedric");
-    Player p4("Diane");
+//void TEST_EA()
+//{
+//    Game g;
+//    PlayerComputer p1("Alice");
+//    PlayerComputer p2("Bob");
+//    PlayerComputer p3("Cedric");
+//    PlayerComputer p4("Diane");
 
 
 
-    LOG_D("");
+//    LOG_D("");
 
-    g.register_with_game(&p1);
-    g.register_with_game(&p2);
-    g.register_with_game(&p3);
-    g.register_with_game(&p4);
+//    g.register_with_game(&p1);
+//    g.register_with_game(&p2);
+//    g.register_with_game(&p3);
+//    g.register_with_game(&p4);
 
-    EA ea(&g, &p1, "T:\\_home\\SchachtnerTh\\RulesFiles\\Bidnet76Clean.txt", "T:\\_home\\SchachtnerTh\\RulesFiles\\PidroBidRulesAI_Master013v1.txt");
-//    EA ea(&g, &p1, "C:\\Bidnet76Clean.txt", "C:\\PidroBidRulesAI_Master013v1.txt");
+//    EA ea(&g, &p1, "T:\\_home\\SchachtnerTh\\RulesFiles\\Bidnet76Clean.txt", "T:\\_home\\SchachtnerTh\\RulesFiles\\PidroBidRulesAI_Master013v1.txt");
+////    EA ea(&g, &p1, "C:\\Bidnet76Clean.txt", "C:\\PidroBidRulesAI_Master013v1.txt");
 
-    cout << "EA test" << endl;
-    bidHint hint = ea.getBidHint();
-    cout << "EA test end" << endl;
+//    cout << "EA test" << endl;
+//    bidHint hint = ea.getBidHint();
+//    cout << "EA test end" << endl;
 
-}
+//}
 
 
 void TEST_PATRIK() {
     Game g;
     Player p1("Alice");
     PlayerConsole p2("Bob");
-    Player p3("Cedric");
+    PlayerComputer p3("Cedric");
     Player p4("Diane");
 
     LOG_D("");

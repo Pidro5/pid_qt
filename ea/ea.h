@@ -16,6 +16,13 @@ namespace std {
 		int action;
 		string value;
 	};
+
+    class cardsConfig {
+    public:
+        int number_of_cards[4];
+        int number_of_unimportant_cards[4];
+        string cardsString[4];
+    };
 	
 	class EA {
 	public:
@@ -27,6 +34,10 @@ namespace std {
 		const static int PL_RESPONSE = 2;
 		const static int PL_A_BLOCK = 3;
 		const static int PL_B_BLOCK = 4;
+        const static int C_SUIT_SPADES = 0;
+        const static int C_SUIT_CLUBS = 1;
+        const static int C_SUIT_HEARTS = 2;
+        const static int C_SUIT_DIAMONDS = 3;
 	private:
 		Game *theGame;
 		Player *me;
@@ -71,11 +82,11 @@ namespace std {
 
 		public:
 			void set_eaNB(float value) { eaNB = value; }
-			float get_eaNB() { return eaNB; };
-			float *get_eavalues() { return eavalues; };
+            float get_eaNB() { return eaNB; }
+            float *get_eavalues() { return eavalues; }
 			float get_eavalue(int bid);
-			float *get_probabilities() { return probability; };
-			float *get_eaNBall() { return eaNBs; };
+            float *get_probabilities() { return probability; }
+            float *get_eaNBall() { return eaNBs; }
 			void set_eaValues(float v1,float v2,float v3,float v4,float v5,float v6,float v7,float v8,float v9) { 
 				eavalues[0] = v1; 
 				eavalues[1] = v2; 
@@ -104,6 +115,7 @@ namespace std {
 				eaNBs[2] = v3; 
 				eaNBs[3] = v4; 
 			}
+ //           oneHand& operator=(oneHand other);
 		};
 
 		class cardcount{
@@ -115,11 +127,16 @@ namespace std {
 		};
 
 		std::list<cardcount> cardcounts;
-		bool readRuleFile(std::string str);	
+        bool readRuleFile(string str);
 		bool readBidRuleFile(string filename);
 		float getEA(int cardsCount, int nonImportant, string cardsConfig, int bid);
 		oneHand *getEAstruct(int cardsCount, int nonImportant, string cardsConfig);
 		void ruleProcessing(ifstream& infile);
+
+        cardsConfig examineHand(list<Card *> hand);
+        int getBidRoleInRound();
+        int getBidPartner();
+        int getBidRight();
 
 
 	public:

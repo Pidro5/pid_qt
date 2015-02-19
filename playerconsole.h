@@ -5,9 +5,9 @@
 
 class PlayerConsole : public Player {
     // these variable are used to access the game and tells in which position the player is in the game
-    Game* my_game;
-    int  my_position;
-    bool my_rotate_to_south;
+    //Game* my_game;
+    //int  my_position;
+    //bool my_rotate_to_south;
 
     int who_has_deck;
     string my_view_on_hands[4];

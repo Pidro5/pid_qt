@@ -23,7 +23,8 @@ SOURCES += main.cpp \
     player.cpp \
     rotator.cpp \
     ea/ea.cpp \
-    playerconsole.cpp
+    playerconsole.cpp \
+    playercomputer.cpp
 
 HEADERS += \
     deck_card.h \
@@ -33,4 +34,5 @@ HEADERS += \
     rotator.h \
     ea/ea.h \
     event.h \
-    playerconsole.h
+    playerconsole.h \
+    playercomputer.h
