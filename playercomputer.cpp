@@ -19,7 +19,8 @@ void PlayerComputer::attached_to_game(Game * g, int position, bool rotate_to_sou
     my_game = g;
     my_position = position;
     my_rotate_to_south = rotate_to_south;
-    ea = new EA(g, this, "T:\\_home\\SchachtnerTh\\RulesFiles\\Bidnet76Clean.txt", "T:\\_home\\SchachtnerTh\\RulesFiles\\PidroBidRulesAI_Master013v1.txt");
+  //  ea = new EA(g, this, "T:\\_home\\SchachtnerTh\\RulesFiles\\Bidnet76Clean.txt", "T:\\_home\\SchachtnerTh\\RulesFiles\\PidroBidRulesAI_Master013v1.txt");
+    ea = new EA(g, this, "C:\\Bidnet76Clean.txt", "C:\\PidroBidRulesAI_Master013v1.txt");
 
 }
 

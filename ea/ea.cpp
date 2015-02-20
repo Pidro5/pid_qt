@@ -40,6 +40,15 @@ namespace std {
 		if (!readBidRuleFile(eaBidRuleFile)) cout << "bid rule file  not correct.";
 	}
 
+    string EA::bool_to_string(bool b){
+        if(b) {
+            return "\t\t\t\t#TRUE";
+        }
+        else {
+            return "\t\t\t\t#FALSE";
+        }
+    }
+
 	bool EA::readBidRuleFile(string filename) {
         bidrulesfile.open(filename.c_str());
 		bool notEOF;
@@ -430,19 +439,22 @@ namespace std {
                list<Card *>::iterator arrayHandIterator;
                for (arrayHandIterator=array_hand[suit].begin();arrayHandIterator!=array_hand[suit].end();arrayHandIterator++)
                {
-                   int itmp = ((Card *)(*arrayHandIterator))->card_ranking(suit);
                    if (array_hand[suit].size() >= 4)
                    {
-                       // The cards [9,8,7,6] is considered as M
-                       if (itmp == 9 || itmp == 8 || itmp == 7 || itmp == 6)
+                       int itmp = ((Card *)(*arrayHandIterator))->card_ranking(suit);
+                       if (array_hand[suit].size() == 4)
                        {
-                           no_of_unimportant_cards[suit]++;
-                       }
-                   } else { // this is the syntax for 5 and 6 cards
-                       // The cards [9,8,7,6, 4, 3] is considered as M
-                       if (itmp == 9 or itmp == 8 or itmp == 7 or itmp == 6 or itmp == 3 or itmp == 2) // ranking values of 4 is 3 (and 3 is 2)
-                       {
-                           no_of_unimportant_cards[suit]++;
+                           // The cards [9,8,7,6] is considered as M
+                           if (itmp == 9 || itmp == 8 || itmp == 7 || itmp == 6)
+                           {
+                               no_of_unimportant_cards[suit]++;
+                           }
+                       } else { // this is the syntax for 5 and 6 cards
+                           // The cards [9,8,7,6, 4, 3] is considered as M
+                           if (itmp == 9 or itmp == 8 or itmp == 7 or itmp == 6 or itmp == 3 or itmp == 2) // ranking values of 4 is 3 (and 3 is 2)
+                           {
+                               no_of_unimportant_cards[suit]++;
+                           }
                        }
                    }
                }
@@ -490,11 +502,11 @@ namespace std {
                    // inner loop of the cards per suit  - if a card is found it should be added
                    for (list<Card *>::iterator handIterator=array_hand[suit].begin(); handIterator!=array_hand[suit].end(); handIterator++)
                    {
-//                       LOG_D(((Card *)(*handIterator))->card_face_value());
-//                       LOG_D(((Card *)(*handIterator))->card_points);
-//                       LOG_D(((Card *)(*handIterator))->card_ranking(suit));
-//                       LOG_D(((Card *)(*handIterator))->card_ranking_name(suit));
-//                       LOG_D(((Card *)(*handIterator))->card_suit());
+                       LOG_D(((Card *)(*handIterator))->card_face_value());
+                       LOG_D(((Card *)(*handIterator))->card_points);
+                       LOG_D(((Card *)(*handIterator))->card_ranking(suit));
+                       LOG_D(((Card *)(*handIterator))->card_ranking_name(suit));
+                       LOG_D(((Card *)(*handIterator))->card_suit());
                        if (((Card *)(*handIterator))->card_ranking(suit) == j)
                        {
                            // pick topmost card and analyse
@@ -575,7 +587,7 @@ namespace std {
 
         // iterator through rules
 		list<EA::rule>::iterator it;
-		bool match;
+        bool line_match;
 		bidHint be;
 		for (it = rules.begin(); it != rules.end(); it++)
 		{
@@ -586,11 +598,18 @@ namespace std {
                 ss << (settingsIt->second);
                 it->ruleSettings[settingsIt->first].value = ss.str();
 			}
-			//check each rule for a match and then return on first match
+
+            LOG_BIDRULE("Rule " << it->ruleSettings["Name"].value);
+            bool rule_match;
+            rule_match = true;
+
+            //check each rule for a match and then return on first match
 			list<EA::rule::ruleLine>::iterator line_it;
 			for (line_it = it->ruleLines.begin(); line_it != it->ruleLines.end(); line_it++) {
-				match = true;
+                line_match = true;
 				string value;
+
+
 				switch (line_it->type) {
 				case EA::SETTING_IMMEDIATE: 
 					value = line_it->currentValue; 
@@ -600,44 +619,43 @@ namespace std {
 					break;
 				}
 				switch (line_it->iOperator) { 
-				case EA::rule::ruleLine::SET: 
-					it->ruleSettings[line_it->valueToCheck].value = value;
-					it->ruleSettings[line_it->valueToCheck].type = EA::SETTING_IMMEDIATE;
-					if (DEBUG) {
-						cout << "* SET   " << line_it->valueToCheck << " to " << value << endl;
-					}
-					break;
-				case EA::rule::ruleLine::GT:
-					if (atoi(it->ruleSettings[line_it->valueToCheck].value.c_str()) <= atoi(value.c_str())) match = false;
-					if (DEBUG) {
-						cout << "* CHECK " << line_it->valueToCheck << " >  " << value << " (" << line_it->valueToCheck << " = " << it->ruleSettings[line_it->valueToCheck].value << ")" << endl;
-					}
-					break;
-				case EA::rule::ruleLine::LT:
-					if (atoi(it->ruleSettings[line_it->valueToCheck].value.c_str()) >= atoi(value.c_str())) match = false;
-					if (DEBUG) {
-						cout << "* CHECK " << line_it->valueToCheck << " <  " << value << " (" << line_it->valueToCheck << " = " << it->ruleSettings[line_it->valueToCheck].value << ")" << endl;
-					}
-					break;
-				case EA::rule::ruleLine::NOT:
-					if (atoi(it->ruleSettings[line_it->valueToCheck].value.c_str()) == atoi(value.c_str())) match = false;
-					if (DEBUG) {
-						cout << "* CHECK " << line_it->valueToCheck << " <> " << value << " (" << line_it->valueToCheck << " = " << it->ruleSettings[line_it->valueToCheck].value << ")" << endl;
-					}
-					break;
+
+                case EA::rule::ruleLine::SET:
+                    it->ruleSettings[line_it->valueToCheck].value = value;
+                    it->ruleSettings[line_it->valueToCheck].type = EA::SETTING_IMMEDIATE;
+                    LOG_BIDRULE("* SET   " << line_it->valueToCheck << " to " << value << " " <<bool_to_string(line_match));
+                    break;
+
+                case EA::rule::ruleLine::GT:
+                    if (atoi(it->ruleSettings[line_it->valueToCheck].value.c_str()) <= atoi(value.c_str())) line_match = false;
+                    LOG_BIDRULE("* CHECK " << line_it->valueToCheck << " >  " << value << " (" << line_it->valueToCheck << " = " << it->ruleSettings[line_it->valueToCheck].value << ")" << "  " <<bool_to_string(line_match) );
+                    break;
+
+                case EA::rule::ruleLine::LT:
+                    if (atoi(it->ruleSettings[line_it->valueToCheck].value.c_str()) >= atoi(value.c_str())) line_match = false;
+                    LOG_BIDRULE("* CHECK " << line_it->valueToCheck << " <  " << value << " (" << line_it->valueToCheck << " = " << it->ruleSettings[line_it->valueToCheck].value << ")"<< "  " <<bool_to_string(line_match) );
+                    break;
+
+                case EA::rule::ruleLine::NOT:
+                    if (atoi(it->ruleSettings[line_it->valueToCheck].value.c_str()) == atoi(value.c_str())) line_match = false;
+                    LOG_BIDRULE("* CHECK " << line_it->valueToCheck << " <> " << value << " (" << line_it->valueToCheck << " = " << it->ruleSettings[line_it->valueToCheck].value << ")" << "  " <<bool_to_string(line_match));
+                    break;
 
 				default:
-					cout << "NO OPERATOR MATCHES!" << endl;
+                    LOG_BIDRULE("\t\t\t\t\t\tNO OPERATOR MATCHES!");
 					break;
 				}
+                if (!line_match) {rule_match = false;}
+
 			}
-			if (match) {
-				cout << "Rule " << it->ruleSettings["Name"].value << " matched.";
+
+            if (rule_match) {
+                LOG_BIDRULE("Rule " << it->ruleSettings["Name"].value << " matched.");
 				be = it->execute;
 				break;
 			} else {
-				cout << "Rule " << it->ruleSettings["Name"].value << " did not match." << endl;
-				cout << "-------------------------------" << endl;
+                LOG_BIDRULE("Rule " << it->ruleSettings["Name"].value << " did not match.");
+                LOG_BIDRULE( "-------------------------------");
 			}
 		}
 

@@ -207,7 +207,9 @@ bool PlayerConsole::inform_event(Event et, int position, list<Card *>& cards){
     }
 
     draw_table();
-    cout << *my_game;
+    if (et == Event::PLAY_CARD) {
+        LOG_D(*my_game);
+    }
 
     cin.get();
 
