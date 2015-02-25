@@ -5,6 +5,7 @@
 class Rotator
 {
     int my_position;
+    int my_start_position;
 
 public:
     Rotator();
@@ -12,7 +13,8 @@ public:
     ~Rotator();
 
     void set_position(int pos);
-    int get_position();
+    int get_position() const;
+    int get_my_start_position() const;
 
 
     Rotator& operator++ ();   // prefix

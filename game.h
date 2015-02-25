@@ -19,6 +19,18 @@ public:
 
 class Game
 {
+public:
+    const static int FIRST = 1;
+    const static int SECOND = 2;
+    const static int THIRD = 3;
+    const static int FOURTH = 4;
+
+    const static int BIDDER = 0;
+    const static int A_DEFENCE = 1;
+    const static int BIDRESPONSE = 2;
+    const static int B_DEFENCE = 3;
+
+private:
 
     //  The game has 4 positions of players
     //  0-South, 1-West, 2-North, 3-East
@@ -78,7 +90,17 @@ class Game
     Rotator who_plays;
 
     // Play Data
-    bool is_cold[4];
+    // ==================================================================================
+    bool player_is_cold[4];
+
+    int how_many_cards_do_i_have[4];             // only to be accessed from player
+    int how_many_visible_cards_has_player[4];    // situation after color selection
+    int how_many_visible_cards_before_buy[4];    //
+
+    int points_left;
+    int available_points_left;
+    int absolute_higest;
+    int round_playing;
 
     //  ----------------------
     Card * played_cards[14];
@@ -87,7 +109,12 @@ class Game
     int  played_idx;
     //  ----------------------
 
+    void play_init();
     void register_card_as_played(Card * c,int who, int round);
+    string get_played_card(int who, int round) const ;
+
+    void play_round_completed(int round);
+
     int who_had_the_higest_card_in_round(int round, int color) const;
     int sum_round_points(bool NS_or_WE, int up_to_round) const;
 
@@ -97,7 +124,7 @@ class Game
 
     void game_init();
     void round_init();
-    int authorise_player(Player * pl) const;
+    int authorize_player(Player * pl) const;
 
 public:
     Game();
@@ -136,10 +163,34 @@ public:
 
     list<Card *>  get_my_cards_in_hand(Player * pl);
     list<Card *>  get_cards_on_the_table(int pos);
+
+    //Used for visualising. Does not accout for discasred cards. Pls see how_many_played_cards
     int get_how_many_cards_in_hand_pos_relative_to_me(Player * pl, int pos);
 
+    // PLAY =============================================================================
 
-    // ==================================================================================
+    int how_many_played_cards(int pos) const;
+    int get_round() const;
+    int get_cards_remaining() const;
+    int get_cards_left_in_my_hand(Player * pl) const;
+    int get_points_left()const;
+    int get_position_in_round(Player * pl) const;
+    int get_bid()const;
+    int get_role_bid(Player * pl)const;
+    string get_my_highest_card(Player * pl)const;
+    string get_the_absolute_highest_card()const;
+    string get_the_highest_card_in_round()const;
+
+
+    string get_card_left(Player * pl)const;
+    string get_card_partner(Player * pl)const;
+    string get_card_right(Player * pl)const;
+    string get_previous_card_left(Player * pl)const;
+    string get_previous_card_partner(Player * pl)const;
+    string get_previous_card_right(Player * pl)const;
+    string get_previous_card_me(Player * pl)const;
+
+   // ==================================================================================
 
       void print(ostream& o) const;
 

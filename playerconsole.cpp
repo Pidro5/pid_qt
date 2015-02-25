@@ -207,9 +207,22 @@ bool PlayerConsole::inform_event(Event et, int position, list<Card *>& cards){
     }
 
     draw_table();
-    if (et == Event::PLAY_CARD) {
+    if (et == Event::PLAY_CARD ||  et == Event::PLAYER_COLD) {
         LOG_D(*my_game);
     }
+
+//    cout << "get_position_in_round "  << " \t " <<  my_game->get_position_in_round(this) << endl;
+//    cout << "get_role_bid 0..3 "  << " \t " <<  my_game->get_role_bid(this) << endl;
+//    cout << "get_my_highest_card "  << " \t " <<  my_game->get_my_highest_card(this) << endl;
+    cout << "get_card_left "  << " \t " <<  my_game->get_card_left(this) << endl;
+    cout << "get_card_partner "  << " \t " <<  my_game->get_card_partner(this) << endl;
+    cout << "get_card_right "  << " \t " <<  my_game->get_card_right(this) << endl;
+
+    cout  << endl;
+    cout << "get_previous_card_left "  << " \t " <<  my_game->get_previous_card_left(this) << endl;
+    cout << "get_previous_card_partner "  << " \t " <<  my_game->get_previous_card_partner(this) << endl;
+    cout << "get_previous_card_right "  << " \t " <<  my_game->get_previous_card_right(this) << endl;
+    cout << "get_previous_card_me "  << " \t " <<  my_game->get_previous_card_me(this) << endl;
 
     cin.get();
 
