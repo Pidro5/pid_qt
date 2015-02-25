@@ -26,6 +26,8 @@ public:
     string card_ranking_name(int suite) const;
     int card_points;            // A,J,10 - 1 point  5 - 5 points, 2- needs different handling
     void print(ostream& o) const;
+    static string convert_rank_value_to_string(int value);
+    static int convert_rank_name_to_value(string str);
 
 };
 

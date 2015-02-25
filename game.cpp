@@ -231,7 +231,16 @@ void Game::run_game() {
             for (int i=0;i<3;i++){    // Note - only 3 - until we reach the deck
                 r++; //start with the next one after deck
                 throw_worthless_cards_on_the_table_do_not_keep_more_than_six(r.get_position(),selected_color, false);
+
+                // note how many visible cards they have after color selection
+                how_many_cards_do_i_have[r.get_position()]=cards_in_hands[r.get_position()].size();
+                how_many_visible_cards_has_player[r.get_position()]=cards_in_hands[r.get_position()].size();
+                how_many_visible_cards_before_buy[r.get_position()]=cards_in_hands[r.get_position()].size();
+
             }
+
+
+
 
             // ==========================================================================
             // Deal to 6 cards
@@ -254,6 +263,10 @@ void Game::run_game() {
                     //  add to hand
                     for (it = tmp_list_of_cards.begin(); it!=tmp_list_of_cards.end(); ++it) {
                         cards_in_hands[r.get_position()].push_back(*it);
+
+                        if ((*it)->card_ranking(selected_color)> 0){ // got one card
+                            how_many_cards_do_i_have[r.get_position()]++;
+                        }
                     }
                     post_event(Event::DEAL_CARD, r.get_position(),tmp_list_of_cards);
                     if(!b_continue_game){return;}
@@ -285,6 +298,16 @@ void Game::run_game() {
                 while(!tmp_list_of_cards.empty()) {tmp_list_of_cards.pop_front();  }
             }
 
+            // I need to update how many cards the deck owner sees
+            how_many_cards_do_i_have[who_has_deck.get_position()] = 0;
+
+            for (it = cards_in_hands[who_has_deck.get_position()].begin(); it!=cards_in_hands[who_has_deck.get_position()].end(); ++it) {
+                if ((*it)->card_ranking(selected_color)> 0){ // got one card - need to update my knowhow
+                    how_many_cards_do_i_have[who_has_deck.get_position()]++;
+                }
+            }
+
+
             // ==========================================================================
             // The deck throws the unnecessary cards
             // ==========================================================================
@@ -310,10 +333,10 @@ void Game::run_game() {
                 for (int i_player=0;i_player<4;i_player++){  // 4 player
 
                     // Check if cold
-                    if(!is_cold[who_plays.get_position()] && check_if_player_has_cards_to_play(who_plays.get_position(), selected_color ) == 0){
+                    if(!player_is_cold[who_plays.get_position()] && check_if_player_has_cards_to_play(who_plays.get_position(), selected_color ) == 0){
                         // this player just got cold - needs to be registered
 
-                        is_cold[who_plays.get_position()] = true;
+                        player_is_cold[who_plays.get_position()] = true;
 
                         // he needs to throw his card - out of the hand - but not onto the table
                         list<Card *> tmp_list_of_cards;
@@ -333,7 +356,7 @@ void Game::run_game() {
 
                     }
 
-                    if(!is_cold[who_plays.get_position()]){
+                    if(!player_is_cold[who_plays.get_position()]){
 
                         // player has still cards - then ask for a card
 
@@ -383,8 +406,9 @@ void Game::run_game() {
                     who_plays++;   // next one in round
 
                 }
-                // Check who has the higest card in round
+                play_round_completed(i_round);
 
+                // Check who has the higest card in round
                 if(a_card_played) {post_event(Event::PLAY_ROUND_FINISH);}
                 if(!b_continue_game){return;}
 
@@ -478,74 +502,6 @@ int Game::check_if_player_has_cards_to_play(int who, int color){
 
 
 
-void Game::register_card_as_played(Card * c, int who, int round){
-
-    //maintain the played_cards structure
-    played_idx++;    //  Set to next element
-    played_cards[played_idx] =c;
-    played_by_whom[played_idx] = who;
-    played_in_round[played_idx] = round;
-}
-
-int Game::sum_round_points(bool NS_or_WE,int including_round) const {
-    //NS_or_WE  - true calculates the North-South points together. Otherwise West-East
-    int sum_ns = 0;
-    int sum_we = 0;
-    int sum_tmp = 0;
-
-    // calc all available points together up to a round - use 6 for all rounds
-    for (int round =0; round <= including_round; round++) {
-
-        sum_tmp = 0;
-
-        // check all available data
-        for(int i =0;i <= played_idx ;i++) {
-            // sum all poinst together
-            if(played_in_round[i] == round) {
-                sum_tmp += played_cards[i]->card_points;
-
-                // special card "2" has no points set
-                if (played_cards[i]->card_face_value() == "2") {
-                    if  (played_by_whom[i] == 0 || played_by_whom[i] == 2){
-                        sum_ns++;
-                    }
-                    else {
-                        sum_we++;
-                    }
-                }
-            }
-
-        }
-        // now decide who the sum_tmp points belongs to
-        int i_who;
-        i_who = who_had_the_higest_card_in_round(round,selected_color);
-        if (i_who ==0 || i_who == 2){
-            sum_ns += sum_tmp;
-        }
-        else {
-            sum_we += sum_tmp;
-        }
-    }
-
-    if (NS_or_WE){  return sum_ns;}
-    return sum_we;
-}
-
-
-int Game::who_had_the_higest_card_in_round(int round, int color) const {
-    int highest = -1;
-    int retval = -1;
-
-    for(int i =0;i <= played_idx ;i++) {
-        if(played_in_round[i] == round){
-            if(played_cards[i]->card_ranking(color) > highest){
-                highest = played_cards[i]->card_ranking(color) ;
-                retval = played_by_whom[i];
-            }
-        }
-    }
-    return retval;
-}
 
 
 
@@ -585,6 +541,10 @@ void Game::throw_worthless_cards_on_the_table_do_not_keep_more_than_six(int who,
     // Check if a hand has now more than 6 cards
     if (cards_in_hands[who].size() > 6) {
         // this hand has more cards than 6
+        // viible to all
+        how_many_cards_do_i_have[who]=cards_in_hands[who].size();
+        how_many_visible_cards_has_player[who]=cards_in_hands[who].size();
+        how_many_visible_cards_before_buy[who]=cards_in_hands[who].size();
 
         int i_cards_to_remove = cards_in_hands[who].size() - 6;
         int i_rank_to_remove = 2;
@@ -627,7 +587,7 @@ void Game::throw_worthless_cards_on_the_table_do_not_keep_more_than_six(int who,
 }
 
 
-int Game::authorise_player(Player * pl) const {
+int Game::authorize_player(Player * pl) const {
     int i;
 
     i = -1;
@@ -636,6 +596,8 @@ int Game::authorise_player(Player * pl) const {
             return i;
         }
     }
+    LOG_E("Game::authorize_player - could not identify plyer");
+    throw std::runtime_error("Game::authorize_player - could not identify plyer");
     return -1;
 }
 
@@ -677,7 +639,7 @@ void Game::round_init(){
 
         //init bids to -1
         bids[i] = -1;
-        is_cold[i] = false;
+        player_is_cold[i] = false;
     }
     higest_bid = 0;              // The highest bid for the round is zero
     who_has_higest_bid = -1;     // who = 0..3.  -1 = nobody
@@ -688,16 +650,13 @@ void Game::round_init(){
     who_bids++;
     who_plays.set_position(0);    // proforma
 
-    //===========
-    // Card * played_cards[14];
-    // int  played_by_whom[14];
-    // int  played_in_round[14];
-    played_idx =-1;      // no data in this structure
+    play_init();
+
 }
 
 int Game::get_game_our_points(Player * pl){
 
-    int who = authorise_player(pl);
+    int who = authorize_player(pl);
 
     if (who == 0 or who == 2){  //North South
         return game_north_south_points;
@@ -713,7 +672,7 @@ int Game::get_game_our_points(Player * pl){
 
 int Game::get_game_their_points(Player * pl){
 
-    int who = authorise_player(pl);
+    int who = authorize_player(pl);
 
     if (who == 0 or who == 2){
         return game_east_west_points;
@@ -729,7 +688,7 @@ int Game::get_game_their_points(Player * pl){
 }
 
 bool Game::get_game_winner(Player * pl){
-    int who = authorise_player(pl);
+    int who = authorize_player(pl);
 
     if (who == 0 or who == 2){
         return b_winner_ns;
@@ -741,7 +700,7 @@ bool Game::get_game_winner(Player * pl){
 }
 
 int Game::get_round_our_points(Player * pl, int including_round) const{
-    int who = authorise_player(pl);
+    int who = authorize_player(pl);
     if (who == 0 or who == 2){
         return sum_round_points(true,including_round);  // north south
     }
@@ -751,7 +710,7 @@ int Game::get_round_our_points(Player * pl, int including_round) const{
 }
 
 int Game::get_round_their_points(Player * pl, int including_round) const{
-    int who = authorise_player(pl);
+    int who = authorize_player(pl);
     if (who == 0 or who == 2){
         return sum_round_points(false,including_round);
     }
@@ -762,7 +721,7 @@ int Game::get_round_their_points(Player * pl, int including_round) const{
 
 int Game::get_roundstat_our_points(Player * pl){
     RoundRecord * rr;
-    int who = authorise_player(pl);
+    int who = authorize_player(pl);
     rr = game_round_records.back();
     if (who == 0 or who == 2){
         return rr->points_north_south; // north south
@@ -774,7 +733,7 @@ int Game::get_roundstat_our_points(Player * pl){
 
 int Game::get_roundstat_their_points(Player * pl){
     RoundRecord * rr;
-    int who = authorise_player(pl);
+    int who = authorize_player(pl);
     rr = game_round_records.back();
     if (who == 0 or who == 2){
         return rr->points_east_west;
@@ -800,7 +759,7 @@ int Game::get_roundstat_bid(){
 int Game::get_roundstat_who_played(Player * pl){
     RoundRecord * rr;
     rr = game_round_records.back();
-    int who = authorise_player(pl);
+    int who = authorize_player(pl);
 
    // if (who == 0 or who == 2){
     int pos = rr->who_played;
@@ -833,7 +792,7 @@ int Game::get_bid_value_pos_absolute(int pos){
 }
 
 int Game::get_bid_value_pos_relative_to_me(Player * pl, int offset){
-    int who = authorise_player(pl);
+    int who = authorize_player(pl);
     if (who >=0){
 
         return bids[(who + offset) % 4 ];
@@ -855,7 +814,7 @@ int Game::get_who_plays_pos_absolute(){
 }
 
 list<Card *>  Game::get_my_cards_in_hand(Player * pl){
-    int who = authorise_player(pl);
+    int who = authorize_player(pl);
     if (who >=0){
 
         return cards_in_hands[who];
@@ -878,8 +837,9 @@ list<Card *> Game::get_cards_on_the_table(int pos){
 
 }
 
+
 int Game::get_how_many_cards_in_hand_pos_relative_to_me(Player * pl, int pos){
-    int who = authorise_player(pl);
+    int who = authorize_player(pl);
     if (who >=0){
 
         if(turn_players_viewpoint_to_south[who]== true){
@@ -893,6 +853,7 @@ int Game::get_how_many_cards_in_hand_pos_relative_to_me(Player * pl, int pos){
     }
 
 }
+
 
 
 
@@ -1031,15 +992,319 @@ void Game::quit_game(){
     b_continue_game = false;
 }
 
+// ============================================================
+
+void Game::play_init(){
+    // This is the basic structure to record played cards
+
+    // Card * played_cards[14];
+    // int  played_by_whom[14];
+    // int  played_in_round[14];
+
+    played_idx =-1;      // no data in this structure
+
+//   int how_many_cards_do_i_have[4];             // only to be accessed from player
+//   int how_many_visible_cards_has_player[4];    // situation after color selection
+//   int how_many_visible_cards_before_buy[4];    //
+
+    for (int i =0; i<4; i++){
+        how_many_cards_do_i_have[i]=0;
+        how_many_visible_cards_has_player[i]=0;
+        how_many_visible_cards_before_buy[i]=0;
+    }
+
+   points_left =14;
+   available_points_left=12;
+   absolute_higest= 14;
+   round_playing =1;
+}
+
+void Game::register_card_as_played(Card * c, int who, int round){
+
+    // This routine is called whenever card is played + when cards a re discarded
+    // The routine can also prepare internal variable before next one plays
+
+    //maintain the played_cards structure
+    played_idx++;    //  Set to next element
+    played_cards[played_idx] =c;
+    played_by_whom[played_idx] = who;
+    played_in_round[played_idx] = round;
+
+
+    //For i = 0 To 3
+     //  gbAndraSer(i) = MaxOf(gbAndraSer(i), gbUtspeladeKort(i))
+     //Next
+    if (how_many_visible_cards_has_player[who] < how_many_played_cards(who)){
+        how_many_visible_cards_has_player[who] = how_many_played_cards(who);
+    }
+}
+
+
+int Game::how_many_played_cards(int pos) const {
+    int ret =0;
+
+    for(int i =0;i <= played_idx ;i++) {
+        if(played_by_whom[i]==pos)
+            ret++;
+    }
+    return ret;
+}
+
+void Game::play_round_completed(int round){
+
+    round_playing++;
+
+    // Set new values for points_left - Points for A and 2 are deducted
+    // and available_points_left -  A and 2 do not affect this
+    // the card "2" needs a sparate check since it has no points set in the card_points
+
+    for(int i =0;i <= played_idx ;i++) {
+        if(played_in_round[i]==round){
+            // check these cards and deduct their points
+            points_left -= played_cards[i]->card_points;
+            available_points_left -= played_cards[i]->card_points;
+
+            if (played_cards[i]->card_ranking(selected_color) == 14){  // this card was A
+                available_points_left++;
+            }
+            if (played_cards[i]->card_ranking(selected_color) == 1){  // this card was 2
+                points_left--;
+            }
+        }
+    }
+    // Now evaluate the absolute_higest;
+
+    bool bfound;
+
+    for(int j =14;j > 0 ;--j) {   // try the cards from top down
+        bfound = false;
+        for(int i =0;i <= played_idx ;i++) {
+            if(played_cards[i]->card_ranking(selected_color) == j) {
+                bfound = true;    // is this card already played
+            }
+        }
+        if (bfound == false){   // if not - this is the highest
+            absolute_higest = j;
+            return;  // we are done
+        }
+    }
+}
+
+int Game::sum_round_points(bool NS_or_WE,int including_round) const {
+    //NS_or_WE  - true calculates the North-South points together. Otherwise West-East
+    int sum_ns = 0;
+    int sum_we = 0;
+    int sum_tmp = 0;
+
+    // calc all available points together up to a round - use 6 for all rounds
+    for (int round =0; round <= including_round; round++) {
+
+        sum_tmp = 0;
+
+        // check all available data
+        for(int i =0;i <= played_idx ;i++) {
+            // sum all poinst together
+            if(played_in_round[i] == round) {
+                sum_tmp += played_cards[i]->card_points;
+
+                // special card "2" has no points set
+                if (played_cards[i]->card_face_value() == "2") {
+                    if  (played_by_whom[i] == 0 || played_by_whom[i] == 2){
+                        sum_ns++;
+                    }
+                    else {
+                        sum_we++;
+                    }
+                }
+            }
+
+        }
+        // now decide who the sum_tmp points belongs to
+        int i_who;
+        i_who = who_had_the_higest_card_in_round(round,selected_color);
+        if (i_who ==0 || i_who == 2){
+            sum_ns += sum_tmp;
+        }
+        else {
+            sum_we += sum_tmp;
+        }
+    }
+
+    if (NS_or_WE){  return sum_ns;}
+    return sum_we;
+}
+
+int Game::who_had_the_higest_card_in_round(int round, int color) const {
+    int highest = -1;
+    int retval = -1;
+
+    for(int i =0;i <= played_idx ;i++) {
+        if(played_in_round[i] == round){
+            if(played_cards[i]->card_ranking(color) > highest){
+                highest = played_cards[i]->card_ranking(color) ;
+                retval = played_by_whom[i];
+            }
+        }
+    }
+    return retval;
+}
+
+int Game::get_round() const{
+    return round_playing;
+}
+
+int Game::get_cards_remaining() const{
+    return 13 - played_idx ;    // idx is set as -1 when no card is played. First card points to item [0]
+}
+
+int Game::get_cards_left_in_my_hand(Player * pl) const{
+    list<Card *>::const_iterator it;
+    int ret = 0;
+
+    int who = authorize_player(pl);
+    if (who >=0){
+        for (it = cards_in_hands[who].begin(); it!=cards_in_hands[who].end(); ++it) {
+            if ((*it)->card_ranking(selected_color)> 0){ // got one card
+                ret++;
+            }
+        }
+    }
+    return ret;
+}
+
+int Game::get_points_left()const{
+    return available_points_left;
+}
+
+int Game::get_position_in_round(Player * pl)const{
+    int who = authorize_player(pl);
+    if (who >=0){
+        if(who_plays.get_my_start_position() == who) return Game::FIRST;
+        if(who_plays.get_my_start_position() == (who + 1) % 4) return Game::FOURTH;
+        if(who_plays.get_my_start_position() == (who + 2) % 4) return Game::THIRD;
+        if(who_plays.get_my_start_position() == (who + 3) % 4) return Game::SECOND;
+    }
+
+    LOG_E("get_position_in_round - player or position not found");
+    throw std::runtime_error("get_position_in_round -  player or position not found");
+}
+
+int Game::get_bid()const{
+    return higest_bid;
+}
+
+int Game::get_role_bid(Player * pl)const{
+    int who = authorize_player(pl);
+    if (who >=0 && who_has_higest_bid >= 0){
+        if(who == who_has_higest_bid) return Game::BIDDER;
+        if(((who + 1) % 4) == who_has_higest_bid ) return Game::B_DEFENCE;
+        if(((who + 2) % 4) == who_has_higest_bid ) return Game::BIDRESPONSE;
+        if(((who + 3) % 4) == who_has_higest_bid ) return Game::A_DEFENCE;
+    }
+    return -1;
+}
+
+string Game::get_my_highest_card(Player * pl)const {
+    list<Card *>::const_iterator it;
+    int highcard = 0;
+    string str ="";
+
+    int who = authorize_player(pl);
+    if (who >=0){
+        for (it = cards_in_hands[who].begin(); it!=cards_in_hands[who].end(); ++it) {
+            if ((*it)->card_ranking(selected_color)> highcard){ // get the highest one in color
+                highcard = (*it)->card_ranking(selected_color);
+                str = (*it)->card_ranking_name(selected_color);   // get the string value A,K...V,v,4,3,2
+            }
+        }
+    }
+    return str;
+
+}
+
+string Game::get_the_absolute_highest_card()const{
+   return Card::convert_rank_value_to_string(absolute_higest);
+}
+
+
+string Game::get_the_highest_card_in_round()const{
+    int highest = 0;
+    string str = "";
+    for(int i =0;i <= played_idx ;i++) {
+        if(played_in_round[i] == round_playing){
+            if(played_cards[i]->card_ranking(selected_color) > highest){
+                highest = played_cards[i]->card_ranking(selected_color) ;
+                str = played_cards[i]->card_ranking_name(selected_color);
+            }
+        }
+    }
+    return str;
+}
+
+string Game::get_played_card(int who, int round) const {
+    string str = "";
+
+    for(int i =0;i <= played_idx ;i++) {
+        if(played_in_round[i] == round && played_by_whom[i] == who){
+            str = played_cards[i]->card_ranking_name(selected_color);
+        }
+    }
+    return str;
+}
+
+string Game::get_card_left(Player * pl)const{
+    int who = authorize_player(pl);
+    return get_played_card((who+1) % 4,round_playing );
+}
+
+string Game::get_card_partner(Player * pl)const {
+    int who = authorize_player(pl);
+    return get_played_card((who+2) % 4,round_playing );
+}
+
+string Game::get_card_right(Player * pl)const{
+    int who = authorize_player(pl);
+    return get_played_card((who+3) % 4,round_playing );
+}
+
+string Game::get_previous_card_left(Player * pl)const{
+    int who = authorize_player(pl);
+    return get_played_card((who+1) % 4,round_playing - 1 );
+}
+
+string Game::get_previous_card_partner(Player * pl)const {
+    int who = authorize_player(pl);
+    return get_played_card((who+2) % 4,round_playing - 1 );
+}
+
+string Game::get_previous_card_right(Player * pl)const{
+    int who = authorize_player(pl);
+    return get_played_card((who+3) % 4,round_playing - 1 );
+}
+
+string Game::get_previous_card_me(Player * pl)const{
+    int who = authorize_player(pl);
+    return get_played_card((who) % 4,round_playing - 1 );
+}
+
+/*
+
+
+*/
+
+// ============================================================
 
 
 void Game::print(ostream& o) const {
+    o << endl;
+
+    /*
     list<Card *>::const_iterator it;
 
-    o << endl;
+
+
     o << "The Deck left:" << endl;
     o << my_deck;
-
     for (int i = 0; i<4; i++){
 
         o <<"Hand (" << i << "):   ";
@@ -1048,8 +1313,40 @@ void Game::print(ostream& o) const {
         }
         o << endl ;
     }
+    */
 
-    o << "Points North-South " << sum_round_points(true,6)<<" Points East-west " << sum_round_points(false,6) << endl;
+    // o << "Points North-South " << sum_round_points(true,6)<<" Points East-west " << sum_round_points(false,6) << endl;
+
+    /*
+    for (int i = 0; i<4; i++){
+        o << i << ": how_many_cards_do_i_have " <<  " \t\t " <<  how_many_cards_do_i_have[i]<< endl;
+        o << i<< ": how_many_visible_cards_has_player "  << " \t " <<  how_many_visible_cards_has_player[i]<< endl;
+        o << i<< ": how_many_visible_cards_before_buy "  << " \t " <<  how_many_visible_cards_before_buy[i]<< endl;
+        o << endl;
+    }
+    */
+
+
+//    o << "points_left "  << " \t\t " <<  points_left<< endl;
+//    o << "get_points_left() "  << " \t " <<  get_points_left()<< endl;
+    o << "absolute_higest "  << " \t " <<  absolute_higest<< endl;
+    o << "get_the_absolute_highest_card() "  << " \t " <<  get_the_absolute_highest_card()<< endl;
+    o << "get_the_highest_card_in_round() "  << " \t " <<  get_the_highest_card_in_round()<< endl;
+
+
+    o << endl;
+
+
+    o << "get_round() "  << " \t\t " <<  get_round() << endl;
+    o << "get_cards_remaining() "  << " \t " <<  get_cards_remaining() << endl;
+    o << endl;
+
+/*
+    for (int i = 0; i<4; i++){
+        o <<  i << ": get_cards_left_in_my_hand " << get_cards_left_in_my_hand(game_player[i]) << endl;
+    }
+
+*/
 
 }
 

@@ -67,7 +67,6 @@ bool Player::inform_event(Event /*et*/, int /*position*/, list<Card *>& /*cards*
     // KILL_CARD           - somebody had more than 6 cards and needs to kill a card
     // PLAY_CARD
     // PLAYER_COLD
-
     return true;    //  true means continue game
 }
 

@@ -1,6 +1,7 @@
 #include <time.h>
 #include <iostream>
 #include <cstdlib>
+#include <stdexcept>
 #include "deck_card.h"
 #include "log.h"
 
@@ -37,7 +38,7 @@ string Card::card_face_value() const
     if (myvalue == 13){str = "K";};
     if (myvalue == 14){str = "A";};
     if (myvalue == 5){str = "V";};
-   return str;
+    return str;
 
 };
 
@@ -50,7 +51,7 @@ string Card::card_suit() const
     if ( mysuit == 1){str = "Clubs";};
     if ( mysuit == 2){str = "Hearts";};
     if ( mysuit == 3){str = "Diamonds";};
-   return str;
+    return str;
 
 };
 
@@ -63,7 +64,7 @@ string Card::card_suit_short() const
     if ( mysuit == 1){str = "CL";};
     if ( mysuit == 2){str = "HZ";};
     if ( mysuit == 3){str = "DI";};
-   return str;
+    return str;
 
 };
 
@@ -112,8 +113,84 @@ string Card::card_ranking_name(int suit) const {
 
 void Card::print(ostream& o) const
 {
-        o << this->card_suit_short() << "_" << this->card_face_value() << " ";
+    o << this->card_suit_short() << "_" << this->card_face_value() << " ";
 }
+
+string Card::convert_rank_value_to_string(int value){
+    string str = "";
+
+    switch (value)
+    {
+    case 1:
+        str = "2";
+        break;
+    case 2:
+        str = "3";
+        break;
+    case 3:
+        str = "4";
+        break;
+    case 4:
+        str = "v";
+        break;
+    case 5:
+        str = "V";
+        break;
+    case 6:
+        str = "6";
+        break;
+    case 7:
+        str = "7";
+        break;
+    case 8:
+        str = "8";
+        break;
+    case 9:
+        str = "9";
+        break;
+    case 10:
+        str = "10";
+        break;
+    case 11:
+        str = "J";
+        break;
+    case 12:
+        str = "Q";
+        break;
+    case 13:
+        str = "K";
+        break;
+    case 14:
+        str = "A";
+        break;
+
+
+    default:
+        throw std::runtime_error("Card::convert_rank_value_to_string - value not allowed");
+    }
+    return str;
+}
+
+int Card::convert_rank_name_to_value(string str){
+
+    if (str == "2") { return 1; }
+    if (str == "3") { return 2; }
+    if (str == "4") { return 3; }
+    if (str == "v") { return 4; }
+    if (str == "V") { return 5; }
+    if (str == "6") { return 6; }
+    if (str == "7") { return 7; }
+    if (str == "8") { return 8; }
+    if (str == "9") { return 9; }
+    if (str == "10") { return 10;}
+    if (str == "J") { return 11; }
+    if (str == "Q") { return 12; }
+    if (str == "K") { return 13; }
+    if (str ==  "A") { return 14;}
+    throw std::runtime_error("convert_rank_name_to_value - string not allowed");
+
+}
+
 
 //
 //  DECK ==============================================================================
