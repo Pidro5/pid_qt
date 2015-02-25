@@ -5,6 +5,7 @@
 #include <streambuf>
 #include <list>
 #include <map>
+#include <vector>
 
 #include "game.h"
 #include "player.h"
@@ -24,6 +25,52 @@ public:
     string cardsString[4];
 };
 
+class oneHand {
+public:
+    float eaNB;
+    float eavalues[9];
+    float probability[9];
+    float eaNBs[4];
+
+public:
+    void set_eaNB(float value) { eaNB = value; }
+    float get_eaNB() { return eaNB; }
+    float *get_eavalues() { return eavalues; }
+    float get_eavalue(int bid);
+    float *get_probabilities() { return probability; }
+    float *get_eaNBall() { return eaNBs; }
+    void set_eaValues(float v1,float v2,float v3,float v4,float v5,float v6,float v7,float v8,float v9) {
+        eavalues[0] = v1;
+        eavalues[1] = v2;
+        eavalues[2] = v3;
+        eavalues[3] = v4;
+        eavalues[4] = v5;
+        eavalues[5] = v6;
+        eavalues[6] = v7;
+        eavalues[7] = v8;
+        eavalues[8] = v9;
+    }
+    void set_probability(float v1,float v2,float v3,float v4,float v5,float v6,float v7,float v8,float v9) {
+        probability[0] = v1;
+        probability[1] = v2;
+        probability[2] = v3;
+        probability[3] = v4;
+        probability[4] = v5;
+        probability[5] = v6;
+        probability[6] = v7;
+        probability[7] = v8;
+        probability[8] = v9;
+    }
+    void set_eaNBs(float v1,float v2,float v3,float v4) {
+        eaNBs[0] = v1;
+        eaNBs[1] = v2;
+        eaNBs[2] = v3;
+        eaNBs[3] = v4;
+    }
+    //           oneHand& operator=(oneHand other);
+};
+
+
 class EA {
 public:
     const static int bidBID = 1; // used for bidExecute
@@ -41,6 +88,10 @@ public:
 private:
     Game *theGame;
     Player *me;
+    void updateGameSettings();
+    float getEABestColor(int bid);
+    vector<string> &split(const string &s, char delim, vector<string> &elems);
+    vector<string> split(const std::string &s, char delim);
     class rule {
     public:
         class settingItem {
@@ -54,10 +105,16 @@ private:
             static const int LT=2;
             static const int GT=3;
             static const int NOT=4;
+            static const int ONEOF=5;
+            static const int CALC_ADD=6;
+            static const int CALC_SUB=7;
             int iOperator;
             string valueToCheck;
             string currentValue;
             int type;
+            bool isFunction;
+            string argument;
+            int argumentType;
             bool checkRuleMatch(int variable, int iOperator, int value);
         };
         map<string, settingItem> ruleSettings;
@@ -74,49 +131,6 @@ private:
     list<rule> rules;
     ifstream bidrulesfile;
 
-    class oneHand {
-        float eaNB;
-        float eavalues[9];
-        float probability[9];
-        float eaNBs[4];
-
-    public:
-        void set_eaNB(float value) { eaNB = value; }
-        float get_eaNB() { return eaNB; }
-        float *get_eavalues() { return eavalues; }
-        float get_eavalue(int bid);
-        float *get_probabilities() { return probability; }
-        float *get_eaNBall() { return eaNBs; }
-        void set_eaValues(float v1,float v2,float v3,float v4,float v5,float v6,float v7,float v8,float v9) {
-            eavalues[0] = v1;
-            eavalues[1] = v2;
-            eavalues[2] = v3;
-            eavalues[3] = v4;
-            eavalues[4] = v5;
-            eavalues[5] = v6;
-            eavalues[6] = v7;
-            eavalues[7] = v8;
-            eavalues[8] = v9;
-        }
-        void set_probability(float v1,float v2,float v3,float v4,float v5,float v6,float v7,float v8,float v9) {
-            probability[0] = v1;
-            probability[1] = v2;
-            probability[2] = v3;
-            probability[3] = v4;
-            probability[4] = v5;
-            probability[5] = v6;
-            probability[6] = v7;
-            probability[7] = v8;
-            probability[8] = v9;
-        }
-        void set_eaNBs(float v1,float v2,float v3,float v4) {
-            eaNBs[0] = v1;
-            eaNBs[1] = v2;
-            eaNBs[2] = v3;
-            eaNBs[3] = v4;
-        }
-        //           oneHand& operator=(oneHand other);
-    };
 
     class cardcount{
     public:

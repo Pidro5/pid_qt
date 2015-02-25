@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <sstream>
 #include <algorithm>
+#include <vector>
 
 #include "ea.h"
 #include "game.h"
@@ -13,6 +14,7 @@ static const bool DEBUG = true;
 
 namespace std {
     map<string, float> gameSettings;
+    oneHand *myEAs[4];
 
     EA::EA() {
         strcpy(eaRuleFile, "T:\\_home\\SchachtnerTh\\RulesFiles\\Bidnet76Clean.txt");
@@ -36,8 +38,18 @@ namespace std {
 		//PidroBidRulesAI_Master013v1.txt
         strcpy(eaRuleFile, rulefile.c_str());
         strcpy(eaBidRuleFile, BidRuleFile.c_str());
-		if (!readRuleFile(eaRuleFile)) cout << "rule file not correct.";
-		if (!readBidRuleFile(eaBidRuleFile)) cout << "bid rule file  not correct.";
+        if (!readRuleFile(eaRuleFile))
+        {
+            LOG_D("rule file not correct.");
+            //cout << "rule file not correct.";
+            exit(-1);
+        }
+        if (!readBidRuleFile(eaBidRuleFile))
+        {
+            LOG_D("bid rule file not correct.");
+            //cout << "bid rule file  not correct.";
+            exit(-1);
+        }
 	}
 
     string EA::bool_to_string(bool b){
@@ -47,6 +59,21 @@ namespace std {
         else {
             return "\t\t\t\t#FALSE";
         }
+    }
+
+    float EA::getEABestColor(int bid) {
+        // We search the best EA value for the given bid
+        // the ea values are as follows [EA no loss],[EA bid 6],[EA bid 7], ..., [EA bid 14]
+        // if a bid value is less than 6, set bid to 6
+        if (bid < 6) bid = 6;
+        // translate the bid value to the index in the structure:
+        // 6 --> index: 1
+        // 7 --> index: 2
+        float bestEA=-200;
+        for (int suit=0; suit < 4; suit++) {
+            if (myEAs[suit]->eavalues[bid - 5] > bestEA) bestEA = myEAs[suit]->eavalues[bid - 5];
+        }
+        return bestEA;
     }
 
 	bool EA::readBidRuleFile(string filename) {
@@ -62,17 +89,24 @@ namespace std {
 				if (_stricmp(line.c_str(), "RULE") == 0) 
 					ruleProcessing(bidrulesfile);
 				else {
-                    auto c1 = line.find(',', 0); // find occurence of first comma
-					if (c1 == string::npos) goto readnext; // if there's no comma in the line, skip to the next line
-                    auto c2 = line.find(',', c1 + 1); // find occurence of second comma
-					if (c2 == string::npos) goto readnext; // if there's no second comma in the line, skip to the next line
-					{
-						string s1 = line.substr(0, c1);
-						string s2 = line.substr(c1 + 1, c2 - c1 - 1);
-						string s3 = line.substr(c2 + 1);
+                    if (_stricmp(line.c_str(), "STOP") == 0)
+                    {
+                        return true;
+                    } else {
 
-						if (_stricmp(s1.c_str(), "set")==0) settings[s2] = s3;
-					}
+                        auto c1 = line.find(',', 0); // find occurence of first comma
+                        if (c1 == string::npos) goto readnext; // if there's no comma in the line, skip to the next line
+                        auto c2 = line.find(',', c1 + 1); // find occurence of second comma
+                        if (c2 == string::npos) goto readnext; // if there's no second comma in the line, skip to the next line
+                        {
+                            string s1 = line.substr(0, c1);
+                            string s2 = line.substr(c1 + 1, c2 - c1 - 1);
+                            string s3 = line.substr(c2 + 1);
+
+                            //if (_stricmp(s1.c_str(), "set")==0) settings[s2] = s3;
+                            if (_stricmp(s1.c_str(), "set")==0) gameSettings[s2] = atof(s3.c_str());
+                        }
+                    }
 				}
 	readnext:
 				notEOF = (bool)getline(bidrulesfile, line);
@@ -80,15 +114,34 @@ namespace std {
 		}
 		catch (int e)
 		{
-			if (e==1) cout << "bid rules File was not found";
+            if (e==1) //cout << "bid rules File was not found";
+                LOG_D("bid rules file was not found.");
 		}
 
         //assert(!true); // An error if we arrive here?
         return false;
 	}
 
+    void EA::updateGameSettings()
+    {
+
+
+        gameSettings["VI"] = theGame->get_game_our_points(me);
+        gameSettings["DE"] = theGame->get_game_their_points(me);
+        gameSettings["Ledning"] = gameSettings["VI"] - gameSettings["DE"];
+        gameSettings["harPacko"] = theGame->get_who_has_deck_pos_absolute();
+        gameSettings["attBjuda"] = theGame->get_who_bids_pos_absolute();
+        gameSettings["BidHighestRound"] = theGame->get_highest_bid_value();
+        gameSettings["BidNext"] = gameSettings["BidHighestRound"] + 1; // Next bid must be at least one higher than current
+        if (gameSettings["BidNext"] > 14) gameSettings["BidNext"] = 14; // ... but limit to 14 (upper limit)
+        if (gameSettings["BidNext"] <  6) gameSettings["BidNext"] =  6; // ... and to 6 (lower limit)
+        gameSettings["BidPartner"] = getBidPartner();
+        gameSettings["RoleInRound"] = getBidRoleInRound();
+    }
+
 	void EA::ruleProcessing(ifstream& infile) {
-		cout << "RULE PROCESSING STARTS";
+        LOG_D("RULE PROCESSING STARTS");
+        //cout << "RULE PROCESSING STARTS";
 		rule thisRule;
 		bool notEOF;
 		bool inExecute = false;
@@ -112,7 +165,8 @@ namespace std {
 			if (c1 == string::npos) // if there's no comma in the line, only accept the EXECUTES keyword
 			{
 				if (_stricmp(line.c_str(), "executes") == 0) {
-					cout << "EXECUTES found" << endl;
+                    LOG_D("EXECUTES found.");
+                    //cout << "EXECUTES found" << endl;
 					inExecute = true;
 				}
 
@@ -128,56 +182,149 @@ namespace std {
 						item.value = s2;
 						item.type = EA::SETTING_IMMEDIATE;
 						thisRule.ruleSettings[s1] = item;
-					}
-					if (_stricmp(s1.c_str(), "probability") == 0) {
+                    } else
+                    /*if (_stricmp(s1.c_str(), "probability") == 0)*/ {
 						// check if the value can be converted to float
-						rule::settingItem item;
-						item.value = s2;
-						if (atoi(s2.c_str())>0 || isdigit(s2.c_str()[0]) ) {
-							item.type = EA::SETTING_IMMEDIATE;
-						} else {
-							item.type = EA::SETTING_LOOKUP;
-						}
-						thisRule.ruleSettings[s1] = item;
+                        //rule::settingItem item;
+                        //item.value = s2;
+                        //if (atoi(s2.c_str())>0 || isdigit(s2.c_str()[0]) ) {
+                        //	item.type = EA::SETTING_IMMEDIATE;
+                        //} else {
+                        //	item.type = EA::SETTING_LOOKUP;
+                        //}
+
+                        //thisRule.ruleSettings[s1] = item;
+                        rule::ruleLine rl;
+                        rl.valueToCheck = s1;
+                        rl.currentValue = s2;
+                        rl.isFunction = false;
+
+                        if (atoi(s2.c_str())>0 || isdigit(s2.c_str()[0]) ) {
+                            rl.type = EA::SETTING_IMMEDIATE;
+                        } else {
+                            rl.type = EA::SETTING_LOOKUP;
+                        }
+                        rl.iOperator = rule::ruleLine::SET;
+                        thisRule.ruleLines.push_back(rl);
+
 					}
 				} else {
-					string s1 = line.substr(0, c1);
-					string s2 = line.substr(c1 + 1, c2 - c1 - 1);
-					string s3 = line.substr(c2 + 1);
+                    // we have at least two commas in the line
+                    auto c3 = line.find(',', c2 + 1); // search for third comma
+                    if (c3 == string::npos) { // if there are only two commas in the line
+                        string s1 = line.substr(0, c1);
+                        string s2 = line.substr(c1 + 1, c2 - c1 - 1);
+                        string s3 = line.substr(c2 + 1);
 
-					if (!inExecute) { // we do not have a line in the EXECUTE section
-						//construct rule object line by line with one ruleline object per line
-						cout << "standard item" << endl;
-						rule::ruleLine rl;
-						rl.valueToCheck = s1;
-						rl.currentValue = s3;
-						if (atoi(s3.c_str()) > 0 || isdigit(s3.c_str()[0])) {
-							rl.type = EA::SETTING_IMMEDIATE;
-						} else {
-							rl.type = EA::SETTING_LOOKUP;
-						}
-						if (_stricmp(s2.c_str(), "<") == 0) {
-							rl.iOperator = rule::ruleLine::LT;
-						}
-						if (_stricmp(s2.c_str(), ">") == 0) {
-							rl.iOperator = rule::ruleLine::GT;
-						}
-						if (_stricmp(s2.c_str(), ":=") == 0) {
-							rl.iOperator = rule::ruleLine::SET;
-						}
-						if (_stricmp(s2.c_str(), "not") == 0) {
-							rl.iOperator = rule::ruleLine::NOT;
-						}
-						thisRule.ruleLines.push_back(rl);
-					} else {
-						// We have an EXECUTE line
-						thisRule.execute.probability = atoi(s1.c_str());
-						if (_stricmp(s2.c_str(), "bid") == 0) thisRule.execute.action = EA::bidBID;
-						if (_stricmp(s2.c_str(), "ea") == 0) thisRule.execute.action = EA::bidEA;
-						thisRule.execute.value = s3.c_str();
+                        if (!inExecute) { // we do not have a line in the EXECUTE section
+                            //construct rule object line by line with one ruleline object per line
 
-					}
-				}
+                            // here we take care of lines like this
+                            // d4,EABestColor,d2
+                            // this basically means SET d4 to EABestColor(d2)
+                            // if there are more statment of this kind, we can add it to the if clause
+                            if (_stricmp(s2.c_str(), "eabestcolor") == 0) {
+                                rule::ruleLine rl;
+                                rl.isFunction = true;   // we have to execute a function before reading the value. The parameter is s3.
+                                rl.valueToCheck = s1;
+                                rl.iOperator = rule::ruleLine::SET;
+                                rl.currentValue = s2;
+                                rl.type = EA::SETTING_LOOKUP; // value should be looked up in settings
+                                rl.argument = s3;
+                                if (atoi(s3.c_str()) > 0 || isdigit(s3.c_str()[0])) {
+                                    rl.argumentType = EA::SETTING_IMMEDIATE;
+                                } else {
+                                    rl.argumentType = EA::SETTING_LOOKUP;
+                                }
+                                thisRule.ruleLines.push_back(rl);
+
+                            }
+
+                            // Check for "RoleInRound" line. This has to be processed separately
+                            if (_stricmp(s1.c_str(), "roleinround") == 0)
+                            {
+                                // RoleInRound is a special rule where we check if RoleInRound is one of the comma-separated values after the keyword
+                                // the correct iOperator is ONEOF
+                                rule::ruleLine rl;
+                                rl.isFunction = false;
+                                rl.valueToCheck = s1;
+                                rl.currentValue = s2 + "," + s3;
+                                rl.iOperator = rule::ruleLine::ONEOF;
+                                rl.type = EA::SETTING_IMMEDIATE;
+                                thisRule.ruleLines.push_back(rl);
+                            } else {
+                                cout << "standard item" << endl;
+                                rule::ruleLine rl;
+                                rl.isFunction = false;
+                                rl.valueToCheck = s1;
+                                rl.currentValue = s3;
+                                if (atoi(s3.c_str()) > 0 || isdigit(s3.c_str()[0])) {
+                                    rl.type = EA::SETTING_IMMEDIATE;
+                                } else {
+                                    rl.type = EA::SETTING_LOOKUP;
+                                }
+                                if (_stricmp(s2.c_str(), "<") == 0) {
+                                    rl.iOperator = rule::ruleLine::LT;
+                                }
+                                if (_stricmp(s2.c_str(), ">") == 0) {
+                                    rl.iOperator = rule::ruleLine::GT;
+                                }
+                                if (_stricmp(s2.c_str(), ":=") == 0) {
+                                    rl.iOperator = rule::ruleLine::SET;
+                                }
+                                if (_stricmp(s2.c_str(), "not") == 0) {
+                                    rl.iOperator = rule::ruleLine::NOT;
+                                }
+                                thisRule.ruleLines.push_back(rl);
+                            }
+                        } else {
+                            // We have an EXECUTE line
+                            thisRule.execute.probability = atoi(s1.c_str());
+                            if (_stricmp(s2.c_str(), "bid") == 0) thisRule.execute.action = EA::bidBID;
+                            if (_stricmp(s2.c_str(), "ea") == 0) thisRule.execute.action = EA::bidEA;
+                            thisRule.execute.value = s3.c_str();
+
+                        }
+                    } else {
+                        // we have at least three commas in the line
+                        auto c4 = line.find(',', c3 + 1); // search for fourth comma
+                        if (c4 == string::npos) { // if there are only three commas in the line
+                            // add checks here for three comma lines
+                        } else {
+                            // we have (at least) four commas in the line
+                            string s1 = line.substr(0, c1);
+                            string s2 = line.substr(c1 + 1, c2 - c1 - 1);
+                            string s3 = line.substr(c2 + 1, c3 - c2 - 1);
+                            string s4 = line.substr(c3 + 1, c4 - c3 - 1);
+                            string s5 = line.substr(c4 + 1);
+                            if (_stricmp(s2.c_str(), ":-") == 0) {
+                                // make calculations
+                                rule::ruleLine rl;
+                                rl.isFunction = false;
+                                rl.valueToCheck = s1;
+                                rl.currentValue = s3;
+                                rl.argument = s5;
+                                if (_stricmp(s4.c_str(), "+") == 0) rl.iOperator = rule::ruleLine::CALC_ADD;
+                                if (_stricmp(s4.c_str(), "-") == 0) rl.iOperator = rule::ruleLine::CALC_SUB;
+
+                                if (atoi(s3.c_str()) > 0 || isdigit(s3.c_str()[0])) {
+                                    rl.type = EA::SETTING_IMMEDIATE;
+                                } else {
+                                    rl.type = EA::SETTING_LOOKUP;
+                                }
+                                if (atoi(s5.c_str()) > 0 || isdigit(s5.c_str()[0])) {
+                                    rl.argumentType = EA::SETTING_IMMEDIATE;
+                                } else {
+                                    rl.argumentType = EA::SETTING_LOOKUP;
+                                }
+
+
+                                //rl.type = EA::SETTING_IMMEDIATE;
+                                thisRule.ruleLines.push_back(rl);
+                            }
+                        }
+                    }
+                }
 			}
 			notEOF = getline (infile, line);
 		} while (notEOF);
@@ -256,7 +403,9 @@ namespace std {
         }
         catch (int e)
         {
-            if (e==1) cout << "bidnet File was not found";
+            if (e==1)
+                //cout << "bidnet File was not found";
+                LOG_D("bidnet file was not found.");
         }
         return true;
     }
@@ -278,7 +427,7 @@ namespace std {
     return false;
 }
 
-	EA::oneHand *EA::getEAstruct(int cardsCount, int nonImportant, string cardsConfig) {
+    oneHand *EA::getEAstruct(int cardsCount, int nonImportant, string cardsConfig) {
 	cardcount *cc;
 	bool found = false;
 	list<cardcount>::iterator it;
@@ -303,21 +452,7 @@ namespace std {
 //        return *this;
 //    }
 
-    float EA::oneHand::get_eavalue(int bid) { return eavalues[bid - 6]; }
-
-    int EA::getBidRoleInRound()
-    {
-        // make sure these two values are set and up to date
-        gameSettings["harPacko"] = theGame->get_who_has_deck_pos_absolute();
-        gameSettings["attBjuda"] = theGame->get_who_bids_pos_absolute();
-        // calculate position and return it
-        if (gameSettings["attBjuda"] + 0 % 4 == gameSettings["harPacko"]) return EA::PL_B_BLOCK;
-        if (gameSettings["attBjuda"] + 1 % 4 == gameSettings["harPacko"]) return EA::PL_RESPONSE;
-        if (gameSettings["attBjuda"] + 2 % 4 == gameSettings["harPacko"]) return EA::PL_A_BLOCK;
-        if (gameSettings["attBjuda"] + 3 % 4 == gameSettings["harPacko"]) return EA::PL_LEAD;
-        assert(false);
-        return -1;
-    }
+    float oneHand::get_eavalue(int bid) { return eavalues[bid - 6]; }
 
     int EA::getBidPartner()
     {
@@ -327,6 +462,22 @@ namespace std {
     int EA::getBidRight()
     {
         return theGame->get_bid_value_pos_relative_to_me(me, 3);
+    }
+
+
+    int EA::getBidRoleInRound()
+    {
+        //updateGameSettings();
+        // make sure these two values are set and up to date
+        //gameSettings["harPacko"] = theGame->get_who_has_deck_pos_absolute();
+        //gameSettings["attBjuda"] = theGame->get_who_bids_pos_absolute();
+        // calculate position and return it
+        if ((int)(gameSettings["attBjuda"] + 0) % 4 == gameSettings["harPacko"]) return EA::PL_B_BLOCK;
+        if ((int)(gameSettings["attBjuda"] + 1) % 4 == gameSettings["harPacko"]) return EA::PL_RESPONSE;
+        if ((int)(gameSettings["attBjuda"] + 2) % 4 == gameSettings["harPacko"]) return EA::PL_A_BLOCK;
+        if ((int)(gameSettings["attBjuda"] + 3) % 4 == gameSettings["harPacko"]) return EA::PL_LEAD;
+        //assert(false);
+        //return -1;
     }
 
     //void EA::examineHand(QList<Card *> hand)
@@ -572,18 +723,37 @@ namespace std {
             return ret;
         }
 
+    // copied from SO
+    // http://stackoverflow.com/questions/236129/split-a-string-in-c
+    vector<string> &EA::split(const string &s, char delim, vector<string> &elems) {
+        std::stringstream ss(s);
+        std::string item;
+        while (std::getline(ss, item, delim)) {
+            elems.push_back(item);
+        }
+        return elems;
+    }
+
+    vector<string> EA::split(const std::string &s, char delim) {
+        vector<std::string> elems;
+        split(s, delim, elems);
+        return elems;
+    }
+
 	bidHint EA::getBidHint()
 	{
 
-        gameSettings["VI"] = theGame->get_game_our_points(me);
-        gameSettings["DE"] = theGame->get_game_their_points(me);
-        gameSettings["Ledning"] = gameSettings["VI"] - gameSettings["DE"];
-        gameSettings["harPacko"] = theGame->get_who_has_deck_pos_absolute();
-        gameSettings["attBjuda"] = theGame->get_who_bids_pos_absolute();
-        gameSettings["BidHighestRound"] = theGame->get_highest_bid_value();
-        gameSettings["BidNext"] = gameSettings["BidHighestRound"] + 1; // Next bid must be at least one higher than current
-        if (gameSettings["BidNext"] > 14) gameSettings["BidNext"] = 14; // ... but limit to 14 (upper limit)
-        if (gameSettings["BidNext"] <  6) gameSettings["BidNext"] =  6; // ... and to 6 (lower limit)
+        updateGameSettings();
+
+        //read EA values
+        cardsConfig cards = examineHand(theGame->get_my_cards_in_hand(me));
+        //oneHand *oh[4];
+        for (int suit=0; suit<4; suit++)
+        {
+            //oh[suit]=getEAstruct(cards.number_of_cards[suit], cards.number_of_unimportant_cards[suit], cards.cardsString[suit]);
+            myEAs[suit]=getEAstruct(cards.number_of_cards[suit], cards.number_of_unimportant_cards[suit], cards.cardsString[suit]);
+        }
+
 
         // iterator through rules
 		list<EA::rule>::iterator it;
@@ -608,17 +778,81 @@ namespace std {
 			for (line_it = it->ruleLines.begin(); line_it != it->ruleLines.end(); line_it++) {
                 line_match = true;
 				string value;
+                float argument;
+
+                if (line_it->argumentType == EA::SETTING_IMMEDIATE)
+                    argument = atof(line_it->argument.c_str());
+                else
+                    argument = atof(it->ruleSettings[line_it->argument].value.c_str());
+
+                switch (line_it->type) {
+                case EA::SETTING_IMMEDIATE:
+                    value = line_it->currentValue;
+                    //LOG_BIDRULE("value is " << value);
+                    break;
+                case EA::SETTING_LOOKUP:
+                    value = it->ruleSettings[line_it->currentValue].value;
+                    //LOG_BIDRULE("value is " << value);
+                    break;
+                }
+
+                if (line_it->isFunction) {
+                    // execute function and store its result in the ruleSettings
+
+                    //LOG_BIDRULE("line_it->currentValue: " << line_it->currentValue);
+                    //LOG_BIDRULE("it->ruleSettings[line_it->currentValue].value: " << it->ruleSettings[line_it->currentValue].value);
+                    if (_stricmp(line_it->currentValue.c_str(), "eabestcolor") == 0) {
+                        it->ruleSettings[line_it->currentValue].value = to_string(getEABestColor(argument));
+                    }
+                    //LOG_BIDRULE("it->ruleSettings[line_it->currentValue].value: " << it->ruleSettings[line_it->currentValue].value);
+                }
 
 
-				switch (line_it->type) {
-				case EA::SETTING_IMMEDIATE: 
-					value = line_it->currentValue; 
-					break;
-				case EA::SETTING_LOOKUP:
-					value = it->ruleSettings[line_it->currentValue].value;
-					break;
-				}
+
+                //LOG_BIDRULE("** line_it->type:        " << line_it->type);
+                //LOG_BIDRULE("** line_it->iOperator:   " << line_it->type);
+                //LOG_BIDRULE("** value                 " << value);
+                //LOG_BIDRULE("** it->ruleSettings[line_it->currentValue].value " << it->ruleSettings[line_it->currentValue].value);
+
 				switch (line_it->iOperator) { 
+
+                case EA::rule::ruleLine::ONEOF:
+                {
+                    vector<string> substrings; // A vector of items that contains player positions like A_BLOCK, B_BLOCK, LEAD, RESPONSE
+                    vector<int> subitems; // A vector of items that contains the numerical representations of the player positions
+                    vector<string>::iterator substrings_it;
+                    vector<int>::iterator values_it;
+                    values_it = subitems.begin();
+                    substrings = split(value, ','); // split a string of the form "A_BLOCK,B_BLOCK,LEAD" into its comma-separated substrings
+                    // convert the substrings like "A_BLOCK" into their numerical representations in order to be able to calculate the result of the rule in the next step
+                    for (substrings_it=substrings.begin(); substrings_it!=substrings.end();substrings_it++)
+                    {
+                        if (_stricmp((*substrings_it).c_str(), "a_block")==0) subitems.insert(values_it, (int)EA::PL_A_BLOCK);
+                        if (_stricmp((*substrings_it).c_str(), "b_block")==0) subitems.insert(values_it, (int)EA::PL_B_BLOCK);
+                        if (_stricmp((*substrings_it).c_str(), "lead")==0) subitems.insert(values_it, (int)EA::PL_LEAD);
+                        if (_stricmp((*substrings_it).c_str(), "response")==0) subitems.insert(values_it, (int)EA::PL_RESPONSE);
+                    }
+                    line_match = false; // Begin with a non-match. As soon as one item matches, the whole rule matches
+                    for (values_it=subitems.begin();values_it!=subitems.end();values_it++)
+                    {
+                        //LOG_BIDRULE("*** Sollwert: values_it: " << *values_it);
+                        //LOG_BIDRULE("*** rulesett:  " << value);
+                        //LOG_BIDRULE("*** line_it->valueToCheck: " << line_it->valueToCheck);
+                        //LOG_BIDRULE("*** line_it->valueToCheck: " << it->ruleSettings[line_it->valueToCheck].value);
+                        if (*values_it == atoi(it->ruleSettings[line_it->valueToCheck].value.c_str())) line_match=true;
+                    }
+                    string playerString;
+                    switch (atoi(it->ruleSettings[line_it->valueToCheck].value.c_str()))
+                    {
+                        case EA::PL_A_BLOCK: playerString="A_BLOCK";break;
+                        case EA::PL_B_BLOCK: playerString="B_BLOCK";break;
+                        case EA::PL_LEAD: playerString="LEAD";break;
+                        case EA::PL_RESPONSE: playerString="RESPONSE";break;
+                    }
+
+                    LOG_BIDRULE("* CHECK " << line_it->valueToCheck << " 1OF " << value << " (" << line_it->valueToCheck << " = " << playerString << "[" << it->ruleSettings[line_it->valueToCheck].value << "])" << "  " <<bool_to_string(line_match));
+                }
+                    break;
 
                 case EA::rule::ruleLine::SET:
                     it->ruleSettings[line_it->valueToCheck].value = value;
@@ -632,7 +866,7 @@ namespace std {
                     break;
 
                 case EA::rule::ruleLine::LT:
-                    if (atoi(it->ruleSettings[line_it->valueToCheck].value.c_str()) >= atoi(value.c_str())) line_match = false;
+                    if (atof(it->ruleSettings[line_it->valueToCheck].value.c_str()) >= atof(value.c_str())) line_match = false;
                     LOG_BIDRULE("* CHECK " << line_it->valueToCheck << " <  " << value << " (" << line_it->valueToCheck << " = " << it->ruleSettings[line_it->valueToCheck].value << ")"<< "  " <<bool_to_string(line_match) );
                     break;
 
@@ -640,6 +874,19 @@ namespace std {
                     if (atoi(it->ruleSettings[line_it->valueToCheck].value.c_str()) == atoi(value.c_str())) line_match = false;
                     LOG_BIDRULE("* CHECK " << line_it->valueToCheck << " <> " << value << " (" << line_it->valueToCheck << " = " << it->ruleSettings[line_it->valueToCheck].value << ")" << "  " <<bool_to_string(line_match));
                     break;
+
+                case EA::rule::ruleLine::CALC_ADD:
+                    it->ruleSettings[line_it->valueToCheck].value = atof(value.c_str()) + argument;
+                    line_match = true;
+                    LOG_BIDRULE("* CALC " << line_it->valueToCheck << " = " << value << " + " << argument << " (" << atof(value.c_str()) + argument << ")" << "  " <<bool_to_string(line_match));
+                    break;
+
+                case EA::rule::ruleLine::CALC_SUB:
+                    it->ruleSettings[line_it->valueToCheck].value = atof(value.c_str()) - argument;
+                    line_match = true;
+                    LOG_BIDRULE("* CALC " << line_it->valueToCheck << " = " << value << " - " << argument << " (" << atof(value.c_str()) - argument << ")" << "  " <<bool_to_string(line_match));
+                    break;
+
 
 				default:
                     LOG_BIDRULE("\t\t\t\t\t\tNO OPERATOR MATCHES!");
@@ -659,12 +906,6 @@ namespace std {
 			}
 		}
 
-        cardsConfig cards = examineHand(theGame->get_my_cards_in_hand(me));
-        oneHand *oh[4];
-        for (int suit=0; suit<4; suit++)
-        {
-            oh[suit]=getEAstruct(cards.number_of_cards[suit], cards.number_of_unimportant_cards[suit], cards.cardsString[suit]);
-        }
 		//bidExecute be;
 		//be.action = 0;
 		//be.probability = 100;
