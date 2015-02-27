@@ -237,7 +237,7 @@ namespace std {
                                     rl.argumentType = EA::SETTING_LOOKUP;
                                 }
                                 thisRule.ruleLines.push_back(rl);
-
+                                break;
                             }
 
                             // Check for "RoleInRound" line. This has to be processed separately
@@ -252,13 +252,15 @@ namespace std {
                                 rl.iOperator = rule::ruleLine::ONEOF;
                                 rl.type = EA::SETTING_IMMEDIATE;
                                 thisRule.ruleLines.push_back(rl);
+                                //continue;
                             } else {
                                 cout << "standard item" << endl;
                                 rule::ruleLine rl;
                                 rl.isFunction = false;
                                 rl.valueToCheck = s1;
                                 rl.currentValue = s3;
-                                if (atoi(s3.c_str()) > 0 || isdigit(s3.c_str()[0])) {
+                                rl.iOperator = 0;
+                                if (atoi(s3.c_str()) != 0 || isdigit(s3.c_str()[0])) {
                                     rl.type = EA::SETTING_IMMEDIATE;
                                 } else {
                                     rl.type = EA::SETTING_LOOKUP;
@@ -275,7 +277,12 @@ namespace std {
                                 if (_stricmp(s2.c_str(), "not") == 0) {
                                     rl.iOperator = rule::ruleLine::NOT;
                                 }
+                                if (rl.iOperator == 0) {
+                                    LOG_E("UNKNOWN OPERATOR '" << s2 <<"'. Please fix (or uncomment line " << __LINE__ + 1 << " in " << __FILE__ << "!");
+                                    exit(-1);
+                                }
                                 thisRule.ruleLines.push_back(rl);
+                                //continue;
                             }
                         } else {
                             // We have an EXECUTE line
@@ -785,6 +792,26 @@ namespace std {
                 else
                     argument = atof(it->ruleSettings[line_it->argument].value.c_str());
 
+
+                if (line_it->isFunction) {
+                    // execute function and store its result in the ruleSettings
+
+                    // set the current rule to "none" as a placeholder
+                    // if this value is still set after processing the functions,
+                    // we did not process a function for this setting. quit the app with an error message.
+                    it->ruleSettings[line_it->currentValue].value = "none";
+                    //LOG_BIDRULE("line_it->currentValue: " << line_it->currentValue);
+                    //LOG_BIDRULE("it->ruleSettings[line_it->currentValue].value: " << it->ruleSettings[line_it->currentValue].value);
+                    if (_stricmp(line_it->currentValue.c_str(), "eabestcolor") == 0) {
+                        it->ruleSettings[line_it->currentValue].value = to_string(getEABestColor(argument));
+                    }
+                    //LOG_BIDRULE("it->ruleSettings[line_it->currentValue].value: " << it->ruleSettings[line_it->currentValue].value);
+                    if (_stricmp(line_it->currentValue.c_str(), "none") == 0) {
+                        LOG_E("No handler function available for " << line_it->currentValue);
+                        exit(-1);
+                    }
+                }
+
                 switch (line_it->type) {
                 case EA::SETTING_IMMEDIATE:
                     value = line_it->currentValue;
@@ -795,18 +822,6 @@ namespace std {
                     //LOG_BIDRULE("value is " << value);
                     break;
                 }
-
-                if (line_it->isFunction) {
-                    // execute function and store its result in the ruleSettings
-
-                    //LOG_BIDRULE("line_it->currentValue: " << line_it->currentValue);
-                    //LOG_BIDRULE("it->ruleSettings[line_it->currentValue].value: " << it->ruleSettings[line_it->currentValue].value);
-                    if (_stricmp(line_it->currentValue.c_str(), "eabestcolor") == 0) {
-                        it->ruleSettings[line_it->currentValue].value = to_string(getEABestColor(argument));
-                    }
-                    //LOG_BIDRULE("it->ruleSettings[line_it->currentValue].value: " << it->ruleSettings[line_it->currentValue].value);
-                }
-
 
 
                 //LOG_BIDRULE("** line_it->type:        " << line_it->type);
@@ -835,10 +850,10 @@ namespace std {
                     line_match = false; // Begin with a non-match. As soon as one item matches, the whole rule matches
                     for (values_it=subitems.begin();values_it!=subitems.end();values_it++)
                     {
-                        //LOG_BIDRULE("*** Sollwert: values_it: " << *values_it);
-                        //LOG_BIDRULE("*** rulesett:  " << value);
-                        //LOG_BIDRULE("*** line_it->valueToCheck: " << line_it->valueToCheck);
-                        //LOG_BIDRULE("*** line_it->valueToCheck: " << it->ruleSettings[line_it->valueToCheck].value);
+                        LOG_BIDRULE("*** Sollwert: values_it: " << *values_it);
+                        LOG_BIDRULE("*** rulesett:  " << value);
+                        LOG_BIDRULE("*** line_it->valueToCheck: " << line_it->valueToCheck);
+                        LOG_BIDRULE("*** line_it->valueToCheck: " << it->ruleSettings[line_it->valueToCheck].value);
                         if (*values_it == atoi(it->ruleSettings[line_it->valueToCheck].value.c_str())) line_match=true;
                     }
                     string playerString;
@@ -857,6 +872,13 @@ namespace std {
                 case EA::rule::ruleLine::SET:
                     it->ruleSettings[line_it->valueToCheck].value = value;
                     it->ruleSettings[line_it->valueToCheck].type = EA::SETTING_IMMEDIATE;
+                    if (_stricmp(line_it->valueToCheck.c_str(), "probability") == 0)
+                    {
+                        int iProbabilityLevel = atoi(value.c_str());
+                        int random = rand() % 101; // random number between 0 and 100
+                        if (random > iProbabilityLevel) line_match = false;
+                        LOG_BIDRULE("random number is " << random << ". Probability is " << iProbabilityLevel);
+                    }
                     LOG_BIDRULE("* SET   " << line_it->valueToCheck << " to " << value << " " <<bool_to_string(line_match));
                     break;
 
@@ -876,13 +898,13 @@ namespace std {
                     break;
 
                 case EA::rule::ruleLine::CALC_ADD:
-                    it->ruleSettings[line_it->valueToCheck].value = atof(value.c_str()) + argument;
+                    it->ruleSettings[line_it->valueToCheck].value = to_string(atof(value.c_str()) + argument);
                     line_match = true;
                     LOG_BIDRULE("* CALC " << line_it->valueToCheck << " = " << value << " + " << argument << " (" << atof(value.c_str()) + argument << ")" << "  " <<bool_to_string(line_match));
                     break;
 
                 case EA::rule::ruleLine::CALC_SUB:
-                    it->ruleSettings[line_it->valueToCheck].value = atof(value.c_str()) - argument;
+                    it->ruleSettings[line_it->valueToCheck].value = to_string(atof(value.c_str()) - argument);
                     line_match = true;
                     LOG_BIDRULE("* CALC " << line_it->valueToCheck << " = " << value << " - " << argument << " (" << atof(value.c_str()) - argument << ")" << "  " <<bool_to_string(line_match));
                     break;
