@@ -12,7 +12,6 @@
 
 static const bool DEBUG = true;
 
-namespace std {
     map<string, float> gameSettings;
     oneHand *myEAs[4];
 
@@ -483,8 +482,9 @@ namespace std {
         if ((int)(gameSettings["attBjuda"] + 1) % 4 == gameSettings["harPacko"]) return EA::PL_RESPONSE;
         if ((int)(gameSettings["attBjuda"] + 2) % 4 == gameSettings["harPacko"]) return EA::PL_A_BLOCK;
         if ((int)(gameSettings["attBjuda"] + 3) % 4 == gameSettings["harPacko"]) return EA::PL_LEAD;
-        //assert(false);
-        //return -1;
+
+        assert(!true);
+        return -1;
     }
 
     //void EA::examineHand(QList<Card *> hand)
@@ -934,6 +934,3 @@ namespace std {
 		//be.value = 10;
 		return be;
 	}
-
-
-}

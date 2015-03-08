@@ -1,3 +1,5 @@
+#ifndef EA_EA_H
+#define EA_EA_H
 
 #include <iostream>
 #include <fstream>
@@ -10,7 +12,6 @@
 #include "game.h"
 #include "player.h"
 
-namespace std {
 class bidHint {
 public:
     int probability;
@@ -160,4 +161,5 @@ public:
     EA(Game *game, Player *player, string rulefile, string bidRuleFile);
     bidHint getBidHint();
 };
-}
+
+#endif
