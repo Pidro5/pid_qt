@@ -1,3 +1,4 @@
+#include <cassert>
 #include <time.h>
 #include <iostream>
 #include <cstdlib>
@@ -27,46 +28,72 @@ Card::Card(int suit, int value)
 
 string Card::card_face_value() const
 {
-    char buf[5];
-    string str;
+    switch (myvalue)
+    {
+    case 11:
+        return "J";
 
-    sprintf(buf,"%d",m_myvalue);
-    str = buf;
+    case 12:
+        return "Q";
 
-    if (m_myvalue == 11){str = "J";};
-    if (m_myvalue == 12){str = "Q";};
-    if (m_myvalue == 13){str = "K";};
-    if (m_myvalue == 14){str = "A";};
-    if (m_myvalue == 5){str = "V";};
-    return str;
+    case 13:
+        return "K";
 
-};
+    case 14:
+        return "A";
+
+    case 5:
+        return "V";
+
+    default:
+        // TODO: Add assert.
+        return std::to_string(myvalue);
+    }
+}
 
 string Card::card_suit() const
 {
     // 0..3, 0-Spades, 1-Clubs, 2-Hearts, 3-Diamonds
-    string str;
-    str = "";
-    if ( m_mysuit == 0){str = "Spades";};
-    if ( m_mysuit == 1){str = "Clubs";};
-    if ( m_mysuit == 2){str = "Hearts";};
-    if ( m_mysuit == 3){str = "Diamonds";};
-    return str;
+    switch (mysuit) {
+    case 0:
+        return "Spades";
 
-};
+    case 1:
+        return "Clubs";
+
+    case 2:
+        return "Hearts";
+
+    case 3:
+        return "Diamonds";
+
+    default:
+        assert(!true);
+        return "";
+    }
+}
 
 string Card::card_suit_short() const
 {
     // 0..3, 0-Spades, 1-Clubs, 2-Hearts, 3-Diamonds
-    string str;
-    str = "";
-    if ( m_mysuit == 0){str = "SP";};
-    if ( m_mysuit == 1){str = "CL";};
-    if ( m_mysuit == 2){str = "HZ";};
-    if ( m_mysuit == 3){str = "DI";};
-    return str;
+    switch (mysuit) {
+    case 0:
+        return "SP";
 
-};
+    case 1:
+        return "CL";
+
+    case 2:
+        return "HZ";
+
+    case 3:
+        return "DI";
+
+    default:
+        assert(!true);
+        return "";
+    }
+}
 
 int Card::card_ranking(int suit) const {
 
