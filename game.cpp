@@ -19,10 +19,12 @@ Game::Game()
 
 Game::~Game()
 {
-
     // Game History delete
-    while(!game_round_records.empty()) {game_round_records.pop_front();  }
-
+    while (!game_round_records.empty()) {
+        RoundRecord* pRecord = game_round_records.front();
+        game_round_records.pop_front();
+        delete pRecord;
+    }
 }
 
 
