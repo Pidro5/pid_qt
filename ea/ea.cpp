@@ -661,7 +661,7 @@ static const bool DEBUG = true;
                    for (list<Card *>::iterator handIterator=array_hand[suit].begin(); handIterator!=array_hand[suit].end(); handIterator++)
                    {
                        LOG_D(((Card *)(*handIterator))->card_face_value());
-                       LOG_D(((Card *)(*handIterator))->card_points);
+                       LOG_D(((Card *)(*handIterator))->m_card_points);
                        LOG_D(((Card *)(*handIterator))->card_ranking(suit));
                        LOG_D(((Card *)(*handIterator))->card_ranking_name(suit));
                        LOG_D(((Card *)(*handIterator))->card_suit());

@@ -4,8 +4,8 @@
 
 class Rotator
 {
-    int my_position;
-    int my_start_position;
+    int m_my_position;
+    int m_my_start_position;
 
 public:
     Rotator();

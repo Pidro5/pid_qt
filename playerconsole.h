@@ -9,10 +9,10 @@ class PlayerConsole : public Player {
     //int  my_position;
     //bool my_rotate_to_south;
 
-    int who_has_deck;
-    string my_view_on_hands[4];
-    string my_view_on_tables[4];
-    string my_view_on_discarded_cards[4];
+    int m_who_has_deck;
+    string m_my_view_on_hands[4];
+    string m_my_view_on_tables[4];
+    string m_my_view_on_discarded_cards[4];
 
     bool is_this_me(int position);
     void draw_table();

@@ -12,11 +12,11 @@ class Player
 {
     // these variable are used to access the game and tells in which position the player is in the game
 protected:
-    Game* my_game;
-    int  my_position;
-    bool my_rotate_to_south;
+    Game* m_my_game;
+    int  m_my_position;
+    bool m_my_rotate_to_south;
 
-    string my_name;
+    string m_my_name;
 
 public:
     Player(string str);

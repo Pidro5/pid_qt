@@ -10,11 +10,11 @@
 class RoundRecord
 {
 public:
-   int points_north_south;
-   int points_east_west;
-   int who_played;
-   int what_was_the_bid;
-   string name_of_player;
+   int m_points_north_south;
+   int m_points_east_west;
+   int m_who_played;
+   int m_what_was_the_bid;
+   string m_name_of_player;
 };
 
 class Game
@@ -35,36 +35,38 @@ private:
     //  The game has 4 positions of players
     //  0-South, 1-West, 2-North, 3-East
 
-    Player * game_player[4];
-    int no_of_players_registered;
+    Player * m_pGame_player[4];
+    int m_no_of_players_registered;
 
     // each player may want to get ther data as if they were sitting in "0-South."
     // This would be the case for instance if all players played remotely on a server
     // All visual data given from the game will be modified to suit the players viepoint
     // initially 0-South = 0, 1-West  =1, 2-North = 2, 3-East = 3  - no transformation required
 
-    bool turn_players_viewpoint_to_south[4];
+    bool m_turn_players_viewpoint_to_south[4];
 
     // ==================================================================================
     // ==================   GAME        DATA         ====================================
     // ==================================================================================
 
-    bool b_continue_game;
-    int game_north_south_points, game_east_west_points;
+    bool m_bContinue_game;
+    int m_game_north_south_points;
+    int m_game_east_west_points;
 
-    list<RoundRecord *> game_round_records;
+    list<RoundRecord *> m_game_round_records;
 
-    bool b_winner_ns,b_winner_ew;
+    bool m_bWinner_ns;
+    bool m_bWinner_ew;
 
 
     // ==================================================================================
     // ==================   ROUND        DATA         ====================================
     // ==================================================================================
 
-    Deck my_deck;
-    list<Card *> cards_in_hands[4];   // view only from the player himself
-    list<Card *> cards_on_table[4];
-    list<Card *> cards_discarded[4];
+    Deck m_my_deck;
+    list<Card *> m_cards_in_hands[4];   // view only from the player himself
+    list<Card *> m_cards_on_table[4];
+    list<Card *> m_cards_discarded[4];
 
 
     void delete_round_events();
@@ -74,39 +76,39 @@ private:
     void post_event(Event et, int position, list<Card *>& cards);
 
     // each bid pro round. -1 if no bid placed
-    int bids[4];
-    int higest_bid;
-    int who_has_higest_bid;
-    int selected_color;
+    int m_bids[4];
+    int m_higest_bid;
+    int m_who_has_higest_bid;
+    int m_selected_color;
     bool check_if_bid_is_valid(int bid, int highbid);
 
     void throw_worthless_cards_on_the_table_do_not_keep_more_than_six(int who, int color, bool adjust_hand_to_six);
-    int check_if_player_has_cards_to_play(int who_plays,int selected_color );  // returns the number of cards the player has
+    int check_if_player_has_cards_to_play(int m_who_plays,int m_selected_color );  // returns the number of cards the player has
 
 
     // Rotators
-    Rotator who_has_deck;
-    Rotator who_bids;
-    Rotator who_plays;
+    Rotator m_who_has_deck;
+    Rotator m_who_bids;
+    Rotator m_who_plays;
 
     // Play Data
     // ==================================================================================
-    bool player_is_cold[4];
+    bool m_player_is_cold[4];
 
-    int how_many_cards_do_i_have[4];             // only to be accessed from player
-    int how_many_visible_cards_has_player[4];    // situation after color selection
-    int how_many_visible_cards_before_buy[4];    //
+    int m_how_many_cards_do_i_have[4];             // only to be accessed from player
+    int m_how_many_visible_cards_has_player[4];    // situation after color selection
+    int m_how_many_visible_cards_before_buy[4];    //
 
-    int points_left;
-    int available_points_left;
-    int absolute_higest;
-    int round_playing;
+    int m_points_left;
+    int m_available_points_left;
+    int m_absolute_higest;
+    int m_round_playing;
 
     //  ----------------------
-    Card * played_cards[14];
-    int  played_by_whom[14];
-    int  played_in_round[14];
-    int  played_idx;
+    Card * m_pPlayed_cards[14];
+    int  m_played_by_whom[14];
+    int  m_played_in_round[14];
+    int  m_played_idx;
     //  ----------------------
 
     void play_init();

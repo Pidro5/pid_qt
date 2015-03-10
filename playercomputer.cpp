@@ -15,9 +15,9 @@ PlayerComputer::~PlayerComputer()
 
 void PlayerComputer::attached_to_game(Game* pGame, int position, bool rotate_to_south)
 {
-    my_game = pGame;
-    my_position = position;
-    my_rotate_to_south = rotate_to_south;
+    m_my_game = pGame;
+    m_my_position = position;
+    m_my_rotate_to_south = rotate_to_south;
 
     //ea = new EA(g, this,
     //            "T:\\_home\\SchachtnerTh\\RulesFiles\\Bidnet76Clean.txt",

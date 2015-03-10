@@ -7,8 +7,8 @@
 
 Player::Player(string strname)
 {
-    my_name = strname;
-    my_position = -1;    // construct the player with a position negative = not attached to game
+    m_my_name = strname;
+    m_my_position = -1;    // construct the player with a position negative = not attached to game
 
 }
 
@@ -18,14 +18,14 @@ Player::~Player()
 }
 
 string Player::get_name(){
-    return my_name;
+    return m_my_name;
 }
 
 void Player::attached_to_game(Game * g, int position, bool rotate_to_south)
 {
-    my_game = g;
-    my_position = position;
-    my_rotate_to_south = rotate_to_south;
+    m_my_game = g;
+    m_my_position = position;
+    m_my_rotate_to_south = rotate_to_south;
 
 }
 
@@ -95,7 +95,7 @@ int Player::give_color(){
 }
 
 Card* Player::play_card(int color){
-    list<Card *> tmp_list_of_cards = my_game->get_my_cards_in_hand(this);
+    list<Card *> tmp_list_of_cards = m_my_game->get_my_cards_in_hand(this);
     list<Card *>::iterator it;
 
     // Find out how many

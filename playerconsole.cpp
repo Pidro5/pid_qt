@@ -5,8 +5,8 @@
 
 PlayerConsole::PlayerConsole(string strname): Player (strname)
 {
-    who_has_deck=0;
-    my_rotate_to_south = false;
+    m_who_has_deck=0;
+    m_my_rotate_to_south = false;
 }
 
 PlayerConsole::~PlayerConsole()
@@ -16,22 +16,22 @@ PlayerConsole::~PlayerConsole()
 
 void PlayerConsole::attached_to_game(Game * g, int position, bool rotate_to_south)
 {
-    my_game = g;
-    my_position = position;
-    my_rotate_to_south = rotate_to_south;
+    m_my_game = g;
+    m_my_position = position;
+    m_my_rotate_to_south = rotate_to_south;
 
-    LOG_D(get_name() << " was attached to game.. position: " << my_position);
+    LOG_D(get_name() << " was attached to game.. position: " << m_my_position);
 }
 
 
 bool PlayerConsole::is_this_me(int position){
-    if (my_rotate_to_south){
+    if (m_my_rotate_to_south){
         if (position == 0){
             return true;
         }
     }
     else {
-        if (my_position == position) {
+        if (m_my_position == position) {
             return true;
         }
     }
@@ -45,7 +45,7 @@ bool PlayerConsole::inform_event(Event et){
     if (et == Event::BEGIN_PLAY) {
 
         for (int i =0; i<4; i++){
-            my_view_on_tables[i] ="";
+            m_my_view_on_tables[i] ="";
         }
         draw_table();
     }
@@ -55,16 +55,16 @@ bool PlayerConsole::inform_event(Event et){
        // cin.get();
     }
     if (et == Event::ROUND_OVER) {
-       cout <<  " Our Points: " << my_game->get_roundstat_our_points(this);
-       cout <<  "  Their Points: " << my_game->get_roundstat_their_points(this);
-       cout <<  " BID: " << my_game->get_roundstat_bid();
-       cout <<  "  Who: "<< my_game->get_roundstat_name();
-       cout <<  "  sits where: "<< my_game->get_roundstat_who_played(this) << endl<< endl;
+       cout <<  " Our Points: " << m_my_game->get_roundstat_our_points(this);
+       cout <<  "  Their Points: " << m_my_game->get_roundstat_their_points(this);
+       cout <<  " BID: " << m_my_game->get_roundstat_bid();
+       cout <<  "  Who: "<< m_my_game->get_roundstat_name();
+       cout <<  "  sits where: "<< m_my_game->get_roundstat_who_played(this) << endl<< endl;
        cin.get();
 
     }
     if (et == Event::GAME_OVER) {
-        if ( my_game->get_game_winner(this)) {
+        if ( m_my_game->get_game_winner(this)) {
             cout <<  "WE WON !!!";
         }
         else {
@@ -80,15 +80,15 @@ bool PlayerConsole::inform_event(Event et){
 bool PlayerConsole::inform_event(Event et, int position){
     if (et == Event::ROUND_INIT) {
         // INIT my internal DATA
-        who_has_deck = position;
+        m_who_has_deck = position;
         for (int i =0; i<4; i++){
-            my_view_on_hands[i] ="";
-            my_view_on_tables[i] ="";
-            my_view_on_discarded_cards[i]="";
+            m_my_view_on_hands[i] ="";
+            m_my_view_on_tables[i] ="";
+            m_my_view_on_discarded_cards[i]="";
         }
     }
     if (et == Event::ASK_FOR_BID) {
-        my_view_on_tables[position] += "BIDS";
+        m_my_view_on_tables[position] += "BIDS";
     }
 
     draw_table();    
@@ -102,19 +102,19 @@ bool PlayerConsole::inform_event(Event et, int position, int value){
 
     if (et == Event::DEAL_CARD) {
         for (int i =0; i<value; i++){
-            my_view_on_hands[position] +=" XX";
+            m_my_view_on_hands[position] +=" XX";
         }
     }
 
     if (et == Event::BID_PLACED) {
         if (value == 0) {
-            my_view_on_tables[position] += " -PASS";
+            m_my_view_on_tables[position] += " -PASS";
         }
         else {
             char buffer [3];
             itoa(value,buffer,10);
-            my_view_on_tables[position] += " ";
-            my_view_on_tables[position] += buffer;
+            m_my_view_on_tables[position] += " ";
+            m_my_view_on_tables[position] += buffer;
         }
     }
 
@@ -122,8 +122,8 @@ bool PlayerConsole::inform_event(Event et, int position, int value){
 
         char buffer [3];
         itoa(value,buffer,10);
-        my_view_on_tables[position] = " Got Bid: ";
-        my_view_on_tables[position] += buffer;
+        m_my_view_on_tables[position] = " Got Bid: ";
+        m_my_view_on_tables[position] += buffer;
 
     }
 
@@ -132,8 +132,8 @@ bool PlayerConsole::inform_event(Event et, int position, int value){
 
         char buffer [3];
         itoa(value,buffer,10);
-        my_view_on_tables[position] += " Color Selected: ";
-        my_view_on_tables[position] += buffer;
+        m_my_view_on_tables[position] += " Color Selected: ";
+        m_my_view_on_tables[position] += buffer;
 
     }
     draw_table();
@@ -151,16 +151,16 @@ bool PlayerConsole::inform_event(Event et, int position, list<Card *>& cards){
 
         list<Card *>::iterator it;
         for (it = cards.begin(); it!=cards.end(); ++it) {
-            my_view_on_hands[position] += ((*it)->card_suit_short()  + "_"+ (*it)->card_face_value()+ " ");
+            m_my_view_on_hands[position] += ((*it)->card_suit_short()  + "_"+ (*it)->card_face_value()+ " ");
         }
     }
 
     if (et == Event::PUT_CARDS_ON_TABLE) {
 
         list<Card *>::iterator it;
-        my_view_on_tables[position]="";   // clear info on the table first
+        m_my_view_on_tables[position]="";   // clear info on the table first
         for (it = cards.begin(); it!=cards.end(); ++it) {
-            my_view_on_tables[position] += ((*it)->card_suit_short()  + "_"+ (*it)->card_face_value()+ " ");
+            m_my_view_on_tables[position] += ((*it)->card_suit_short()  + "_"+ (*it)->card_face_value()+ " ");
         }
     }
 
@@ -169,16 +169,16 @@ bool PlayerConsole::inform_event(Event et, int position, list<Card *>& cards){
         list<Card *>::iterator it;
        // my_view_on_tables[position]="";   // clear info on the table first
         for (it = cards.begin(); it!=cards.end(); ++it) {
-            my_view_on_tables[position] += ((*it)->card_suit_short()  + "_"+ (*it)->card_face_value()+ " ");
+            m_my_view_on_tables[position] += ((*it)->card_suit_short()  + "_"+ (*it)->card_face_value()+ " ");
         }
     }
 
     if (et == Event::KILL_CARD) {
 
         list<Card *>::iterator it;
-        my_view_on_discarded_cards[position]="KILL: ";   // clear info on the table first
+        m_my_view_on_discarded_cards[position]="KILL: ";   // clear info on the table first
         for (it = cards.begin(); it!=cards.end(); ++it) {
-            my_view_on_discarded_cards[position] += ((*it)->card_suit_short()  + "_"+ (*it)->card_face_value()+ " ");
+            m_my_view_on_discarded_cards[position] += ((*it)->card_suit_short()  + "_"+ (*it)->card_face_value()+ " ");
         }
     }
 
@@ -188,19 +188,19 @@ bool PlayerConsole::inform_event(Event et, int position, list<Card *>& cards){
             et == Event::PLAYER_COLD) {
 
         // I need to refresh the remaining cards in hand
-        my_view_on_hands[position] = "";
+        m_my_view_on_hands[position] = "";
         if (!is_this_me(position)){   // somebody else's hand
-            for (int i =0; i<my_game->get_how_many_cards_in_hand_pos_relative_to_me(this, position); i++){
-                my_view_on_hands[position] +=" XX";
+            for (int i =0; i<m_my_game->get_how_many_cards_in_hand_pos_relative_to_me(this, position); i++){
+                m_my_view_on_hands[position] +=" XX";
             }
         }
         else {
-            my_view_on_hands[position] = "";
+            m_my_view_on_hands[position] = "";
 
             list<Card *>::iterator it;
-            list<Card *> mycards = my_game->get_my_cards_in_hand(this);
+            list<Card *> mycards = m_my_game->get_my_cards_in_hand(this);
             for (it = mycards.begin(); it!=mycards.end(); ++it) {
-                my_view_on_hands[position] += ((*it)->card_suit_short()  + "_"+ (*it)->card_face_value()+ " ");
+                m_my_view_on_hands[position] += ((*it)->card_suit_short()  + "_"+ (*it)->card_face_value()+ " ");
             }
         }
 
@@ -208,21 +208,21 @@ bool PlayerConsole::inform_event(Event et, int position, list<Card *>& cards){
 
     draw_table();
     if (et == Event::PLAY_CARD ||  et == Event::PLAYER_COLD) {
-        LOG_D(*my_game);
+        LOG_D(*m_my_game);
     }
 
 //    cout << "get_position_in_round "  << " \t " <<  my_game->get_position_in_round(this) << endl;
 //    cout << "get_role_bid 0..3 "  << " \t " <<  my_game->get_role_bid(this) << endl;
 //    cout << "get_my_highest_card "  << " \t " <<  my_game->get_my_highest_card(this) << endl;
-    cout << "get_card_left "  << " \t " <<  my_game->get_card_left(this) << endl;
-    cout << "get_card_partner "  << " \t " <<  my_game->get_card_partner(this) << endl;
-    cout << "get_card_right "  << " \t " <<  my_game->get_card_right(this) << endl;
+    cout << "get_card_left "  << " \t " <<  m_my_game->get_card_left(this) << endl;
+    cout << "get_card_partner "  << " \t " <<  m_my_game->get_card_partner(this) << endl;
+    cout << "get_card_right "  << " \t " <<  m_my_game->get_card_right(this) << endl;
 
     cout  << endl;
-    cout << "get_previous_card_left "  << " \t " <<  my_game->get_previous_card_left(this) << endl;
-    cout << "get_previous_card_partner "  << " \t " <<  my_game->get_previous_card_partner(this) << endl;
-    cout << "get_previous_card_right "  << " \t " <<  my_game->get_previous_card_right(this) << endl;
-    cout << "get_previous_card_me "  << " \t " <<  my_game->get_previous_card_me(this) << endl;
+    cout << "get_previous_card_left "  << " \t " <<  m_my_game->get_previous_card_left(this) << endl;
+    cout << "get_previous_card_partner "  << " \t " <<  m_my_game->get_previous_card_partner(this) << endl;
+    cout << "get_previous_card_right "  << " \t " <<  m_my_game->get_previous_card_right(this) << endl;
+    cout << "get_previous_card_me "  << " \t " <<  m_my_game->get_previous_card_me(this) << endl;
 
     cin.get();
 
@@ -249,7 +249,7 @@ int PlayerConsole::give_bid(int minimum){
     cout << "(Enter -1 to quit the game)? ";
 
     cin >> mybid;
-    if (mybid < 0){my_game->quit_game();}
+    if (mybid < 0){m_my_game->quit_game();}
     return mybid;
 
 }
@@ -264,14 +264,14 @@ int PlayerConsole::give_color(){
     cout << "(Enter -1 to quit the game)? ";
 
     cin >> mybid;
-    if (mybid < 0){my_game->quit_game();}
+    if (mybid < 0){m_my_game->quit_game();}
     return mybid;
 
 }
 
 Card* PlayerConsole::play_card(int /*color*/){
     int mycard;
-    list<Card *> tmp_list_of_cards = my_game->get_my_cards_in_hand(this);
+    list<Card *> tmp_list_of_cards = m_my_game->get_my_cards_in_hand(this);
     list<Card *>::iterator it;
 
     cout << "Which card to play? 1..6 " <<  endl;
@@ -279,7 +279,7 @@ Card* PlayerConsole::play_card(int /*color*/){
 
     cin >> mycard;
     if (mycard < 0){
-        my_game->quit_game();
+        m_my_game->quit_game();
         return tmp_list_of_cards.front();
     }
 
@@ -296,25 +296,25 @@ Card* PlayerConsole::play_card(int /*color*/){
 void PlayerConsole::draw_table(){
     system("cls");
     cout << "______________________________________________________________     " + get_name() << endl;
-    if (who_has_deck == 2){
+    if (m_who_has_deck == 2){
         cout << "                             <DECK> "<< endl;
     }
-    cout << "                     " + my_view_on_hands[2]<< endl;
-    cout << "                     " + my_view_on_tables[2]<< endl;
-    cout << "                     " + my_view_on_discarded_cards[2]<< endl;
+    cout << "                     " + m_my_view_on_hands[2]<< endl;
+    cout << "                     " + m_my_view_on_tables[2]<< endl;
+    cout << "                     " + m_my_view_on_discarded_cards[2]<< endl;
 
     for (int i =0; i < 3; i++){cout << endl;}
-    if (who_has_deck == 1){
+    if (m_who_has_deck == 1){
         cout << "<DECK> "<< endl;
     }
 
-    cout <<  my_view_on_hands[1]<< endl;
-    cout <<  my_view_on_tables[1]<< endl;
-    cout <<  my_view_on_discarded_cards[1]<< endl;
-    cout <<  "                                            "  + my_view_on_hands[3]<< endl;
-    cout <<  "                                            "  + my_view_on_tables[3]<< endl;
-    cout <<  "                                            "  + my_view_on_discarded_cards[3]<< endl;
-    if (who_has_deck == 3){
+    cout <<  m_my_view_on_hands[1]<< endl;
+    cout <<  m_my_view_on_tables[1]<< endl;
+    cout <<  m_my_view_on_discarded_cards[1]<< endl;
+    cout <<  "                                            "  + m_my_view_on_hands[3]<< endl;
+    cout <<  "                                            "  + m_my_view_on_tables[3]<< endl;
+    cout <<  "                                            "  + m_my_view_on_discarded_cards[3]<< endl;
+    if (m_who_has_deck == 3){
         cout << "                                                                 <DECK> "<< endl;
     }
 
@@ -322,10 +322,10 @@ void PlayerConsole::draw_table(){
     for (int i =0; i < 3; i++){cout << endl;}
 
 
-    cout << "                 " + my_view_on_hands[0]<< endl;
-    cout << "                 " + my_view_on_tables[0]<< endl;
-    cout << "                 " + my_view_on_discarded_cards[0]<< endl;
-    if (who_has_deck ==0){
+    cout << "                 " + m_my_view_on_hands[0]<< endl;
+    cout << "                 " + m_my_view_on_tables[0]<< endl;
+    cout << "                 " + m_my_view_on_discarded_cards[0]<< endl;
+    if (m_who_has_deck ==0){
         cout << "                             <DECK> "<< endl;
     }
  //   cout << "___________________________________________________________________________"<< endl;
