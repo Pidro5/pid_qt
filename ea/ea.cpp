@@ -10,6 +10,8 @@
 #include "player.h"
 #include "deck_card.h"
 
+// Branch "Support for Bid-RULE file
+
 static const bool DEBUG = true;
 
     map<string, float> gameSettings;
