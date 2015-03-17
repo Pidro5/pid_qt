@@ -91,6 +91,7 @@ private:
     Player *me;
     void updateGameSettings();
     float getEABestColor(int bid);
+    float getPLevel(int bid);
     vector<string> &split(const string &s, char delim, vector<string> &elems);
     vector<string> split(const std::string &s, char delim);
     class rule {

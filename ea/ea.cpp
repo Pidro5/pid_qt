@@ -75,6 +75,22 @@ static const bool DEBUG = true;
         return bestEA;
     }
 
+    float EA::getPLevel(int bid) {
+        // We search the best (== the highest) probability value for the given bid
+        // the ea values are as follows [EA no loss],[EA bid 6],[EA bid 7], ..., [EA bid 14]
+        // if a bid value is less than 6, set bid to 6
+        if (bid < 6) bid = 6;
+        // translate the bid value to the index in the structure:
+        // 6 --> index: 1
+        // 7 --> index: 2
+        float bestPLevel=-200;
+        for (int suit=0; suit < 4; suit++) {
+            if (myEAs[suit]->probability[bid - 5] > bestPLevel) bestPLevel = myEAs[suit]->probability[bid - 5];
+        }
+        return bestPLevel;
+    }
+
+
 	bool EA::readBidRuleFile(string filename) {
         bidrulesfile.open(filename.c_str());
 		bool notEOF;
@@ -222,7 +238,7 @@ static const bool DEBUG = true;
                             // d4,EABestColor,d2
                             // this basically means SET d4 to EABestColor(d2)
                             // if there are more statment of this kind, we can add it to the if clause
-                            if (_stricmp(s2.c_str(), "eabestcolor") == 0) {
+                            if (_stricmp(s2.c_str(), "eabestcolor") == 0 || _stricmp(s2.c_str(), "plevel") == 0) {
                                 rule::ruleLine rl;
                                 rl.isFunction = true;   // we have to execute a function before reading the value. The parameter is s3.
                                 rl.valueToCheck = s1;
@@ -271,6 +287,9 @@ static const bool DEBUG = true;
                                     rl.iOperator = rule::ruleLine::GT;
                                 }
                                 if (_stricmp(s2.c_str(), ":=") == 0) {
+                                    rl.iOperator = rule::ruleLine::SET;
+                                }
+                                if (_stricmp(s2.c_str(), "=") == 0) {
                                     rl.iOperator = rule::ruleLine::SET;
                                 }
                                 if (_stricmp(s2.c_str(), "not") == 0) {
@@ -804,6 +823,9 @@ static const bool DEBUG = true;
                     //LOG_BIDRULE("it->ruleSettings[line_it->currentValue].value: " << it->ruleSettings[line_it->currentValue].value);
                     if (_stricmp(line_it->currentValue.c_str(), "eabestcolor") == 0) {
                         it->ruleSettings[line_it->currentValue].value = to_string(getEABestColor(argument));
+                    }
+                    if (_stricmp(line_it->currentValue.c_str(), "plevel") == 0) {
+                        it->ruleSettings[line_it->currentValue].value = to_string(getPLevel(argument));
                     }
                     //LOG_BIDRULE("it->ruleSettings[line_it->currentValue].value: " << it->ruleSettings[line_it->currentValue].value);
                     if (_stricmp(line_it->currentValue.c_str(), "none") == 0) {
