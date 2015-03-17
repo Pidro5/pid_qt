@@ -17,22 +17,22 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp \
-    deck_card.cpp \
-    log.cpp \
-    game.cpp \
-    player.cpp \
-    rotator.cpp \
-    ea/ea.cpp \
-    playerconsole.cpp \
-    playercomputer.cpp
+     cli/playerconsole.cpp \
+    common/deck_card.cpp \
+    common/ea.cpp \
+    common/game.cpp \
+    common/log.cpp \
+    common/player.cpp \
+    common/playercomputer.cpp \
+    common/rotator.cpp
 
 HEADERS += \
-    deck_card.h \
-    log.h \
-    game.h \
-    player.h \
-    rotator.h \
-    ea/ea.h \
-    event.h \
-    playerconsole.h \
-    playercomputer.h
+    cli/playerconsole.h \
+    common/deck_card.h \
+    common/ea.h \
+    common/event.h \
+    common/game.h \
+    common/log.h \
+    common/player.h \
+    common/playercomputer.h \
+    common/rotator.h
