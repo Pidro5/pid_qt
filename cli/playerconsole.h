@@ -1,7 +1,7 @@
 #ifndef PLAYERCONSOLE_H
 #define PLAYERCONSOLE_H
 
-#include "player.h"
+#include "common/player.h"
 
 class PlayerConsole : public Player {
     // these variable are used to access the game and tells in which position the player is in the game

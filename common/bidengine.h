@@ -1,5 +1,5 @@
-#ifndef EA_EA_H
-#define EA_EA_H
+#ifndef BIDENGINE_H
+#define BIDENGINE_H
 
 #include <iostream>
 #include <fstream>
@@ -11,6 +11,13 @@
 
 #include "game.h"
 #include "player.h"
+
+extern "C" {
+#include "luah/lua.h"        //Lua main library (lua_*)
+#include "luah/lauxlib.h"
+#include "luah/lualib.h"
+}
+
 
 class bidHint {
 public:
@@ -72,7 +79,7 @@ public:
 };
 
 
-class EA {
+class BidEngine {
 public:
     const static int bidBID = 1; // used for bidExecute
     const static int bidEA = 2; // used for bidExecute
@@ -89,9 +96,21 @@ public:
 private:
     Game *theGame;
     Player *me;
+
+    // handle to lua
+    lua_State *m_L;
+
+    oneHand *m_myEAs[4];
+    float getEABestValue(int bid)const;
+    int getEABestColor(int bid) const;
+    float getPLevel(int bid) const;
+    int getPLevelColor(int bid) const;
+    float getWorstEAuH(int pos) const;   //pos 0..3  South, West..
+
+    int m_my_color;
+
+
     void updateGameSettings();
-    float getEABestColor(int bid);
-    float getPLevel(int bid);
     vector<string> &split(const string &s, char delim, vector<string> &elems);
     vector<string> split(const std::string &s, char delim);
     class rule {
@@ -126,8 +145,8 @@ private:
         bidHint execute;
     };
 
-    char eaRuleFile[FILENAME_MAX];
-    char eaBidRuleFile[FILENAME_MAX];
+    char m_eaRuleFile[FILENAME_MAX];
+    char m_eaBidRuleFile[FILENAME_MAX];
 
     map<std::string, string> settings;
     list<rule> rules;
@@ -143,7 +162,7 @@ private:
     };
 
     std::list<cardcount> cardcounts;
-    bool readRuleFile(string str);
+    bool readEAFile(string str);
     bool readBidRuleFile(string filename);
     float getEA(int cardsCount, int nonImportant, string cardsConfig, int bid);
     oneHand *getEAstruct(int cardsCount, int nonImportant, string cardsConfig);
@@ -155,12 +174,14 @@ private:
     int getBidRight();
 
     string bool_to_string(bool b);
-public:
-    EA(void);
-    EA(string rulefile);
-    EA(string rulefile, string bidRuleFile);
-    EA(Game *game, Player *player, string rulefile, string bidRuleFile);
+    BidEngine(string rulefile, string bidRuleFile);
     bidHint getBidHint();
+
+public:
+    BidEngine(Game *game, Player *player, string rulefile, string bidRuleFile);
+    ~BidEngine();
+    int give_bid(int minimum);
+    int give_color() const;
 };
 
-#endif
+#endif   //BIDENGINE_H

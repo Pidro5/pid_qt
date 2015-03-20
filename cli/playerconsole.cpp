@@ -1,6 +1,6 @@
-#include "playerconsole.h"
-#include "game.h"
-#include "log.h"
+#include "cli/playerconsole.h"
+#include "common/game.h"
+#include "common/log.h"
 #include "stdlib.h"
 
 PlayerConsole::PlayerConsole(string strname): Player (strname)

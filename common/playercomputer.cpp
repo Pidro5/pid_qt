@@ -1,6 +1,6 @@
 #include "playercomputer.h"
 #include <cassert>
-#include "ea/ea.h"
+#include "bidengine.h"
 
 using namespace std;
 
@@ -26,9 +26,9 @@ void PlayerComputer::attached_to_game(Game* pGame, int position, bool rotate_to_
 
     string dir(pDir ? pDir : "C:");
     string rulesFile(dir + "\\Bidnet76Clean.txt");
-    string bidRulesFile(dir + "\\PidroBidRulesAI_Master013v1.txt");
+    string bidRulesFile(dir + "\\PidroBidRulesAI.lua");
 
-    sEa = make_shared<EA>(pGame, this, rulesFile, bidRulesFile);
+    m_sBidMachine = make_shared<BidEngine>(pGame, this, rulesFile, bidRulesFile);
 }
 
 int PlayerComputer::give_bid(int minimum)
@@ -37,33 +37,16 @@ int PlayerComputer::give_bid(int minimum)
     // if 0 or -1  the next highest bid is 6
     // if minimum is 14, the player can exceed this with a bid of 14
 
-    assert(sEa.get());
-    sEa->getBidHint();
+    assert(m_sBidMachine.get());
+    return m_sBidMachine->give_bid(minimum);
 
-    if (minimum == 5) {
-        return 6;
-    }
 
-    int rnd = rand() % 10;
-    if (rnd < 5) {
-        return 0;
-    }     //  50% to pass
-
-    if (minimum == 0) {
-        return 10;
-    }
-
-    if (minimum == 14) {
-        return 14;
-    }
-
-    return minimum + 1;
 }
 
 int PlayerComputer::give_color()
 {
-    // color can be 0 ..3
-    int rnd = rand() % 4;
 
-    return rnd;
+    assert(m_sBidMachine.get());
+    return m_sBidMachine->give_color();
+
 }

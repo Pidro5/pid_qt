@@ -616,8 +616,11 @@ void Game::game_init(){
     m_who_plays.set_position(0);    // proforma
 
     // Game History delete
-    while(!m_game_round_records.empty()) {m_game_round_records.pop_front();  }
-
+     while (!m_game_round_records.empty()) {
+         RoundRecord* pRecord = m_game_round_records.front();
+         m_game_round_records.pop_front();
+         delete pRecord;
+     }
 
 }
 
@@ -664,10 +667,6 @@ int Game::get_game_our_points(Player * pl){
         return m_game_north_south_points;
     }
     else {
-        if ((who != 1) || (who != 3)) {
-            LOG_E("Game::get_game_our_points - could not identify plyer");
-            throw std::runtime_error("Game::get_game_our_points - could not identify plyer");
-        }
         return  m_game_east_west_points;
     }
 }
@@ -680,11 +679,6 @@ int Game::get_game_their_points(Player * pl){
         return m_game_east_west_points;
     }
     else {
-        if ((who != 1) || (who != 3)) {
-            LOG_E("Game::get_game_their_points - could not identify plyer");
-            throw std::runtime_error("Game::get_game_their_points - could not identify plyer");
-        }
-
         return  m_game_north_south_points;
     }
 }

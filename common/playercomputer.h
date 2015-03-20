@@ -4,7 +4,7 @@
 #include <memory>
 #include "player.h"
 
-class EA;
+class BidEngine;
 
 class PlayerComputer : public Player
 {
@@ -22,7 +22,7 @@ public:
     void attached_to_game(Game* pGame, int position, bool rotate_to_south);
 
 private:
-    std::shared_ptr<EA> sEa;
+    std::shared_ptr<BidEngine> m_sBidMachine;
 };
 
 #endif // PLAYERCOMPUTER_H

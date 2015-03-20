@@ -19,20 +19,32 @@ TEMPLATE = app
 SOURCES += main.cpp \
      cli/playerconsole.cpp \
     common/deck_card.cpp \
-    common/ea.cpp \
     common/game.cpp \
     common/log.cpp \
     common/player.cpp \
     common/playercomputer.cpp \
-    common/rotator.cpp
+    common/rotator.cpp \
+    common/bidengine.cpp
 
 HEADERS += \
     cli/playerconsole.h \
     common/deck_card.h \
-    common/ea.h \
     common/event.h \
     common/game.h \
     common/log.h \
     common/player.h \
     common/playercomputer.h \
-    common/rotator.h
+    common/rotator.h \
+    common/bidengine.h \
+    luah/lauxlib.h \
+    luah/lua.h \
+    luah/lua.hpp \
+    luah/luaconf.h \
+    luah/lualib.h
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/lualib/ -llua51
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/lualib/ -llua51
+else:unix: LIBS += -L$$PWD/lualib/ -llua51
+
+INCLUDEPATH += $$PWD/lualib
+DEPENDPATH += $$PWD/lualib
