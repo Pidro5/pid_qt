@@ -16,7 +16,8 @@ CONFIG   += c++11
 TEMPLATE = app
 
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    ../common/playengine.cpp
 SOURCES += playerconsole.cpp
 SOURCES += ../common/deck_card.cpp
 SOURCES += ../common/game.cpp
@@ -26,7 +27,8 @@ SOURCES += ../common/playercomputer.cpp
 SOURCES += ../common/rotator.cpp
 SOURCES += ../common/bidengine.cpp
 
-HEADERS += playerconsole.h
+HEADERS += playerconsole.h \
+    ../common/playengine.h
 HEADERS += ../common/deck_card.h
 HEADERS += ../common/event.h
 HEADERS += ../common/game.h

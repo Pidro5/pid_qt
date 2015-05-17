@@ -1,7 +1,7 @@
 #include <stdexcept>
 #include "game.h"
 #include "log.h"
-
+#include <cassert>
 
 
 
@@ -645,6 +645,7 @@ void Game::round_init(){
         //init bids to -1
         m_bids[i] = -1;
         m_player_is_cold[i] = false;
+        m_player_wihtout_pidro[i] = false;
     }
     m_higest_bid = 0;              // The highest bid for the round is zero
     m_who_has_higest_bid = -1;     // who = 0..3.  -1 = nobody
@@ -693,6 +694,26 @@ bool Game::get_game_winner(Player * pl){
         return m_bWinner_ew;
     }
 
+}
+
+int Game::get_on_table_our_points(Player * pl) const{
+    int who = authorize_player(pl);
+    if (who == 0 or who == 2){
+        return sum_points_on_table(true);  // north south
+    }
+    else {
+        return sum_points_on_table(false);
+    }
+}
+
+int Game::get_on_table_their_points(Player * pl) const{
+    int who = authorize_player(pl);
+    if (who == 0 or who == 2){
+        return sum_points_on_table(false);  // north south
+    }
+    else {
+        return sum_points_on_table(true);
+    }
 }
 
 int Game::get_round_our_points(Player * pl, int including_round) const{
@@ -832,6 +853,38 @@ list<Card *> Game::get_cards_on_the_table(int pos){
     }
 
 }
+
+bool Game::do_i_have_card_of_rank(Player * pl, int rank) const {
+    list<Card *>::const_iterator it;
+    int who = authorize_player(pl);
+    if (who >=0){
+        for (it = m_cards_in_hands[who].begin(); it!=m_cards_in_hands[who].end(); ++it) {
+            if ((*it)->card_ranking(m_selected_color) == rank ){ // got the card
+                return true;
+            }
+        }
+
+    }
+    else {
+        LOG_E("GAME::do_i_have_card_of_ran  No Player Authorised");
+        throw std::runtime_error("Trying to access wrong player");
+    }
+    return false;
+}
+
+
+
+bool Game::is_card_of_rank_played(int rank) const{
+
+
+    for(int i =0;i <= m_played_idx ;i++) {
+        if(m_pPlayed_cards[i]->card_ranking(m_selected_color) == rank) {
+            return true;    // is this card already played
+        }
+    }
+    return false;
+}
+
 
 
 int Game::get_how_many_cards_in_hand_pos_relative_to_me(Player * pl, int pos){
@@ -1011,6 +1064,7 @@ void Game::play_init(){
 
    m_points_left =14;
    m_available_points_left=12;
+   m_previous_absolute_higest =14;
    m_absolute_higest= 14;
    m_round_playing =1;
 }
@@ -1033,6 +1087,32 @@ void Game::register_card_as_played(Card * c, int who, int round){
     if (m_how_many_visible_cards_has_player[who] < how_many_played_cards(who)){
         m_how_many_visible_cards_has_player[who] = how_many_played_cards(who);
     }
+
+    // UpdateWithoutPidroConstruct
+    //
+    // TRUE när spelaren
+    // inte pidrat på abs hög eller
+    // inte pidrat på partnern hög sist eller
+    // inte tagit pidro säker som hög sist eller
+
+    if (get_unplayed_pidro(m_pGame_player[who])){
+        if (c->card_ranking(m_selected_color) != 4  and c->card_ranking(m_selected_color) != 5) {  //' inte pidrat sjalv
+            if (get_played_card((who + 2) % 4, round) == m_absolute_higest) {
+                //'partner abs hog - jag pidra inte
+                m_player_wihtout_pidro[who] = true;
+            }
+        }
+        if (get_last(m_pGame_player[who])){   //' nu ar jag sist
+            if (get_played_card((who + 2) % 4, round) > get_played_card((who + 1) % 4, round) and
+                    get_played_card((who + 2) % 4, round) > get_played_card((who + 3) % 4, round)){
+                m_player_wihtout_pidro[who] = true;
+            }
+            // ' sist of safe - betyder Left,Right < 4..
+            if (get_played_card((who + 1) % 4, round) < 4 and get_played_card((who + 3) % 4, round) < 4){
+                 m_player_wihtout_pidro[who] = true;
+            }
+        }
+    }
 }
 
 
@@ -1045,6 +1125,16 @@ int Game::how_many_played_cards(int pos) const {
     }
     return ret;
 }
+
+int Game::how_many_played_cards_all() const{
+    return m_played_idx + 1;
+}
+
+int Game::get_played_card_rank_idx(int idx) const{
+
+    return m_pPlayed_cards[idx]->card_ranking(m_selected_color);
+}
+
 
 void Game::play_round_completed(int round){
 
@@ -1069,7 +1159,7 @@ void Game::play_round_completed(int round){
         }
     }
     // Now evaluate the absolute_higest;
-
+    m_previous_absolute_higest =m_absolute_higest;
     bool bfound;
 
     for(int j =14;j > 0 ;--j) {   // try the cards from top down
@@ -1130,6 +1220,47 @@ int Game::sum_round_points(bool NS_or_WE,int including_round) const {
     return sum_we;
 }
 
+
+int Game::sum_points_on_table(bool NS_or_WE) const {
+    //NS_or_WE  - true calculates the North-South points together. Otherwise West-East
+    int sum_ns = 0;
+    int sum_we = 0;
+    int sum_tmp = 0;
+
+
+    // check all available data
+    for(int i =0;i <= m_played_idx ;i++) {
+        // sum all poinst together
+        if(m_played_in_round[i] == m_round_playing) {
+            sum_tmp += m_pPlayed_cards[i]->m_card_points;
+
+            // special card "2" has no points set
+            if (m_pPlayed_cards[i]->card_face_value() == "2") {
+                if  (m_played_by_whom[i] == 0 || m_played_by_whom[i] == 2){
+                    sum_ns++;
+                }
+                else {
+                    sum_we++;
+                }
+            }
+        }
+
+    }
+    // now decide who the sum_tmp points belongs to
+    int i_who;
+    i_who = who_had_the_higest_card_in_round(m_round_playing,m_selected_color);
+    if (i_who ==0 || i_who == 2){
+        sum_ns += sum_tmp;
+    }
+    else {
+        sum_we += sum_tmp;
+    }
+
+    if (NS_or_WE){  return sum_ns;}
+    return sum_we;
+}
+
+
 int Game::who_had_the_higest_card_in_round(int round, int color) const {
     int highest = -1;
     int retval = -1;
@@ -1185,6 +1316,10 @@ int Game::get_position_in_round(Player * pl)const{
     throw std::runtime_error("get_position_in_round -  player or position not found");
 }
 
+int Game::get_who_starts_pos_absolute()const{
+   return m_who_plays.get_my_start_position();
+}
+
 int Game::get_bid()const{
     return m_higest_bid;
 }
@@ -1200,93 +1335,288 @@ int Game::get_role_bid(Player * pl)const{
     return -1;
 }
 
-string Game::get_my_highest_card(Player * pl)const {
+int Game::get_my_highest_card(Player * pl)const {
     list<Card *>::const_iterator it;
     int highcard = 0;
-    string str ="";
+    int val = 0;
 
     int who = authorize_player(pl);
     if (who >=0){
         for (it = m_cards_in_hands[who].begin(); it!=m_cards_in_hands[who].end(); ++it) {
             if ((*it)->card_ranking(m_selected_color)> highcard){ // get the highest one in color
                 highcard = (*it)->card_ranking(m_selected_color);
-                str = (*it)->card_ranking_name(m_selected_color);   // get the string value A,K...V,v,4,3,2
+                val = (*it)->card_ranking(m_selected_color);   // get the string value A,K...V,v,4,3,2
             }
         }
     }
-    return str;
+    return val;
 
 }
 
-string Game::get_the_absolute_highest_card()const{
-   return Card::convert_rank_value_to_string(m_absolute_higest);
+int Game::get_the_absolute_highest_card()const{
+   return m_absolute_higest;
+}
+int Game::get_the_previous_absolute_highest_card()const{
+   return m_previous_absolute_higest;
 }
 
-
-string Game::get_the_highest_card_in_round()const{
+int Game::get_the_highest_card_in_round()const{
     int highest = 0;
-    string str = "";
+    int val = 0;
     for(int i =0;i <= m_played_idx ;i++) {
         if(m_played_in_round[i] == m_round_playing){
             if(m_pPlayed_cards[i]->card_ranking(m_selected_color) > highest){
                 highest = m_pPlayed_cards[i]->card_ranking(m_selected_color) ;
-                str = m_pPlayed_cards[i]->card_ranking_name(m_selected_color);
+                val = m_pPlayed_cards[i]->card_ranking(m_selected_color);
             }
         }
     }
-    return str;
+    return val;
 }
 
-string Game::get_played_card(int who, int round) const {
-    string str = "";
+int Game::get_played_card(int who, int round) const {
+    int rank = 0;
 
     for(int i =0;i <= m_played_idx ;i++) {
         if(m_played_in_round[i] == round && m_played_by_whom[i] == who){
-            str = m_pPlayed_cards[i]->card_ranking_name(m_selected_color);
+            rank = m_pPlayed_cards[i]->card_ranking(m_selected_color);
         }
     }
-    return str;
+    return rank;
 }
 
-string Game::get_card_left(Player * pl)const{
+int Game::get_card_left(Player * pl)const{
     int who = authorize_player(pl);
     return get_played_card((who+1) % 4,m_round_playing );
 }
 
-string Game::get_card_partner(Player * pl)const {
+int Game::get_card_partner(Player * pl)const {
     int who = authorize_player(pl);
     return get_played_card((who+2) % 4,m_round_playing );
 }
 
-string Game::get_card_right(Player * pl)const{
+int Game::get_card_right(Player * pl)const{
     int who = authorize_player(pl);
     return get_played_card((who+3) % 4,m_round_playing );
 }
 
-string Game::get_previous_card_left(Player * pl)const{
+int Game::get_previous_card_left(Player * pl)const{
     int who = authorize_player(pl);
     return get_played_card((who+1) % 4,m_round_playing - 1 );
 }
 
-string Game::get_previous_card_partner(Player * pl)const {
+int Game::get_previous_card_partner(Player * pl)const {
     int who = authorize_player(pl);
     return get_played_card((who+2) % 4,m_round_playing - 1 );
 }
 
-string Game::get_previous_card_right(Player * pl)const{
+int Game::get_previous_card_right(Player * pl)const{
     int who = authorize_player(pl);
     return get_played_card((who+3) % 4,m_round_playing - 1 );
 }
 
-string Game::get_previous_card_me(Player * pl)const{
+int Game::get_previous_card_me(Player * pl)const{
     int who = authorize_player(pl);
     return get_played_card((who) % 4,m_round_playing - 1 );
 }
 
-/*
+int Game::get_previous_card_highest_round() const {
+    int rank = 0;
+
+    for(int i =0;i <= m_played_idx ;i++) {
+        if(m_played_in_round[i] == m_round_playing - 1 ){
+            if (m_pPlayed_cards[i]->card_ranking(m_selected_color) > rank) {
+                rank = m_pPlayed_cards[i]->card_ranking(m_selected_color);
+            }
+        }
+    }
+    return rank;
+}
 
 
-*/
+int Game::get_selected_color()const{
+    return m_selected_color;
+}
+
+int Game::get_cards_initially_in_my_hand (Player * pl) const{
+    int who = authorize_player(pl);
+    return m_how_many_cards_do_i_have[who];
+}
+
+int Game::get_sum_other_cards_not_me (Player * pl) const{
+    int who = authorize_player(pl);
+    int sum = 0;
+    for (int i = 0 ;i < 4; i++)
+    {
+        if (i != who) {
+            sum = sum + m_how_many_visible_cards_has_player[i];
+        }
+    }
+    return sum;
+}
+
+int Game::get_cards_before_buying_left (Player * pl) const{
+    int who = authorize_player(pl);
+    int idx = (who + 1) % 4;
+    return m_how_many_visible_cards_before_buy[idx];
+}
+int Game::get_cards_before_buying_partner (Player * pl) const{
+    int who = authorize_player(pl);
+    int idx = (who + 2) % 4;
+    return m_how_many_visible_cards_before_buy[idx];
+}
+int Game::get_cards_before_buying_right (Player * pl) const{
+    int who = authorize_player(pl);
+    int idx = (who + 3) % 4;
+    return m_how_many_visible_cards_before_buy[idx];
+}
+
+
+int Game::get_cards_before_buying_them_max (Player * pl) const{
+    int who = authorize_player(pl);
+    int a = 0;
+    int b =0;
+    // CardsBeforeBuyingThemMax = storre av CardsBeforeBuyingRight och CardsBeforeBuyingLeft
+    // GetCardsBeforeBuyingThemMax = MaxOf(GetCardsBeforeBuyingRight, GetCardsBeforeBuyingLeft)
+    if (who > 0) {
+        a = get_cards_before_buying_right(pl);
+        b = get_cards_before_buying_left(pl);
+        if (a > b) {
+            return a;
+        }
+    }
+    return b;
+}
+
+
+bool Game::get_cold_by_player(Player * pl, int idx){
+    int who = authorize_player(pl);
+    if (m_player_is_cold[idx]) {
+        return true;
+    }
+    //  If GetCardsLoose = 0 Then    'det finns inga obekanta kort i kopet.
+    int sum = 0;
+    sum = 14 - get_cards_initially_in_my_hand(pl);
+    sum = sum - get_sum_other_cards_not_me(pl);
+
+    if (sum ==0){  // CardsLoose = 0   this player sees no unknown cards
+        if (get_round() > m_how_many_visible_cards_has_player[idx] and who != idx){
+            // this player has not played yet (or thrown his cards)
+            // it is not me and i can calculate that he is cold
+
+            return true;
+        }
+    }
+    return false;
+}
+
+int Game::get_cards_unknown(Player * pl){
+    // 'Da ar platserna:
+    // 'SUM alla obekanta hander av:
+    // '( 6- Max(synliga kort efter kop, spelade kort)) eller 0 om Cold (raknad Cold OK)
+    // 'egen hand raknas inte.
+    int who = authorize_player(pl);
+    int sum = 0;
+    int tmp = 0;
+
+    for (int i = 0 ; i < 4; i++){
+        if (i != who){    // not me
+            if (get_cold_by_player(pl,i) == false) {   // if Cold then  = 0
+                tmp = 6 - m_how_many_visible_cards_has_player[i]; // kompliment
+                if (tmp > 0){
+                    sum += tmp;
+                }
+            }
+        }
+    }
+    return sum;
+}
+
+bool Game::get_unplayed_pidro(Player * pl){
+//    int who = authorize_player(pl);
+
+    if (is_card_of_rank_played(4) and is_card_of_rank_played(5) ) {
+        //bada pidrona spelade
+        return false;
+    }
+    if (is_card_of_rank_played(4) and do_i_have_card_of_rank(pl,5) ) {
+        // 5 ospelad - har jag den
+        return false;
+    }
+    if (is_card_of_rank_played(5) and do_i_have_card_of_rank(pl,4) ) {
+        // 4 ospelad - har jag den
+        return false;
+    }
+    if (do_i_have_card_of_rank(pl,5) and do_i_have_card_of_rank(pl,4) ) {
+        //  i have both pidro
+        return false;
+    }
+    return true;
+}
+
+bool Game::get_last(Player * pl){
+    int who = authorize_player(pl);
+    int StartsRound = get_who_starts_pos_absolute();
+
+    // "FOURTH"
+    if ((who + 1) % 4 == StartsRound) {
+        return true;
+    }
+    // "THIRD"
+    if ((who + 2) % 4 == StartsRound and get_cold_by_player(pl,(who + 1) % 4)) {
+        return true;
+    }
+    //"SECOND"
+    if ((who + 3) % 4 == StartsRound and get_cold_by_player(pl,(who + 1) % 4) and get_cold_by_player(pl,(who + 2) % 4)) {
+         return true;
+    }
+    return false;
+}
+
+bool Game::get_without_pidro_left (Player * pl) const{
+    int who = authorize_player(pl);
+    int idx = (who + 1) % 4;
+    return m_player_wihtout_pidro[idx];
+}
+bool Game::get_without_pidro_partner (Player * pl) const{
+    int who = authorize_player(pl);
+    int idx = (who + 2) % 4;
+    return m_player_wihtout_pidro[idx];
+}
+bool Game::get_without_pidro_right (Player * pl) const{
+    int who = authorize_player(pl);
+    int idx = (who + 3) % 4;
+    return m_player_wihtout_pidro[idx];
+}
+
+
+float Game::get_expected_one_person (Player * pl, int offset){
+    int who = authorize_player(pl);
+    int idx;
+    float visible;
+    int loose = 0;   // loose cards
+
+    loose = 14 - get_cards_initially_in_my_hand(pl);
+    loose = loose - get_sum_other_cards_not_me(pl);
+
+    idx = (who + offset) % 4;
+
+    if (who == idx){  //myself
+        visible = m_how_many_cards_do_i_have[who];
+    }
+    else {    // others
+        visible = m_how_many_visible_cards_has_player[idx];
+    }
+    //   ' om en person ar kall sa ar saken klar - ingen dyn exp.
+    if (get_cold_by_player(pl, idx) )
+    {
+        return visible;
+    }
+
+    return visible + ((6 - visible) * loose / get_cards_unknown(pl));
+
+}
+
 
 // ============================================================
 

@@ -1,6 +1,7 @@
 #include "playercomputer.h"
 #include <cassert>
 #include "bidengine.h"
+#include "playengine.h"
 
 using namespace std;
 
@@ -28,7 +29,12 @@ void PlayerComputer::attached_to_game(Game* pGame, int position, bool rotate_to_
     string rulesFile(dir + "\\Bidnet76Clean.txt");
     string bidRulesFile(dir + "\\PidroBidRulesAI.lua");
 
+    string playRulesFile(dir + "\\PidroPlayRulesAI.lua");
+//    string playRulesFile("C:\\_Pidro\\AI_used\\PlaySnippet.lua");
+
     m_sBidMachine = make_shared<BidEngine>(pGame, this, rulesFile, bidRulesFile);
+    m_sPlayMachine = make_shared<PlayEngine>(pGame, this, playRulesFile);
+
 }
 
 int PlayerComputer::give_bid(int minimum)
@@ -49,4 +55,16 @@ int PlayerComputer::give_color()
     assert(m_sBidMachine.get());
     return m_sBidMachine->give_color();
 
+}
+
+
+Card* PlayerComputer::play_card(int color){
+    Card* pC;
+
+    assert( m_sPlayMachine.get());
+    pC =   m_sPlayMachine->play_card( color);
+
+
+    //assert(!pC);
+    return pC;
 }

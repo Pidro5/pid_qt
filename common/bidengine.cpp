@@ -530,19 +530,19 @@ int BidEngine::give_bid(int minimum){
 
 
     bid = lua_tonumber(m_L, -1);
-    LOG_D("ExcecuteBid: " << bid);
+  //  LOG_D("ExcecuteBid: " << bid);
     lua_pop(m_L, 1);  /* Take the returned value out of the stack */
 
     assert(bid == 0 || (bid >= 6 and bid <= 14));
 
     ea_val = lua_tonumber(m_L, -1);
-    LOG_D("ExecuteEAValue: " << ea_val);
+ //   LOG_D("ExecuteEAValue: " << ea_val);
     lua_pop(m_L, 1);  /* Take the returned value out of the stack */
 
 
 
     str = lua_tostring(m_L, -1);
-    LOG_D("ExcecuteTyp: " << str);
+ //   LOG_D("ExcecuteTyp: " << str);
 
     b_ea= false;        // for BID type return
     if (strcmp(str, "EA") == 0) {

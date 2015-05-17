@@ -3,6 +3,7 @@
 
 #include <memory>
 #include "player.h"
+#include "playengine.h"
 
 class BidEngine;
 
@@ -17,12 +18,15 @@ public:
 
     int give_bid(int minimum);
     int give_color();
+    Card* play_card(int color);
 
     // this is a callback function and is called from the game after succesful registration
     void attached_to_game(Game* pGame, int position, bool rotate_to_south);
 
 private:
     std::shared_ptr<BidEngine> m_sBidMachine;
+    std::shared_ptr<PlayEngine> m_sPlayMachine;
+
 };
 
 #endif // PLAYERCOMPUTER_H

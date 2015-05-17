@@ -94,6 +94,7 @@ private:
     // Play Data
     // ==================================================================================
     bool m_player_is_cold[4];
+    bool m_player_wihtout_pidro[4];
 
     int m_how_many_cards_do_i_have[4];             // only to be accessed from player
     int m_how_many_visible_cards_has_player[4];    // situation after color selection
@@ -102,6 +103,7 @@ private:
     int m_points_left;
     int m_available_points_left;
     int m_absolute_higest;
+    int m_previous_absolute_higest;
     int m_round_playing;
 
     //  ----------------------
@@ -113,12 +115,15 @@ private:
 
     void play_init();
     void register_card_as_played(Card * c,int who, int round);
-    string get_played_card(int who, int round) const ;
+    int get_played_card(int who, int round) const ;
 
     void play_round_completed(int round);
 
+    int how_many_played_cards(int pos) const;
+
     int who_had_the_higest_card_in_round(int round, int color) const;
     int sum_round_points(bool NS_or_WE, int up_to_round) const;
+    int sum_points_on_table(bool NS_or_WE) const ;
 
     // ==================================================================================
     // ==================          OTHER             ====================================
@@ -145,6 +150,9 @@ public:
     int get_game_their_points(Player * pl);   // DE
     bool get_game_winner(Player * pl);      // If player is on the winning team - true. Else - false
 
+    int get_on_table_our_points(Player * pl) const;
+    int get_on_table_their_points(Player * pl) const;
+
     int get_round_our_points(Player * pl, int including_round) const;
     int get_round_their_points(Player * pl, int including_round) const;
 
@@ -153,11 +161,13 @@ public:
     string get_roundstat_name();
     int get_roundstat_bid();
     int get_roundstat_who_played(Player * pl);
+    int get_selected_color()const;
 
     int get_highest_bid_value();
     int get_bid_value_pos_absolute(int pos);
     // get players bid value, offset 0 - me, 1 - next, 2 -partner, 3 -just before me
     int get_bid_value_pos_relative_to_me(Player * pl, int offset);
+    int get_who_starts_pos_absolute()const;
 
     int get_who_has_deck_pos_absolute();
     int get_who_bids_pos_absolute();
@@ -166,12 +176,20 @@ public:
     list<Card *>  get_my_cards_in_hand(Player * pl);
     list<Card *>  get_cards_on_the_table(int pos);
 
+
+    bool do_i_have_card_of_rank(Player * pl, int rank) const;
+    bool is_card_of_rank_played(int rank) const;
+    bool get_unplayed_pidro(Player * pl);
+    bool get_last(Player * pl);
+
     //Used for visualising. Does not accout for discasred cards. Pls see how_many_played_cards
     int get_how_many_cards_in_hand_pos_relative_to_me(Player * pl, int pos);
 
     // PLAY =============================================================================
 
-    int how_many_played_cards(int pos) const;
+
+    int how_many_played_cards_all() const;
+    int get_played_card_rank_idx(int idx) const;
     int get_round() const;
     int get_cards_remaining() const;
     int get_cards_left_in_my_hand(Player * pl) const;
@@ -179,18 +197,34 @@ public:
     int get_position_in_round(Player * pl) const;
     int get_bid()const;
     int get_role_bid(Player * pl)const;
-    string get_my_highest_card(Player * pl)const;
-    string get_the_absolute_highest_card()const;
-    string get_the_highest_card_in_round()const;
+    int get_my_highest_card(Player * pl)const;
+    int get_the_absolute_highest_card()const;
+    int get_the_previous_absolute_highest_card()const;
+    int get_the_highest_card_in_round()const;
+    int get_cards_initially_in_my_hand (Player * pl) const;
+    int get_sum_other_cards_not_me (Player * pl) const;
 
+    int  get_card_left(Player * pl)const;
+    int  get_card_partner(Player * pl)const;
+    int  get_card_right(Player * pl)const;
+    int  get_previous_card_left(Player * pl)const;
+    int  get_previous_card_partner(Player * pl)const;
+    int  get_previous_card_right(Player * pl)const;
+    int  get_previous_card_me(Player * pl)const;
+    int  get_previous_card_highest_round() const;
+    int  get_cards_before_buying_left (Player * pl) const;
+    int  get_cards_before_buying_partner (Player * pl) const;
+    int  get_cards_before_buying_right (Player * pl) const;
+    int  get_cards_before_buying_them_max (Player * pl) const;
 
-    string get_card_left(Player * pl)const;
-    string get_card_partner(Player * pl)const;
-    string get_card_right(Player * pl)const;
-    string get_previous_card_left(Player * pl)const;
-    string get_previous_card_partner(Player * pl)const;
-    string get_previous_card_right(Player * pl)const;
-    string get_previous_card_me(Player * pl)const;
+    bool get_without_pidro_left (Player * pl) const;
+    bool get_without_pidro_partner (Player * pl) const;
+    bool get_without_pidro_right (Player * pl) const;
+
+    bool get_cold_by_player(Player * pl, int idx);
+    int get_cards_unknown(Player * pl);
+    float get_expected_one_person (Player * pl, int offset);
+
 
    // ==================================================================================
 
