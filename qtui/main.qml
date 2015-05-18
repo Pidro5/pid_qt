@@ -5,9 +5,22 @@ import QtQuick.Dialogs 1.2
 
 ApplicationWindow {
     title: qsTr("Hello World")
-    width: 640
-    height: 480
+    width: 1290
+    height: 960
     visible: true
+
+    Component.onCompleted: {
+        var card = Qt.createComponent("Card.qml");
+        if (card) {
+            console.log("Created");
+            card.source = "file:cards/4C.png"
+            card.visible = true;
+            card.x = 100;
+            card.y = 100;
+        } else {
+            console.log("NOT created")
+        }
+    }
 
     menuBar: MenuBar {
         Menu {
@@ -21,6 +34,11 @@ ApplicationWindow {
                 onTriggered: Qt.quit();
             }
         }
+    }
+
+    Card {
+        id: card
+        source: "file:cards/4H.png"
     }
 
     MainForm {

@@ -2,5 +2,7 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>MainForm.ui.qml</file>
+        <file>Card.qml</file>
+        <file>CardForm.ui.qml</file>
     </qresource>
 </RCC>
