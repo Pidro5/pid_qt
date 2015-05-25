@@ -3,8 +3,8 @@ import QtQuick 2.4
 Item {
     id: item
     // Actual size of the PNG files is 224 x 312
-    width: 112
-    height: 156
+    width: 75
+    height: 104
 
     property alias source: image.source
 

@@ -7,13 +7,15 @@ Item {
     width: 1280
     height: 960
 
-    property alias button3: button3
-    property alias button2: button2
-    property alias button1: button1
+    property alias buttonExit: buttonExit
+    property alias buttonAbout: buttonAbout
+
+    property alias rectangleAlice: rectangleAlice
+    property alias rectangleAliceHiddenCards: rectangleAliceHiddenCards
 
     Rectangle {
         id: board
-        color: "#45f422"
+        color: "#2db612"
         anchors.right: parent.right
         anchors.rightMargin: 0
         anchors.left: parent.left
@@ -27,7 +29,8 @@ Item {
             id: rectangleAlice
             x: 0
             width: 150
-            color: "#f71a1a"
+            color: "#2db612"
+            opacity: 1
             anchors.top: parent.top
             anchors.topMargin: 0
             anchors.bottom: parent.bottom
@@ -42,13 +45,34 @@ Item {
                 anchors.topMargin: 150
                 font.pixelSize: 20
             }
+
+            Rectangle {
+                id: rectangleAliceHiddenCards
+                x: 0
+                y: 189
+                width: 68
+                height: 565
+                color: "#2db612"
+                clip: false
+                opacity: 1
+            }
+
+            Rectangle {
+                id: rectangleAliceVisibleCards
+                x: 74
+                y: 189
+                width: 68
+                height: 565
+                color: "#2db612"
+                opacity: 1
+            }
         }
 
         Rectangle {
             id: rectangleCarlos
             x: 919
             width: 150
-            color: "#073aea"
+            color: "#2db612"
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 0
             anchors.top: parent.top
@@ -63,12 +87,32 @@ Item {
                 anchors.topMargin: 150
                 font.pixelSize: 20
             }
+
+            Rectangle {
+                id: rectangleCarlosHiddenCards
+                x: 80
+                y: 189
+                width: 68
+                height: 565
+                color: "#2db612"
+                opacity: 1
+            }
+
+            Rectangle {
+                id: rectangleCarlosVisibleCards
+                x: 0
+                y: 189
+                width: 68
+                height: 565
+                color: "#2db612"
+                opacity: 1
+            }
         }
 
         Rectangle {
             id: rectangleBob
             height: 150
-            color: "#37801b"
+            color: "#2db612"
             anchors.left: rectangleAlice.right
             anchors.leftMargin: 0
             anchors.right: rectangleCarlos.left
@@ -81,13 +125,33 @@ Item {
                 text: qsTr("Bob")
                 font.pixelSize: 20
             }
+
+            Rectangle {
+                id: rectangleBobHiddenCards
+                x: 41
+                y: 8
+                width: 639
+                height: 63
+                color: "#2db612"
+                opacity: 1
+            }
+
+            Rectangle {
+                id: rectangleBobVisibleCards
+                x: 41
+                y: 87
+                width: 639
+                height: 63
+                color: "#2db612"
+                opacity: 1
+            }
         }
 
         Rectangle {
             id: rectangleVictor
             y: 623
             height: 150
-            color: "#dd07c5"
+            color: "#2db612"
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 0
             anchors.right: rectangleCarlos.left
@@ -100,33 +164,25 @@ Item {
                 text: qsTr("Victor")
                 font.pixelSize: 20
             }
-        }
 
-        RowLayout {
-            x: 156
-            y: 228
-            anchors.top: parent.top
-            anchors.topMargin: 121
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 337
-            anchors.right: parent.right
-            anchors.rightMargin: 280
-            anchors.left: parent.left
-            anchors.leftMargin: 126
-
-            Button {
-                id: button1
-                text: qsTr("Press Me 1")
+            Rectangle {
+                id: rectangleVictorHiddenCards
+                x: 56
+                y: 80
+                width: 624
+                height: 62
+                color: "#2db612"
+                opacity: 1
             }
 
-            Button {
-                id: button2
-                text: qsTr("Press Me 2")
-            }
-
-            Button {
-                id: button3
-                text: qsTr("Press Me 3")
+            Rectangle {
+                id: rectangleVictorVisibleCards
+                x: 59
+                y: 8
+                width: 624
+                height: 66
+                color: "#2db612"
+                opacity: 1
             }
         }
 
@@ -134,13 +190,103 @@ Item {
         id: rectangleScore
         x: 927
         width: 300
-        color: "#ffffff"
+        color: "#2db612"
         anchors.right: parent.right
         anchors.rightMargin: 0
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 0
         anchors.top: parent.top
         anchors.topMargin: 0
+
+        Button {
+            id: buttonExit
+            x: 204
+            y: 22
+            text: qsTr("Exit")
+        }
+
+        Button {
+            id: buttonAbout
+            x: 46
+            y: 22
+            text: qsTr("About")
+        }
+    }
+
+    RowLayout {
+        id: rowLayoutBid
+        y: 756
+        height: 54
+        anchors.bottom: rectangleVictor.top
+        anchors.bottomMargin: 0
+        anchors.right: rectangleCarlos.left
+        anchors.rightMargin: 0
+        anchors.left: rectangleAlice.right
+        anchors.leftMargin: 0
+
+        Button {
+            id: buttonPass
+            width: 40
+            height: 23
+            text: qsTr("-")
+        }
+
+        Button {
+            id: button6
+            width: 40
+            height: 23
+            text: qsTr("6")
+        }
+
+        Button {
+            id: button7
+            width: 40
+            text: qsTr("7")
+        }
+
+        Button {
+            id: button8
+            width: 40
+            text: qsTr("8")
+            clip: false
+            visible: true
+        }
+
+        Button {
+            id: button9
+            width: 40
+            text: qsTr("9")
+        }
+
+        Button {
+            id: button10
+            width: 40
+            text: qsTr("10")
+        }
+
+        Button {
+            id: button11
+            width: 40
+            text: qsTr("11")
+        }
+
+        Button {
+            id: button12
+            width: 40
+            text: qsTr("12")
+        }
+
+        Button {
+            id: button13
+            width: 40
+            text: qsTr("13")
+        }
+
+        Button {
+            id: button14
+            width: 40
+            text: qsTr("14")
+        }
     }
 
     }

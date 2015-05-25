@@ -4,23 +4,11 @@ import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
 
 ApplicationWindow {
+    id: appWindow
     title: qsTr("Hello World")
     width: 1290
     height: 960
     visible: true
-
-    Component.onCompleted: {
-        var card = Qt.createComponent("Card.qml");
-        if (card) {
-            console.log("Created");
-            card.source = "file:cards/4C.png"
-            card.visible = true;
-            card.x = 100;
-            card.y = 100;
-        } else {
-            console.log("NOT created")
-        }
-    }
 
     menuBar: MenuBar {
         Menu {
@@ -43,9 +31,27 @@ ApplicationWindow {
 
     MainForm {
         anchors.fill: parent
-        button1.onClicked: messageDialog.show(qsTr("Button 1 pressed"))
-        button2.onClicked: messageDialog.show(qsTr("Button 2 pressed"))
-        button3.onClicked: messageDialog.show(qsTr("Button 3 pressed"))
+        buttonAbout.onClicked: messageDialog.show(qsTr("About Pidro"))
+        buttonExit.onClicked: Qt.quit();
+
+        Component.onCompleted: {
+            var Card = Qt.createComponent("Card.qml");
+            if (Card) {
+                console.log("Created Card");
+
+                for (var i = 0; i < 14; ++i) {
+                    var card = Card.createObject(rectangleAliceHiddenCards);
+
+                    card.source = "file:cards/BACK_BLUE1.png"
+                    card.visible = true;
+                    card.y = i * 20;
+                }
+            } else {
+                console.log("NOT created")
+            }
+        }
+
+
     }
 
     MessageDialog {
