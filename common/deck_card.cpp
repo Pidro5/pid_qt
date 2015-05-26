@@ -108,7 +108,8 @@ string Card::card_suit_short() const
     }
 }
 
-int Card::card_ranking(int suit) const {
+int Card::card_ranking(int suit) const
+{
 
     int ret_val = 0;
 
@@ -137,8 +138,8 @@ int Card::card_ranking(int suit) const {
 }
 
 
-string Card::card_ranking_name(int suit) const {
-
+string Card::card_ranking_name(int suit) const
+{
     string ret_val = "";
 
     if (m_myvalue != 5) {
@@ -170,7 +171,8 @@ void Card::print(ostream& o) const
     o << this->card_suit_short() << "_" << this->card_face_value() << " ";
 }
 
-string Card::convert_rank_value_to_string(int value){
+string Card::convert_rank_value_to_string(int value)
+{
     string str = "";
 
     switch (value)
@@ -225,7 +227,8 @@ string Card::convert_rank_value_to_string(int value){
     return str;
 }
 
-int Card::convert_rank_name_to_value(string str){
+int Card::convert_rank_name_to_value(const string& str)
+{
 
     if (str == "2") { return 1; }
     if (str == "3") { return 2; }

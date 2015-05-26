@@ -16,9 +16,9 @@ PlayerComputer::~PlayerComputer()
 
 void PlayerComputer::attached_to_game(Game* pGame, int position, bool rotate_to_south)
 {
-    m_my_game = pGame;
-    m_my_position = position;
-    m_my_rotate_to_south = rotate_to_south;
+    m_pGame = pGame;
+    m_position = position;
+    m_rotate_to_south = rotate_to_south;
 
     //ea = new EA(g, this,
     //            "T:\\_home\\SchachtnerTh\\RulesFiles\\Bidnet76Clean.txt",
@@ -35,6 +35,26 @@ void PlayerComputer::attached_to_game(Game* pGame, int position, bool rotate_to_
     m_sBidMachine = make_shared<BidEngine>(pGame, this, rulesFile, bidRulesFile);
     m_sPlayMachine = make_shared<PlayEngine>(pGame, this, playRulesFile);
 
+}
+
+bool PlayerComputer::inform_event(Event)
+{
+    return true;
+}
+
+bool PlayerComputer::inform_event(Event, int)
+{
+    return true;
+}
+
+bool PlayerComputer::inform_event(Event, int, int)
+{
+    return true;
+}
+
+bool PlayerComputer::inform_event(Event, int, std::list<Card *>&)
+{
+    return true;
 }
 
 int PlayerComputer::give_bid(int minimum)

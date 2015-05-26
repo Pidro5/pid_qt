@@ -3,35 +3,32 @@
 #include "common/log.h"
 #include "stdlib.h"
 
-PlayerConsole::PlayerConsole(string strname): Player (strname)
+using namespace std;
+
+PlayerConsole::PlayerConsole(const string& name)
+    : Player(name)
+    , m_who_has_deck(0)
 {
-    m_who_has_deck=0;
-    m_my_rotate_to_south = false;
 }
 
 PlayerConsole::~PlayerConsole()
 {
-
 }
 
-void PlayerConsole::attached_to_game(Game * g, int position, bool rotate_to_south)
+void PlayerConsole::attached_to_game(Game* pGame, int position, bool rotate_to_south)
 {
-    m_my_game = g;
-    m_my_position = position;
-    m_my_rotate_to_south = rotate_to_south;
-
-    LOG_D(get_name() << " was attached to game.. position: " << m_my_position);
+    Player::attached_to_game(pGame, position, rotate_to_south);
 }
 
 
 bool PlayerConsole::is_this_me(int position){
-    if (m_my_rotate_to_south){
+    if (m_rotate_to_south){
         if (position == 0){
             return true;
         }
     }
     else {
-        if (m_my_position == position) {
+        if (m_position == position) {
             return true;
         }
     }
@@ -55,16 +52,16 @@ bool PlayerConsole::inform_event(Event et){
         cin.get();
     }
     if (et == Event::ROUND_OVER) {
-       cout <<  " Our Points: " << m_my_game->get_roundstat_our_points(this);
-       cout <<  "  Their Points: " << m_my_game->get_roundstat_their_points(this);
-       cout <<  " BID: " << m_my_game->get_roundstat_bid();
-       cout <<  "  Who: "<< m_my_game->get_roundstat_name();
-       cout <<  "  sits where: "<< m_my_game->get_roundstat_who_played(this) << endl<< endl;
+       cout <<  " Our Points: " << m_pGame->get_roundstat_our_points(this);
+       cout <<  "  Their Points: " << m_pGame->get_roundstat_their_points(this);
+       cout <<  " BID: " << m_pGame->get_roundstat_bid();
+       cout <<  "  Who: "<< m_pGame->get_roundstat_name();
+       cout <<  "  sits where: "<< m_pGame->get_roundstat_who_played(this) << endl<< endl;
        cin.get();
 
     }
     if (et == Event::GAME_OVER) {
-        if ( m_my_game->get_game_winner(this)) {
+        if ( m_pGame->get_game_winner(this)) {
             cout <<  "WE WON !!!";
         }
         else {
@@ -192,7 +189,7 @@ bool PlayerConsole::inform_event(Event et, int position, list<Card *>& cards){
         // I need to refresh the remaining cards in hand
         m_my_view_on_hands[position] = "";
         if (!is_this_me(position)){   // somebody else's hand
-            for (int i =0; i<m_my_game->get_how_many_cards_in_hand_pos_relative_to_me(this, position); i++){
+            for (int i =0; i<m_pGame->get_how_many_cards_in_hand_pos_relative_to_me(this, position); i++){
                 m_my_view_on_hands[position] +=" XX";
             }
         }
@@ -200,7 +197,7 @@ bool PlayerConsole::inform_event(Event et, int position, list<Card *>& cards){
             m_my_view_on_hands[position] = "";
 
             list<Card *>::iterator it;
-            list<Card *> mycards = m_my_game->get_my_cards_in_hand(this);
+            list<Card *> mycards = m_pGame->get_my_cards_in_hand(this);
             for (it = mycards.begin(); it!=mycards.end(); ++it) {
                 m_my_view_on_hands[position] += ((*it)->card_suit_short()  + "_"+ (*it)->card_face_value()+ " ");
             }
@@ -237,7 +234,7 @@ int PlayerConsole::give_bid(int minimum){
     cout << "(Enter -1 to quit the game)? ";
 
     cin >> mybid;
-    if (mybid < 0){m_my_game->quit_game();}
+    if (mybid < 0){m_pGame->quit_game();}
     return mybid;
 
 }
@@ -252,14 +249,14 @@ int PlayerConsole::give_color(){
     cout << "(Enter -1 to quit the game)? ";
 
     cin >> mybid;
-    if (mybid < 0){m_my_game->quit_game();}
+    if (mybid < 0){m_pGame->quit_game();}
     return mybid;
 
 }
 
 Card* PlayerConsole::play_card(int /*color*/){
     int mycard;
-    list<Card *> tmp_list_of_cards = m_my_game->get_my_cards_in_hand(this);
+    list<Card *> tmp_list_of_cards = m_pGame->get_my_cards_in_hand(this);
     list<Card *>::iterator it;
 
     cout << "Which card to play? 1..6 " <<  endl;
@@ -267,7 +264,7 @@ Card* PlayerConsole::play_card(int /*color*/){
 
     cin >> mycard;
     if (mycard < 0){
-        m_my_game->quit_game();
+        m_pGame->quit_game();
         return tmp_list_of_cards.front();
     }
 

@@ -18,12 +18,15 @@ extern "C" {
 #include "luah/lualib.h"
 }
 
+using namespace std;
 
-map<string, float> gameSettings;
+//map<string, float> gameSettings;
 
 
 
-BidEngine::BidEngine(Game *game, Player *player, string eaFile, string bidRuleFile) : BidEngine(eaFile,bidRuleFile) {
+BidEngine::BidEngine(Game *game, Player *player, string eaFile, string bidRuleFile)
+    : BidEngine(eaFile,bidRuleFile)
+{
     m_theGame=game;
     m_me=player;
     m_my_color = 0;

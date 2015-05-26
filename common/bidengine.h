@@ -23,7 +23,7 @@ class cardsConfig {
 public:
     int m_number_of_cards[4];
     int m_number_of_unimportant_cards[4];
-    string m_cardsString[4];
+    std::string m_cardsString[4];
 };
 
 class oneHand {
@@ -95,16 +95,16 @@ private:
     };
 
     std::list<cardcount> m_cardcounts;
-    bool readEAFile(string str);
-    float getEA(int cardsCount, int nonImportant, string cardsConfig, int bid);
-    oneHand *getEAstruct(int cardsCount, int nonImportant, string cardsConfig);
+    bool readEAFile(std::string str);
+    float getEA(int cardsCount, int nonImportant, std::string cardsConfig, int bid);
+    oneHand *getEAstruct(int cardsCount, int nonImportant, std::string cardsConfig);
 
-    cardsConfig examineHand(list<Card *> hand);
+    cardsConfig examineHand(std::list<Card *> hand);
 
-    BidEngine(string rulefile, string bidRuleFile);
+    BidEngine(std::string rulefile, std::string bidRuleFile);
 
 public:
-    BidEngine(Game *game, Player *player, string rulefile, string bidRuleFile);
+    BidEngine(Game *game, Player *player, std::string rulefile, std::string bidRuleFile);
     ~BidEngine();
     int give_bid(int minimum);
     int give_color() const;

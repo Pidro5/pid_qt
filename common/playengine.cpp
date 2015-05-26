@@ -7,6 +7,8 @@ extern "C" {
 #include "luah/lualib.h"
 }
 
+using namespace std;
+
 PlayEngine::PlayEngine(Game *game, Player *player, string playRuleFile)
 {
     m_theGame = game;

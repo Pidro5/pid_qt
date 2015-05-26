@@ -3,7 +3,7 @@
 #include "log.h"
 #include <cassert>
 
-
+using namespace std;
 
 Game::Game()
 {
