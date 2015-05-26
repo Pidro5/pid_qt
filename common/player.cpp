@@ -1,77 +1,39 @@
+#include <cstdlib>
 #include <iostream>
 #include "log.h"
 #include "player.h"
 #include "game.h"
 
-#include <cstdlib>
+using namespace std;
 
-Player::Player(string strname)
+Player::Player(const string &name)
+    : m_name(name)
+    , m_pGame(nullptr)
+    , m_position(-1) // not attached to game
+    , m_rotate_to_south(false)
 {
-    m_my_name = strname;
-    m_my_position = -1;    // construct the player with a position negative = not attached to game
-
 }
 
 Player::~Player()
 {
-
 }
 
-string Player::get_name(){
-    return m_my_name;
-}
-
-void Player::attached_to_game(Game * g, int position, bool rotate_to_south)
+string Player::get_name() const
 {
-    m_my_game = g;
-    m_my_position = position;
-    m_my_rotate_to_south = rotate_to_south;
-
+    return m_name;
 }
 
-bool Player::inform_event(Event /*et*/){
-    // this event gets
-    // GAME_INIT
-    // BEGIN_PLAY           just before the play begins - clear tables
-    // PLAY_ROUND_FINISH   - when each player has been asked to play one card
-                            //  after this the player with the highest card starts playing the next round..
-                            //  This is good for showing some imtermediate stats
-    // ROUND_OVER     -    all 14 cards played. The stats have been summed up
-    // GAME_OVER
+void Player::attached_to_game(Game* pGame, int position, bool rotate_to_south)
+{
+    m_pGame = pGame;
+    m_position = position;
+    m_rotate_to_south = rotate_to_south;
 
-    return true;    //  true means continue game
+    LOG_D(get_name() << " was attached to game.. position: " << m_position);
 }
 
-
-bool Player::inform_event(Event /*et*/, int /*position*/){
-    // this event gets
-    // ROUND_INIT
-    // ASK_FOR_BID   - this tells who is bidding
-    return true;    //  true means continue game
-}
-
-bool Player::inform_event(Event /*et*/, int /*position*/, int /*value*/){
-    // this event gets
-    // DEAL_CARD  - when sombedy else gets cards dealt into their hand
-    // BID_PLACED  - who(position), the bid (value )
-    // GOT_BID  - who(position), the bid (value )
-    // COLOR_SELECTED
-    return true;    //  true means continue game
-}
-
-
-bool Player::inform_event(Event /*et*/, int /*position*/, list<Card *>& /*cards*/){
-    // this event gets
-    // DEAL_CARD  -  I GOT CARDS dealt to my hand
-    // PUT_CARDS_ON_TABLE    - somebody put one or more cards on the table..
-    // KILL_CARD           - somebody had more than 6 cards and needs to kill a card
-    // PLAY_CARD
-    // PLAYER_COLD
-    return true;    //  true means continue game
-}
-
-
-int Player::give_bid(int minimum){
+int Player::give_bid(int minimum)
+{
 
     // minimum is the currect higest bid
     // if 0 or -1  the next highest bid is 6
@@ -87,15 +49,17 @@ int Player::give_bid(int minimum){
     return minimum+1;
 }
 
-int Player::give_color(){
+int Player::give_color()
+{
     // color can be 0 ..3
     int rnd = rand() % 4;
 
     return rnd;
 }
 
-Card* Player::play_card(int color){
-    list<Card *> tmp_list_of_cards = m_my_game->get_my_cards_in_hand(this);
+Card* Player::play_card(int color)
+{
+    list<Card *> tmp_list_of_cards = m_pGame->get_my_cards_in_hand(this);
     list<Card *>::iterator it;
 
     // Find out how many

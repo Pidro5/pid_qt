@@ -111,7 +111,7 @@ private:
     // handle to lua
     lua_State *m_L;
 public:
-    PlayEngine(Game *game, Player *player, string playrulefile);
+    PlayEngine(Game *game, Player *player, std::string playrulefile);
     ~PlayEngine();
     Card*  play_card(int color);
 
