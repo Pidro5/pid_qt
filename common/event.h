@@ -1,6 +1,7 @@
 #ifndef EVENT_H
 #define EVENT_H
 
+#include <iostream>
 
 enum class Event
 {
@@ -20,5 +21,13 @@ enum class Event
     ROUND_OVER,
     GAME_OVER
 };
+
+const char* toString(Event ev);
+
+inline std::ostream& operator << (std::ostream& out, Event ev)
+{
+    out << toString(ev);
+    return out;
+}
 
 #endif // EVENT_H

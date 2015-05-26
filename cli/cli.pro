@@ -16,10 +16,11 @@ CONFIG   += c++11
 TEMPLATE = app
 
 
-SOURCES += main.cpp \
-    ../common/playengine.cpp
+SOURCES += main.cpp
 SOURCES += playerconsole.cpp
+SOURCES += ../common/playengine.cpp
 SOURCES += ../common/deck_card.cpp
+SOURCES += ../common/event.cpp
 SOURCES += ../common/game.cpp
 SOURCES += ../common/log.cpp
 SOURCES += ../common/player.cpp
