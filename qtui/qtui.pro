@@ -19,6 +19,8 @@ SOURCES += ../common/playengine.cpp
 SOURCES += ../common/playercomputer.cpp
 SOURCES += ../common/rotator.cpp
 SOURCES += main.cpp
+SOURCES += gamethread.cpp
+SOURCES += playerproxy.cpp
 SOURCES += qplayer.cpp
 
 RESOURCES += qml.qrc
