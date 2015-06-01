@@ -222,6 +222,8 @@ public:
     bool get_without_pidro_right (Player * pl) const;
 
     bool get_cold_by_player(Player * pl, int idx);
+    bool get_clean_cold_by_player(int idx);
+
     int get_cards_unknown(Player * pl);
     float get_expected_one_person (Player * pl, int offset);
 

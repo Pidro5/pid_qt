@@ -235,7 +235,7 @@ int PlayData::GetPointsToKill() {
         if (b_har_highest == false and m_theGame->do_i_have_card_of_rank(m_me,high_card)){
             if (EqualInRank(high_card,m_theGame->get_card_partner(m_me))){
                 //  'Ar min partner hogst i rundan??
-                if (m_theGame->get_card_partner(m_me) == high_card ){
+                if (m_theGame->get_card_partner(m_me) == m_theGame->get_the_highest_card_in_round() ){
                     b_har_highest = true;
                 }
             }
@@ -442,8 +442,10 @@ PlayData::PlayData(Game *game, Player *player)
     for (i=0;i<14;i++){
         m_PlayedCards[i]=0;
     }
+
     for (i=0;i<4;i++){
-        m_Cold[i]=false;
+        m_ColdCalculated[i]=false;
+        m_ColdClean[i]=false;
     }
 
 }
@@ -498,8 +500,10 @@ void PlayData::populate_with_data(int color){
     m_CardsBeforeBuyingPartner = m_theGame->get_cards_before_buying_partner(m_me);
     m_CardsBeforeBuyingRight = m_theGame->get_cards_before_buying_right(m_me);
 
+
     for (i =0 ;i < 4; i++) {
-        m_Cold[i] = m_theGame->get_cold_by_player(m_me,i);
+        m_ColdCalculated[i] = m_theGame->get_cold_by_player(m_me,i);
+        m_ColdClean[i] = m_theGame->get_clean_cold_by_player(i);
     }
 
     m_CardsUnknown = m_theGame->get_cards_unknown(m_me);
@@ -627,7 +631,7 @@ void PlayData::push_to_lua(lua_State *m_L){
     lua_newtable(m_L);
     for (i =0; i < 4; i++) {
         lua_pushnumber(m_L, i + 1);
-        if ( m_Cold[i]) {
+        if ( m_ColdClean[i]) {
             lua_pushnumber(m_L, 1);
         }
         else
@@ -636,7 +640,21 @@ void PlayData::push_to_lua(lua_State *m_L){
         }
         lua_rawset(m_L, -3);
     }
-    lua_setglobal(m_L, "Cold");
+    lua_setglobal(m_L, "ColdClean");
+
+    lua_newtable(m_L);
+    for (i =0; i < 4; i++) {
+        lua_pushnumber(m_L, i + 1);
+        if ( m_ColdCalculated[i]) {
+            lua_pushnumber(m_L, 1);
+        }
+        else
+        {
+            lua_pushnumber(m_L, 0);
+        }
+        lua_rawset(m_L, -3);
+    }
+    lua_setglobal(m_L, "ColdCalculated");
 
     lua_pushinteger (m_L,  m_CardsUnknown);
     lua_setglobal(m_L, "CardsUnknown");

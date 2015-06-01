@@ -20,7 +20,8 @@ private:
     int m_MyCardsNumber = 0;    // how mny cards
     int m_PlayedCards[14];
     int m_PlayedCardsNumber = 0;  // how mny cards
-    bool m_Cold[4];
+    bool m_ColdClean[4];
+    bool m_ColdCalculated[4];
     int m_Bid = 0;
     int m_Cardleft = 0;
     int m_Cardright = 0;

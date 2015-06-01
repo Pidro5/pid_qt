@@ -1478,7 +1478,7 @@ int Game::get_cards_before_buying_them_max (Player * pl) const{
     int b =0;
     // CardsBeforeBuyingThemMax = storre av CardsBeforeBuyingRight och CardsBeforeBuyingLeft
     // GetCardsBeforeBuyingThemMax = MaxOf(GetCardsBeforeBuyingRight, GetCardsBeforeBuyingLeft)
-    if (who > 0) {
+    if (who >= 0) {
         a = get_cards_before_buying_right(pl);
         b = get_cards_before_buying_left(pl);
         if (a > b) {
@@ -1486,6 +1486,10 @@ int Game::get_cards_before_buying_them_max (Player * pl) const{
         }
     }
     return b;
+}
+
+bool Game::get_clean_cold_by_player(int idx){
+    return m_player_is_cold[idx];
 }
 
 
