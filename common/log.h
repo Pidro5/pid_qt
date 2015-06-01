@@ -4,6 +4,9 @@
 #include <string>
 #include <cstdlib>
 
+namespace Pidro
+{
+  
 namespace Log
 {
     enum Entry
@@ -20,20 +23,21 @@ namespace Log
     void setStream(std::ostream* pStream);
 }
 
+}
+
 #define LOG(kind, expression)\
     do {\
-        Log::stream() << Log::toString(kind) << __FILE__ << "(" << __LINE__ << "): " << expression << std::endl;\
-        if (kind == Log::Entry::FATAL) {\
-            abort();\
-        }\
+      Pidro::Log::stream() << Pidro::Log::toString(kind) << __FILE__ << "(" << __LINE__ << "): " << expression << std::endl; \
+      if (kind == Pidro::Log::Entry::FATAL) {\
+        abort();\
+      }\
     } while (false)
 
 
 
-#define LOG_D(expression) LOG(Log::DEBUG, expression)
-#define LOG_W(expression) LOG(Log::WARNING, expression)
-#define LOG_E(expression) LOG(Log::ERROR, expression)
-#define LOG_F(expression) LOG(Log::FATAL, expression)
-
+#define LOG_D(expression) LOG(Pidro::Log::DEBUG, expression)
+#define LOG_W(expression) LOG(Pidro::Log::WARNING, expression)
+#define LOG_E(expression) LOG(Pidro::Log::ERROR, expression)
+#define LOG_F(expression) LOG(Pidro::Log::FATAL, expression)
 
 #endif // LOG_H

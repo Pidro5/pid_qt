@@ -18,7 +18,9 @@ extern "C" {
 #include "luah/lualib.h"
 }
 
-
+namespace Pidro
+{
+  
 class cardsConfig {
 public:
     int m_number_of_cards[4];
@@ -109,5 +111,7 @@ public:
     int give_bid(int minimum);
     int give_color() const;
 };
+
+}
 
 #endif   //BIDENGINE_H

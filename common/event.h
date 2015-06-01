@@ -3,6 +3,9 @@
 
 #include <iostream>
 
+namespace Pidro
+{
+  
 enum class Event
 {
     GAME_INIT = 0,
@@ -28,6 +31,8 @@ inline std::ostream& operator << (std::ostream& out, Event ev)
 {
     out << toString(ev);
     return out;
+}
+
 }
 
 #endif // EVENT_H

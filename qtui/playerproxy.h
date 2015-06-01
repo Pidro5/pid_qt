@@ -7,7 +7,7 @@
 class QPidroEvent;
 class QPlayer;
 
-class PlayerProxy : public Player
+class PlayerProxy : public Pidro::Player
 {
 public:
     explicit PlayerProxy(const std::string& name, QPlayer* pPlayer);
@@ -16,10 +16,10 @@ public:
     ~PlayerProxy();
 
 private:
-    bool inform_event(Event et) override;
-    bool inform_event(Event et, int position) override;
-    bool inform_event(Event et, int position, int value) override;
-    bool inform_event(Event et, int position, std::list<Card *>& cards) override;
+    bool inform_event(Pidro::Event et) override;
+    bool inform_event(Pidro::Event et, int position) override;
+    bool inform_event(Pidro::Event et, int position, int value) override;
+    bool inform_event(Pidro::Event et, int position, std::list<Pidro::Card *>& cards) override;
 
     bool deliverEvent(QPidroEvent* pEvent);
 

@@ -11,6 +11,9 @@ ostream* u_pLogStream = &cout;
 
 }
 
+namespace Pidro
+{
+
 ostream& Log::stream()
 {
     assert(u_pLogStream);
@@ -43,4 +46,6 @@ const char* Log::toString(Log::Entry entry)
 
     assert(!true);
     return "U"; // As in unknown.
+}
+
 }

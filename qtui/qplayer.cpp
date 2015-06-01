@@ -37,24 +37,24 @@ bool QPlayer::event(QPidroEvent *pEvent)
     return true;
 }
 
-bool QPlayer::inform_event(Event et)
+bool QPlayer::inform_event(Pidro::Event et)
 {
     LOG_D(et);
 
     switch (et) {
-    case Event::GAME_INIT:
+    case Pidro::Event::GAME_INIT:
         break;
 
-    case Event::BEGIN_PLAY:
+    case Pidro::Event::BEGIN_PLAY:
         break;
 
-    case Event::PLAY_ROUND_FINISH:
+    case Pidro::Event::PLAY_ROUND_FINISH:
         break;
 
-    case Event::ROUND_OVER:
+    case Pidro::Event::ROUND_OVER:
         break;
 
-    case Event::GAME_OVER:
+    case Pidro::Event::GAME_OVER:
         break;
 
     default:
@@ -64,15 +64,15 @@ bool QPlayer::inform_event(Event et)
     return true;
 }
 
-bool QPlayer::inform_event(Event ev, int position)
+bool QPlayer::inform_event(Pidro::Event ev, int position)
 {
     LOG_D(ev << position);
 
     switch (ev) {
-    case Event::ROUND_INIT:
+    case Pidro::Event::ROUND_INIT:
         break;
 
-    case Event::ASK_FOR_BID:
+    case Pidro::Event::ASK_FOR_BID:
         break;
 
     default:
@@ -82,21 +82,21 @@ bool QPlayer::inform_event(Event ev, int position)
     return true;
 }
 
-bool QPlayer::inform_event(Event ev, int position, int value)
+bool QPlayer::inform_event(Pidro::Event ev, int position, int value)
 {
     LOG_D(ev << " " << position << " " << value);
 
     switch (ev) {
-    case Event::DEAL_CARD:
+    case Pidro::Event::DEAL_CARD:
         break;
 
-    case Event::BID_PLACED:
+    case Pidro::Event::BID_PLACED:
         break;
 
-    case Event::GOT_BID:
+    case Pidro::Event::GOT_BID:
         break;
 
-    case Event::COLOR_SELECTED:
+    case Pidro::Event::COLOR_SELECTED:
         break;
 
     default:
@@ -106,24 +106,24 @@ bool QPlayer::inform_event(Event ev, int position, int value)
     return true;
 }
 
-bool QPlayer::inform_event(Event ev, int position, std::list<Card *>& /*cards*/)
+bool QPlayer::inform_event(Pidro::Event ev, int position, std::list<Pidro::Card*>& /*cards*/)
 {
     LOG_D(ev << " " << position << " " << "...");
 
     switch (ev) {
-    case Event::DEAL_CARD:
+    case Pidro::Event::DEAL_CARD:
         break;
 
-    case Event::PUT_CARDS_ON_TABLE:
+    case Pidro::Event::PUT_CARDS_ON_TABLE:
         break;
 
-    case Event::KILL_CARD:
+    case Pidro::Event::KILL_CARD:
         break;
 
-    case Event::PLAY_CARD:
+    case Pidro::Event::PLAY_CARD:
         break;
 
-    case Event::PLAYER_COLD:
+    case Pidro::Event::PLAYER_COLD:
         break;
 
     default:

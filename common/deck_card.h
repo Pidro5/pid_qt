@@ -4,6 +4,9 @@
 #include <iostream>
 #include <list>
 
+namespace Pidro
+{
+  
 //  CARD ==============================================================================
 
 class Card {
@@ -52,6 +55,8 @@ public:
 inline std::ostream& operator << (std::ostream& out, const Deck& x) {
     x.print(out);
     return out;
+}
+
 }
 
 #endif // DECK_CARD_H

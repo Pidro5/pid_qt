@@ -9,7 +9,9 @@
 
 using namespace std;
 
-
+namespace Pidro
+{
+  
 Card::Card(int suit, int value)
 {
     m_card_points =0;
@@ -348,4 +350,6 @@ void Deck::deck_delete()
         //LOG_D("Deleting card: " << c->card_suit() << " " << c->card_face_value());
         delete pC;
     }
+}
+
 }

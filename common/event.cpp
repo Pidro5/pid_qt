@@ -3,6 +3,9 @@
 
 using namespace std;
 
+namespace Pidro
+{
+  
 const char* toString(Event ev)
 {
     switch (ev) {
@@ -55,4 +58,6 @@ const char* toString(Event ev)
         assert(!true);
         return "UNKNOWN";
     }
+}
+
 }

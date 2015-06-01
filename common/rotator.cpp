@@ -1,5 +1,8 @@
 #include "rotator.h"
 
+namespace Pidro
+{
+  
 Rotator::Rotator()
 {
    m_my_position = 0;
@@ -68,5 +71,7 @@ Rotator Rotator::operator --(int ){
 
     }
     return temp;
+
+}
 
 }

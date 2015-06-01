@@ -10,6 +10,9 @@ extern "C" {
 #include "luah/lualib.h"
 }
 
+namespace Pidro
+{
+  
 class PlayData
 {
 private:
@@ -117,5 +120,7 @@ public:
     Card*  play_card(int color);
 
 };
+
+}
 
 #endif // PLAYENGINE_H

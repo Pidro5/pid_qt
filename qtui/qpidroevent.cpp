@@ -26,7 +26,7 @@ std::shared_ptr<QPidroResult> QPidroEvent::result() const
 /*
  * QPidroEvent1
  */
-QPidroEvent1::QPidroEvent1(shared_ptr<QPidroResult> sResult, Event event)
+QPidroEvent1::QPidroEvent1(shared_ptr<QPidroResult> sResult, Pidro::Event event)
     : QPidroEvent(sResult)
     , m_event(event)
 {
@@ -42,7 +42,7 @@ bool QPidroEvent1::deliverTo(QPlayer& player)
 /*
  * QPidroEvent2
  */
-QPidroEvent2::QPidroEvent2(shared_ptr<QPidroResult> sResult, Event event, int position)
+QPidroEvent2::QPidroEvent2(shared_ptr<QPidroResult> sResult, Pidro::Event event, int position)
     : QPidroEvent(sResult)
     , m_event(event)
     , m_position(position)
@@ -59,7 +59,7 @@ bool QPidroEvent2::deliverTo(QPlayer& player)
 /*
  * QPidroEvent3
  */
-QPidroEvent3::QPidroEvent3(shared_ptr<QPidroResult> sResult, Event event, int position, int value)
+QPidroEvent3::QPidroEvent3(shared_ptr<QPidroResult> sResult, Pidro::Event event, int position, int value)
     : QPidroEvent(sResult)
     , m_event(event)
     , m_position(position)
@@ -78,9 +78,9 @@ bool QPidroEvent3::deliverTo(QPlayer& player)
  * QPidroEvent4
  */
 QPidroEvent4::QPidroEvent4(shared_ptr<QPidroResult> sResult,
-                           Event event,
+                           Pidro::Event event,
                            int position,
-                           list<Card*>& cards) // TODO: Can be const?
+                           list<Pidro::Card*>& cards) // TODO: Can be const?
     : QPidroEvent(sResult)
     , m_event(event)
     , m_position(position)

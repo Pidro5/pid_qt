@@ -5,6 +5,9 @@
 #include "player.h"
 #include "playengine.h"
 
+namespace Pidro
+{
+  
 class BidEngine;
 
 class PlayerComputer : public Player
@@ -33,5 +36,7 @@ private:
     std::shared_ptr<PlayEngine> m_sPlayMachine;
 
 };
+
+}
 
 #endif // PLAYERCOMPUTER_H

@@ -4,6 +4,7 @@
 #include "stdlib.h"
 
 using namespace std;
+using namespace Pidro;
 
 PlayerConsole::PlayerConsole(const string& name)
     : Player(name)

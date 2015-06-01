@@ -18,10 +18,10 @@ public:
     bool event(QEvent* pEvent);
     bool event(QPidroEvent* pEvent);
 
-    bool inform_event(Event et);
-    bool inform_event(Event et, int position);
-    bool inform_event(Event et, int position, int value);
-    bool inform_event(Event et, int position, std::list<Card *>& cards);
+    bool inform_event(Pidro::Event et);
+    bool inform_event(Pidro::Event et, int position);
+    bool inform_event(Pidro::Event et, int position, int value);
+    bool inform_event(Pidro::Event et, int position, std::list<Pidro::Card*>& cards);
 
 signals:
 

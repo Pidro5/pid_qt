@@ -6,6 +6,9 @@
 
 using namespace std;
 
+namespace Pidro
+{
+  
 Player::Player(const string &name)
     : m_name(name)
     , m_pGame(nullptr)
@@ -85,4 +88,5 @@ Card* Player::play_card(int color)
     return tmp_list_of_cards.front();    // then take the first one even if wrong..
 }
 
+}
 

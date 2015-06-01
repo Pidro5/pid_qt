@@ -7,6 +7,9 @@
 #include "event.h"
 
 
+namespace Pidro
+{
+  
 class RoundRecord
 {
 public:
@@ -238,4 +241,7 @@ inline std::ostream& operator << (std::ostream& out, const Game& x) {
     x.print(out);
     return out;
 }
+
+}
+
 #endif // GAME_H

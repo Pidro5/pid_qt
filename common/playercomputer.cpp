@@ -5,6 +5,9 @@
 
 using namespace std;
 
+namespace Pidro
+{
+  
 PlayerComputer::PlayerComputer(const string& str)
     : Player(str)
 {
@@ -88,3 +91,6 @@ Card* PlayerComputer::play_card(int color){
     //assert(!pC);
     return pC;
 }
+
+}
+

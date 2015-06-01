@@ -1,7 +1,9 @@
 #ifndef ROTATOR_H
 #define ROTATOR_H
 
-
+namespace Pidro
+{
+  
 class Rotator
 {
     int m_my_position;
@@ -24,5 +26,7 @@ public:
     Rotator operator-- (int);  // postfix
 
 };
+
+}
 
 #endif // ROTATOR_H

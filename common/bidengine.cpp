@@ -22,7 +22,8 @@ using namespace std;
 
 //map<string, float> gameSettings;
 
-
+namespace Pidro
+{
 
 BidEngine::BidEngine(Game *game, Player *player, string eaFile, string bidRuleFile)
     : BidEngine(eaFile,bidRuleFile)
@@ -614,4 +615,6 @@ int BidEngine::give_bid(int minimum){
 
 int BidEngine::give_color() const{
     return m_my_color;
+}
+
 }

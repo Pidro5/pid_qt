@@ -6,6 +6,9 @@
 #include "deck_card.h"
 #include "event.h"
 
+namespace Pidro
+{
+  
 class Game;
 
 class Player
@@ -64,5 +67,7 @@ protected:
     int  m_position;
     bool m_rotate_to_south;
 };
+
+}
 
 #endif // PLAYER_H

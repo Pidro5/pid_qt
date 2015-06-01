@@ -5,6 +5,9 @@
 
 using namespace std;
 
+namespace Pidro
+{
+  
 Game::Game()
 {
     //  Players and viewoints
@@ -1680,3 +1683,4 @@ void Game::print(ostream& o) const {
 
 }
 
+}

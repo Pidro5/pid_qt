@@ -5,9 +5,9 @@
 #include <memory>
 #include <QEvent>
 #include <QSemaphore>
+#include "deck_card.h"
 #include "event.h"
 
-class Card;
 class QPlayer;
 class QPidroResult;
 
@@ -42,14 +42,14 @@ private:
 class QPidroEvent1 : public QPidroEvent
 {
 public:
-    QPidroEvent1(std::shared_ptr<QPidroResult> sResult, Event ev);
+    QPidroEvent1(std::shared_ptr<QPidroResult> sResult, Pidro::Event ev);
     QPidroEvent1(const QPidroEvent1&) = delete;
     QPidroEvent1& operator = (const QPidroEvent1&) = delete;
 
     bool deliverTo(QPlayer& pPlayer);
 
 private:
-    Event m_event;
+    Pidro::Event m_event;
 };
 
 /*
@@ -58,14 +58,14 @@ private:
 class QPidroEvent2 : public QPidroEvent
 {
 public:
-    QPidroEvent2(std::shared_ptr<QPidroResult> sResult, Event ev, int position);
+    QPidroEvent2(std::shared_ptr<QPidroResult> sResult, Pidro::Event ev, int position);
     QPidroEvent2(const QPidroEvent2&) = delete;
     QPidroEvent2& operator = (const QPidroEvent2&) = delete;
 
     bool deliverTo(QPlayer& pPlayer);
 
 private:
-    Event m_event;
+    Pidro::Event m_event;
     int m_position;
 };
 
@@ -75,14 +75,14 @@ private:
 class QPidroEvent3 : public QPidroEvent
 {
 public:
-    QPidroEvent3(std::shared_ptr<QPidroResult> sResult, Event ev, int position, int value);
+    QPidroEvent3(std::shared_ptr<QPidroResult> sResult, Pidro::Event ev, int position, int value);
     QPidroEvent3(const QPidroEvent3&) = delete;
     QPidroEvent3& operator = (const QPidroEvent3&) = delete;
 
     bool deliverTo(QPlayer& pPlayer);
 
 private:
-    Event m_event;
+    Pidro::Event m_event;
     int m_position;
     int m_value;
 };
@@ -93,16 +93,19 @@ private:
 class QPidroEvent4 : public QPidroEvent
 {
 public:
-    QPidroEvent4(std::shared_ptr<QPidroResult> sResult, Event ev, int position, std::list<Card*>& cards);
+    QPidroEvent4(std::shared_ptr<QPidroResult> sResult,
+                 Pidro::Event ev,
+                 int position,
+                 std::list<Pidro::Card*>& cards);
     QPidroEvent4(const QPidroEvent4&) = delete;
     QPidroEvent4& operator = (const QPidroEvent4&) = delete;
 
     bool deliverTo(QPlayer& pPlayer);
 
 private:
-    Event m_event;
+    Pidro::Event m_event;
     int m_position;
-    std::list<Card*> m_cards; // TODO: Could be reference.
+    std::list<Pidro::Card*> m_cards; // TODO: Could be reference.
 };
 
 #endif // QPIDROEVENT_H

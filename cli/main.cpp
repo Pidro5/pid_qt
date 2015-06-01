@@ -16,11 +16,11 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    Game g;
-    PlayerComputer p1("Alice");
+    Pidro::Game g;
+    Pidro::PlayerComputer p1("Alice");
     PlayerConsole p2("Bob");
-    PlayerComputer p3("Cedric");
-    PlayerComputer p4("Diane");
+    Pidro::PlayerComputer p3("Cedric");
+    Pidro::PlayerComputer p4("Diane");
 
 
     g.register_with_game(&p1);

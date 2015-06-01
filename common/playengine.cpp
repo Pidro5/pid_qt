@@ -9,6 +9,9 @@ extern "C" {
 
 using namespace std;
 
+namespace Pidro
+{
+  
 PlayEngine::PlayEngine(Game *game, Player *player, string playRuleFile)
 {
     m_theGame = game;
@@ -763,5 +766,7 @@ void PlayData::push_to_lua(lua_State *m_L){
 
     */
      //   cin.get();
+}
+
 }
 
