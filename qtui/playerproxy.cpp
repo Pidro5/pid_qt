@@ -1,11 +1,16 @@
 #include "playerproxy.h"
 #include <cassert>
 #include <iostream>
+#include <QCoreApplication>
+#include "qplayer.h"
+#include "qpidroevent.h"
+#include "qpidroresult.h"
 
 using namespace std;
 
-PlayerProxy::PlayerProxy(const std::string& name)
+PlayerProxy::PlayerProxy(const std::string& name, QPlayer* pPlayer)
   : Player(name)
+  , m_pPlayer(pPlayer)
 {
 }
 
@@ -13,98 +18,50 @@ PlayerProxy::~PlayerProxy()
 {
 }
 
-bool PlayerProxy::inform_event(Event et)
+bool PlayerProxy::inform_event(Event ev)
 {
-    LOG_D(et);
+    LOG_D(ev);
 
-    switch (et) {
-    case Event::GAME_INIT:
-        break;
+    shared_ptr<QPidroResult> sResult(new QPidroResult);
 
-    case Event::BEGIN_PLAY:
-        break;
-
-    case Event::PLAY_ROUND_FINISH:
-        break;
-
-    case Event::ROUND_OVER:
-        break;
-
-    case Event::GAME_OVER:
-        break;
-
-    default:
-        assert(!true);
-    }
-
-    return true;
+    return deliverEvent(new QPidroEvent1(sResult, ev));
 }
 
-bool PlayerProxy::inform_event(Event et, int position)
+bool PlayerProxy::inform_event(Event ev, int position)
 {
-    LOG_D(et << " " << position);
+    LOG_D(ev << " " << position);
 
-    switch (et) {
-    case Event::ROUND_INIT:
-        break;
+    shared_ptr<QPidroResult> sResult(new QPidroResult);
 
-    case Event::ASK_FOR_BID:
-        break;
-
-    default:
-        assert(!true);
-    }
-
-    return true;
+    return deliverEvent(new QPidroEvent2(sResult, ev, position));
 }
 
-bool PlayerProxy::inform_event(Event et, int position, int value)
+bool PlayerProxy::inform_event(Event ev, int position, int value)
 {
-    LOG_D(et << " " << position << " " << value);
+    LOG_D(ev << " " << position << " " << value);
 
-    switch (et) {
-    case Event::DEAL_CARD:
-        break;
+    shared_ptr<QPidroResult> sResult(new QPidroResult);
 
-    case Event::BID_PLACED:
-        break;
+    return deliverEvent(new QPidroEvent3(sResult, ev, position, value));
 
-    case Event::GOT_BID:
-        break;
-
-    case Event::COLOR_SELECTED:
-        break;
-
-    default:
-        assert(!true);
-    }
-
-    return true;
 }
 
-bool PlayerProxy::inform_event(Event et, int position, std::list<Card *>& /*cards*/)
+bool PlayerProxy::inform_event(Event ev, int position, std::list<Card*>& cards)
 {
-    LOG_D(et << " " << position << " " << "...");
+    LOG_D(ev << " " << position << " " << "...");
 
-    switch (et) {
-    case Event::DEAL_CARD:
-        break;
+    shared_ptr<QPidroResult> sResult(new QPidroResult);
 
-    case Event::PUT_CARDS_ON_TABLE:
-        break;
+    return deliverEvent(new QPidroEvent4(sResult, ev, position, cards));
+}
 
-    case Event::KILL_CARD:
-        break;
+bool PlayerProxy::deliverEvent(QPidroEvent* pEvent)
+{
+    shared_ptr<QPidroResult> sResult = pEvent->result();
 
-    case Event::PLAY_CARD:
-        break;
+    QCoreApplication::postEvent(m_pPlayer, pEvent);
 
-    case Event::PLAYER_COLD:
-        break;
+    sResult->wait();
 
-    default:
-        assert(!true);
-    }
-
-    return true;
+    return sResult->code();
 }

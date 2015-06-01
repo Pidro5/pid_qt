@@ -5,21 +5,23 @@
 #include <string>
 #include "player.h"
 
-class QPlayer : public QObject,
-                private Player
+class QPidroEvent;
+
+class QPlayer : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit QPlayer(const std::string& name,
-                     QObject* pParent = 0);
+    explicit QPlayer(QObject* pParent = 0);
     ~QPlayer();
 
-private:
-    bool inform_event(Event et) override;
-    bool inform_event(Event et, int position) override;
-    bool inform_event(Event et, int position, int value) override;
-    bool inform_event(Event et, int position, std::list<Card *>& cards) override;
+    bool event(QEvent* pEvent);
+    bool event(QPidroEvent* pEvent);
+
+    bool inform_event(Event et);
+    bool inform_event(Event et, int position);
+    bool inform_event(Event et, int position, int value);
+    bool inform_event(Event et, int position, std::list<Card *>& cards);
 
 signals:
 

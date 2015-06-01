@@ -5,7 +5,8 @@
 #include "playerproxy.h"
 
 
-GameThread::GameThread()
+GameThread::GameThread(QPlayer* pPlayer)
+    : m_pPlayer(pPlayer)
 {
 }
 
@@ -17,12 +18,12 @@ void GameThread::run()
     PlayerComputer p1("Alice");
     PlayerComputer p2("Carlos");
     PlayerComputer p3("Bob");
-    PlayerProxy p4("Victor");
+    PlayerProxy p4("Victor", m_pPlayer);
 
     g.register_with_game(&p1);
-    g.register_with_game(&p2,true);
+    g.register_with_game(&p2);
     g.register_with_game(&p3);
-    g.register_with_game(&p4);
+    g.register_with_game(&p4,true);
 
     g.run_game();
 }

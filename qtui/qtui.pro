@@ -7,6 +7,10 @@ QT += qml quick widgets
 INCLUDEPATH += $$PWD/..
 INCLUDEPATH += $$PWD/../common
 
+HEADERS += gamethread.h
+HEADERS += playerproxy.h
+HEADERS += qpidroevent.h
+HEADERS += qpidroresult.h
 HEADERS += qplayer.h
 
 SOURCES += ../common/bidengine.cpp
@@ -18,9 +22,11 @@ SOURCES += ../common/player.cpp
 SOURCES += ../common/playengine.cpp
 SOURCES += ../common/playercomputer.cpp
 SOURCES += ../common/rotator.cpp
-SOURCES += main.cpp
 SOURCES += gamethread.cpp
+SOURCES += main.cpp
 SOURCES += playerproxy.cpp
+SOURCES += qpidroevent.cpp
+SOURCES += qpidroresult.cpp
 SOURCES += qplayer.cpp
 
 RESOURCES += qml.qrc
