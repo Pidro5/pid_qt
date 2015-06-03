@@ -3,8 +3,8 @@
 
 #include <string>
 #include <pidro/player.h>
+#include "qpidroevent.h"
 
-class QPidroEvent;
 class QPlayer;
 
 class PlayerProxy : public Pidro::Player
@@ -21,7 +21,13 @@ private:
     bool inform_event(Pidro::Event et, int position, int value) override;
     bool inform_event(Pidro::Event et, int position, std::list<Pidro::Card *>& cards) override;
 
-    bool deliverEvent(QPidroEvent* pEvent);
+    int give_bid(int minimum);
+    int give_color();
+    Pidro::Card* play_card(int color);
+
+    bool deliverEvent(QPidroEventT<bool>* pEvent);
+    int deliverEvent(QPidroEventT<int>* pEvent);
+    Pidro::Card* deliverEvent(QPidroEventT<Pidro::Card*>* pEvent);
 
 private:
     QPlayer* m_pPlayer;

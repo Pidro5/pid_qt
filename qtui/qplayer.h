@@ -23,6 +23,10 @@ public:
     bool inform_event(Pidro::Event et, int position, int value);
     bool inform_event(Pidro::Event et, int position, std::list<Pidro::Card*>& cards);
 
+    int give_bid(int minimum);
+    int give_color();
+    Pidro::Card* play_card(int color);
+
 signals:
 
 public slots:

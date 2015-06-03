@@ -22,27 +22,27 @@ bool PlayerProxy::inform_event(Pidro::Event ev)
 {
     LOG_D(ev);
 
-    shared_ptr<QPidroResult> sResult(new QPidroResult);
+    shared_ptr<QPidroResultBool> sResult(new QPidroResultBool);
 
-    return deliverEvent(new QPidroEvent1(sResult, ev));
+    return deliverEvent(new QPidroInfoEvent1(sResult, ev));
 }
 
 bool PlayerProxy::inform_event(Pidro::Event ev, int position)
 {
     LOG_D(ev << " " << position);
 
-    shared_ptr<QPidroResult> sResult(new QPidroResult);
+    shared_ptr<QPidroResultBool> sResult(new QPidroResultBool);
 
-    return deliverEvent(new QPidroEvent2(sResult, ev, position));
+    return deliverEvent(new QPidroInfoEvent2(sResult, ev, position));
 }
 
 bool PlayerProxy::inform_event(Pidro::Event ev, int position, int value)
 {
     LOG_D(ev << " " << position << " " << value);
 
-    shared_ptr<QPidroResult> sResult(new QPidroResult);
+    shared_ptr<QPidroResultBool> sResult(new QPidroResultBool);
 
-    return deliverEvent(new QPidroEvent3(sResult, ev, position, value));
+    return deliverEvent(new QPidroInfoEvent3(sResult, ev, position, value));
 
 }
 
@@ -50,18 +50,64 @@ bool PlayerProxy::inform_event(Pidro::Event ev, int position, std::list<Pidro::C
 {
     LOG_D(ev << " " << position << " " << "...");
 
-    shared_ptr<QPidroResult> sResult(new QPidroResult);
+    shared_ptr<QPidroResultBool> sResult(new QPidroResultBool);
 
-    return deliverEvent(new QPidroEvent4(sResult, ev, position, cards));
+    return deliverEvent(new QPidroInfoEvent4(sResult, ev, position, cards));
 }
 
-bool PlayerProxy::deliverEvent(QPidroEvent* pEvent)
+int PlayerProxy::give_bid(int minimum)
 {
-    shared_ptr<QPidroResult> sResult = pEvent->result();
+    shared_ptr<QPidroResultInt> sResult(new QPidroResultInt);
+
+    /*return*/ deliverEvent(new QPidroCommandGiveBid(sResult, minimum));
+    return Player::give_bid(minimum);
+}
+
+int PlayerProxy::give_color()
+{
+    shared_ptr<QPidroResultInt> sResult(new QPidroResultInt);
+
+    /*return*/ deliverEvent(new QPidroCommandGiveColor(sResult));
+    return Player::give_color();
+}
+
+Pidro::Card* PlayerProxy::play_card(int color)
+{
+    shared_ptr<QPidroResultCard> sResult(new QPidroResultCard);
+
+    /*return*/ deliverEvent(new QPidroCommandPlayCard(sResult, color));
+    return Player::play_card(color);
+}
+
+bool PlayerProxy::deliverEvent(QPidroEventT<bool>* pEvent)
+{
+    shared_ptr<QPidroResultBool> sResult = pEvent->result();
 
     QCoreApplication::postEvent(m_pPlayer, pEvent);
 
     sResult->wait();
 
-    return sResult->code();
+    return sResult->value();
+}
+
+int PlayerProxy::deliverEvent(QPidroEventT<int>* pEvent)
+{
+    shared_ptr<QPidroResultInt> sResult = pEvent->result();
+
+    QCoreApplication::postEvent(m_pPlayer, pEvent);
+
+    sResult->wait();
+
+    return sResult->value();
+}
+
+Pidro::Card* PlayerProxy::deliverEvent(QPidroEventT<Pidro::Card*>* pEvent)
+{
+    shared_ptr<QPidroResultCard> sResult = pEvent->result();
+
+    QCoreApplication::postEvent(m_pPlayer, pEvent);
+
+    sResult->wait();
+
+    return sResult->value();
 }

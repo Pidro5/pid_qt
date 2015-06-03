@@ -8,9 +8,8 @@ using namespace std;
 /*
  * QPidroEvent
  */
-QPidroEvent::QPidroEvent(shared_ptr<QPidroResult> sResult)
+QPidroEvent::QPidroEvent()
     : QEvent(static_cast<QEvent::Type>(QPidroEvent::Id))
-    , m_sResult(sResult)
 {
 }
 
@@ -18,21 +17,29 @@ QPidroEvent::~QPidroEvent()
 {
 }
 
-std::shared_ptr<QPidroResult> QPidroEvent::result() const
-{
-    return m_sResult;
-}
-
 /*
- * QPidroEvent1
+ * QPidroInfoEvent
  */
-QPidroEvent1::QPidroEvent1(shared_ptr<QPidroResult> sResult, Pidro::Event event)
-    : QPidroEvent(sResult)
+QPidroInfoEvent::QPidroInfoEvent(std::shared_ptr<QPidroResultBool> sResult, Pidro::Event event)
+    : QPidroEventT<bool>(sResult)
     , m_event(event)
 {
 }
 
-bool QPidroEvent1::deliverTo(QPlayer& player)
+void QPidroInfoEvent::deliverTo(QPlayer& player)
+{
+    result()->setValue(doDeliverTo(player));
+}
+
+/*
+ * QPidroInfoEvent1
+ */
+QPidroInfoEvent1::QPidroInfoEvent1(shared_ptr<QPidroResultBool> sResult, Pidro::Event event)
+    : QPidroInfoEvent(sResult, event)
+{
+}
+
+bool QPidroInfoEvent1::doDeliverTo(QPlayer& player)
 {
     LOG_D("Now should deliver!");
 
@@ -40,16 +47,15 @@ bool QPidroEvent1::deliverTo(QPlayer& player)
 }
 
 /*
- * QPidroEvent2
+ * QPidroInfoEvent2
  */
-QPidroEvent2::QPidroEvent2(shared_ptr<QPidroResult> sResult, Pidro::Event event, int position)
-    : QPidroEvent(sResult)
-    , m_event(event)
+QPidroInfoEvent2::QPidroInfoEvent2(shared_ptr<QPidroResultBool> sResult, Pidro::Event event, int position)
+    : QPidroInfoEvent(sResult, event)
     , m_position(position)
 {
 }
 
-bool QPidroEvent2::deliverTo(QPlayer& player)
+bool QPidroInfoEvent2::doDeliverTo(QPlayer& player)
 {
     LOG_D("Now should deliver!");
 
@@ -57,17 +63,17 @@ bool QPidroEvent2::deliverTo(QPlayer& player)
 }
 
 /*
- * QPidroEvent3
+ * QPidroInfoEvent3
  */
-QPidroEvent3::QPidroEvent3(shared_ptr<QPidroResult> sResult, Pidro::Event event, int position, int value)
-    : QPidroEvent(sResult)
-    , m_event(event)
+QPidroInfoEvent3::QPidroInfoEvent3(shared_ptr<QPidroResultBool> sResult,
+                                   Pidro::Event event, int position, int value)
+    : QPidroInfoEvent(sResult, event)
     , m_position(position)
     , m_value(value)
 {
 }
 
-bool QPidroEvent3::deliverTo(QPlayer& player)
+bool QPidroInfoEvent3::doDeliverTo(QPlayer& player)
 {
     LOG_D("Now should deliver!");
 
@@ -75,24 +81,64 @@ bool QPidroEvent3::deliverTo(QPlayer& player)
 }
 
 /*
- * QPidroEvent4
+ * QPidroInfoEvent4
  */
-QPidroEvent4::QPidroEvent4(shared_ptr<QPidroResult> sResult,
-                           Pidro::Event event,
-                           int position,
-                           list<Pidro::Card*>& cards) // TODO: Can be const?
-    : QPidroEvent(sResult)
-    , m_event(event)
+QPidroInfoEvent4::QPidroInfoEvent4(shared_ptr<QPidroResultBool> sResult,
+                                   Pidro::Event event,
+                                   int position,
+                                   list<Pidro::Card*>& cards) // TODO: Can be const?
+    : QPidroInfoEvent(sResult, event)
     , m_position(position)
     , m_cards(cards)
 {
 }
 
-bool QPidroEvent4::deliverTo(QPlayer& player)
+bool QPidroInfoEvent4::doDeliverTo(QPlayer& player)
 {
     LOG_D("Now should deliver!");
 
     return player.inform_event(m_event, m_position, m_cards);
 }
 
+/*
+ * QPidroCommandGiveBid
+ */
+QPidroCommandGiveBid::QPidroCommandGiveBid(std::shared_ptr<QPidroResultInt> sResult,
+                                           int minimum)
+    : QPidroEventT<int>(sResult)
+    , m_minimum(minimum)
+{
+}
 
+void QPidroCommandGiveBid::deliverTo(QPlayer& player)
+{
+    result()->setValue(player.give_bid(m_minimum));
+}
+
+/*
+ * QPidroCommandGiveColor
+ */
+QPidroCommandGiveColor::QPidroCommandGiveColor(std::shared_ptr<QPidroResultInt> sResult)
+    : QPidroEventT<int>(sResult)
+{
+}
+
+void QPidroCommandGiveColor::deliverTo(QPlayer& player)
+{
+    result()->setValue(player.give_color());
+}
+
+/*
+ * QPidroCommandPlayCard
+ */
+QPidroCommandPlayCard::QPidroCommandPlayCard(std::shared_ptr<QPidroResultCard> sResult,
+                                             int color)
+    : QPidroEventT<Pidro::Card*>(sResult)
+    , m_color(color)
+{
+}
+
+void QPidroCommandPlayCard::deliverTo(QPlayer& player)
+{
+    result()->setValue(player.play_card(m_color));
+}

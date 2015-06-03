@@ -32,7 +32,7 @@ bool QPlayer::event(QEvent *pEvent)
 
 bool QPlayer::event(QPidroEvent *pEvent)
 {
-    pEvent->result()->setCode(pEvent->deliverTo(*this));
+    pEvent->deliverTo(*this);
 
     return true;
 }
@@ -131,4 +131,22 @@ bool QPlayer::inform_event(Pidro::Event ev, int position, std::list<Pidro::Card*
     }
 
     return true;
+}
+
+int QPlayer::give_bid(int minimum)
+{
+    LOG_D("give_bid");
+    return 0;
+}
+
+int QPlayer::give_color()
+{
+    LOG_D("give_color");
+    return 0;
+}
+
+Pidro::Card* QPlayer::play_card(int color)
+{
+    LOG_D("play_card");
+    return 0;
 }
