@@ -1,8 +1,8 @@
-#ifndef PLAYENGINE_H
-#define PLAYENGINE_H
+#ifndef PIDRO_PLAYENGINE_H
+#define PIDRO_PLAYENGINE_H
 
-#include "game.h"
-#include "player.h"
+#include <pidro/game.h>
+#include <pidro/player.h>
 
 extern "C" {
 #include "luah/lua.h"        //Lua main library (lua_*)

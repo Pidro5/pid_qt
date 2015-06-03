@@ -1,7 +1,7 @@
 #ifndef PLAYERCONSOLE_H
 #define PLAYERCONSOLE_H
 
-#include "common/player.h"
+#include <pidro/player.h>
 
 class PlayerConsole : public Pidro::Player
 {

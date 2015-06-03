@@ -2,7 +2,7 @@
 #define PLAYERPROXY_H
 
 #include <string>
-#include "player.h"
+#include <pidro/player.h>
 
 class QPidroEvent;
 class QPlayer;

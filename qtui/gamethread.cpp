@@ -1,7 +1,7 @@
 #include "gamethread.h"
-#include <game.h>
-#include <log.h>
-#include <playercomputer.h>
+#include <pidro/game.h>
+#include <pidro/log.h>
+#include <pidro/playercomputer.h>
 #include "playerproxy.h"
 
 

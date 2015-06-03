@@ -1,5 +1,5 @@
-#ifndef EVENT_H
-#define EVENT_H
+#ifndef PIDRO_EVENT_H
+#define PIDRO_EVENT_H
 
 #include <iostream>
 

@@ -15,6 +15,27 @@ CONFIG   += c++11
 
 TEMPLATE = app
 
+INCLUDEPATH += $$PWD/..
+INCLUDEPATH += $$PWD/../common
+INCLUDEPATH += $$PWD/../lualib
+               
+DEPENDPATH += $$INCLUDEPATH
+
+HEADERS += playerconsole.h
+HEADERS += ../common/pidro/playengine.h
+HEADERS += ../common/pidro/deck_card.h
+HEADERS += ../common/pidro/event.h
+HEADERS += ../common/pidro/game.h
+HEADERS += ../common/pidro/log.h
+HEADERS += ../common/pidro/player.h
+HEADERS += ../common/pidro/playercomputer.h
+HEADERS += ../common/pidro/rotator.h
+HEADERS += ../common/pidro/bidengine.h
+HEADERS += ../luah/lauxlib.h
+HEADERS += ../luah/lua.h
+HEADERS += ../luah/lua.hpp
+HEADERS += ../luah/luaconf.h
+HEADERS += ../luah/lualib.h
 
 SOURCES += main.cpp
 SOURCES += playerconsole.cpp
@@ -28,27 +49,6 @@ SOURCES += ../common/playercomputer.cpp
 SOURCES += ../common/rotator.cpp
 SOURCES += ../common/bidengine.cpp
 
-HEADERS += playerconsole.h \
-    ../common/playengine.h
-HEADERS += ../common/deck_card.h
-HEADERS += ../common/event.h
-HEADERS += ../common/game.h
-HEADERS += ../common/log.h
-HEADERS += ../common/player.h
-HEADERS += ../common/playercomputer.h
-HEADERS += ../common/rotator.h
-HEADERS += ../common/bidengine.h
-HEADERS += ../luah/lauxlib.h
-HEADERS += ../luah/lua.h
-HEADERS += ../luah/lua.hpp
-HEADERS += ../luah/luaconf.h
-HEADERS += ../luah/lualib.h
-
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../lualib/ -llua51
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../lualib/ -llua51
 else:unix: LIBS += -L$$PWD/../lualib/ -llua51
-
-INCLUDEPATH += $$PWD/..
-INCLUDEPATH += $$PWD/../lualib
-               
-DEPENDPATH += $$INCLUDEPATH

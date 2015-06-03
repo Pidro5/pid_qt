@@ -1,10 +1,10 @@
-#ifndef GAME_H
-#define GAME_H
+#ifndef PIDRO_GAME_H
+#define PIDRO_GAME_H
 
-#include "player.h"
-#include "deck_card.h"
-#include "rotator.h"
-#include "event.h"
+#include <pidro/player.h>
+#include <pidro/deck_card.h>
+#include <pidro/rotator.h>
+#include <pidro/event.h>
 
 
 namespace Pidro

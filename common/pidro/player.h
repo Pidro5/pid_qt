@@ -1,10 +1,10 @@
-#ifndef PLAYER_H
-#define PLAYER_H
+#ifndef PIDRO_PLAYER_H
+#define PIDRO_PLAYER_H
 
 #include <iostream>
-#include "log.h"
-#include "deck_card.h"
-#include "event.h"
+#include <pidro/log.h>
+#include <pidro/deck_card.h>
+#include <pidro/event.h>
 
 namespace Pidro
 {

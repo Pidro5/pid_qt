@@ -1,7 +1,7 @@
-#include "playercomputer.h"
+#include <pidro/playercomputer.h>
 #include <cassert>
-#include "bidengine.h"
-#include "playengine.h"
+#include <pidro/bidengine.h>
+#include <pidro/playengine.h>
 
 using namespace std;
 

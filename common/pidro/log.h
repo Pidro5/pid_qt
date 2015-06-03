@@ -1,5 +1,5 @@
-#ifndef LOG_H
-#define LOG_H
+#ifndef PIDRO_LOG_H
+#define PIDRO_LOG_H
 
 #include <string>
 #include <cstdlib>

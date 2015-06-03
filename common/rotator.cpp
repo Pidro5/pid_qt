@@ -1,4 +1,4 @@
-#include "rotator.h"
+#include <pidro/rotator.h>
 
 namespace Pidro
 {

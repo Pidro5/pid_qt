@@ -1,5 +1,5 @@
-#ifndef DECK_CARD_H
-#define DECK_CARD_H
+#ifndef PIDRO_DECK_CARD_H
+#define PIDRO_DECK_CARD_H
 
 #include <iostream>
 #include <list>

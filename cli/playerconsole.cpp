@@ -1,7 +1,7 @@
-#include "cli/playerconsole.h"
-#include "common/game.h"
-#include "common/log.h"
-#include "stdlib.h"
+#include "playerconsole.h"
+#include <stdlib.h>
+#include <pidro/game.h>
+#include <pidro/log.h>
 
 using namespace std;
 using namespace Pidro;

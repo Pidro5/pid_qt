@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <string>
-#include "player.h"
+#include <pidro/player.h>
 
 class QPidroEvent;
 

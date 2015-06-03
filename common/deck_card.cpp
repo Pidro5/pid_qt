@@ -1,10 +1,10 @@
+#include <pidro/deck_card.h>
 #include <cassert>
 #include <time.h>
 #include <iostream>
 #include <cstdlib>
 #include <stdexcept>
-#include "deck_card.h"
-#include "log.h"
+#include <pidro/log.h>
 
 
 using namespace std;

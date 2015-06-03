@@ -5,8 +5,8 @@
 #include <memory>
 #include <QEvent>
 #include <QSemaphore>
-#include "deck_card.h"
-#include "event.h"
+#include <pidro/deck_card.h>
+#include <pidro/event.h>
 
 class QPlayer;
 class QPidroResult;

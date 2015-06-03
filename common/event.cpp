@@ -1,4 +1,4 @@
-#include "event.h"
+#include <pidro/event.h>
 #include <cassert>
 
 using namespace std;

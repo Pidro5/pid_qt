@@ -1,9 +1,9 @@
-#ifndef PLAYERCOMPUTER_H
-#define PLAYERCOMPUTER_H
+#ifndef PIDRO_PLAYERCOMPUTER_H
+#define PIDRO_PLAYERCOMPUTER_H
 
 #include <memory>
-#include "player.h"
-#include "playengine.h"
+#include <pidro/player.h>
+#include <pidro/playengine.h>
 
 namespace Pidro
 {

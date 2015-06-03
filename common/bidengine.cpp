@@ -1,3 +1,4 @@
+#include <pidro/bidengine.h>
 #include <cassert>
 #include <string.h>
 #include <stdlib.h>
@@ -5,12 +6,9 @@
 #include <algorithm>
 #include <vector>
 #include <cstring>
-
-
-#include "bidengine.h"
-#include "game.h"
-#include "player.h"
-#include "deck_card.h"
+#include <pidro/deck_card.h>
+#include <pidro/game.h>
+#include <pidro/player.h>
 
 extern "C" {
 #include "luah/lua.h"        //Lua main library (lua_*)

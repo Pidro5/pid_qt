@@ -1,5 +1,5 @@
-#ifndef ROTATOR_H
-#define ROTATOR_H
+#ifndef PIDRO_ROTATOR_H
+#define PIDRO_ROTATOR_H
 
 namespace Pidro
 {

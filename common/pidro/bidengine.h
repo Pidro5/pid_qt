@@ -1,5 +1,5 @@
-#ifndef BIDENGINE_H
-#define BIDENGINE_H
+#ifndef PIDRO_BIDENGINE_H
+#define PIDRO_BIDENGINE_H
 
 #include <iostream>
 #include <fstream>
@@ -9,8 +9,8 @@
 #include <map>
 #include <vector>
 
-#include "game.h"
-#include "player.h"
+#include <pidro/game.h>
+#include <pidro/player.h>
 
 extern "C" {
 #include "luah/lua.h"        //Lua main library (lua_*)

@@ -1,7 +1,7 @@
-#include <stdexcept>
-#include "game.h"
-#include "log.h"
+#include <pidro/game.h>
 #include <cassert>
+#include <stdexcept>
+#include <pidro/log.h>
 
 using namespace std;
 

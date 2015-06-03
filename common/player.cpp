@@ -1,8 +1,8 @@
+#include <pidro/player.h>
 #include <cstdlib>
 #include <iostream>
-#include "log.h"
-#include "player.h"
-#include "game.h"
+#include <pidro/log.h>
+#include <pidro/game.h>
 
 using namespace std;
 

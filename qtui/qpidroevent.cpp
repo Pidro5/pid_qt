@@ -1,5 +1,5 @@
 #include "qpidroevent.h"
-#include <log.h>
+#include <pidro/log.h>
 #include "qpidroresult.h"
 #include "qplayer.h"
 

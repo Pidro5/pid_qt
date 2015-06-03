@@ -1,4 +1,4 @@
-#include "playengine.h"
+#include <pidro/playengine.h>
 #include <string.h>
 
 extern "C" {
