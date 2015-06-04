@@ -15,8 +15,8 @@ namespace Pidro
 Card::Card(int suit, int value)
 {
     m_card_points =0;
-    m_mysuit = suit;
-    m_myvalue = value;
+    m_suit = suit;
+    m_value = value;
 
     switch (value) {
     case 14:
@@ -34,16 +34,16 @@ Card::Card(int suit, int value)
     }
 
     // which card is higher A=14,K=13,better Pidro=5, lower pidro=4, (4,3,2= 3,2,1)
-    m_myranking = value;
+    m_ranking = value;
 
     if (value <= 4){
-        m_myranking = value - 1; //(cards 4,3,2 =  ranking 3,2,1)
+        m_ranking = value - 1; //(cards 4,3,2 =  ranking 3,2,1)
     }
 }
 
 string Card::card_face_value() const
 {
-    switch (m_myvalue)
+    switch (m_value)
     {
     case 11:
         return "J";
@@ -62,14 +62,14 @@ string Card::card_face_value() const
 
     default:
         // TODO: Add assert?
-        return std::to_string(m_myvalue);
+        return std::to_string(m_value);
     }
 }
 
 string Card::card_suit() const
 {
     // 0..3, 0-Spades, 1-Clubs, 2-Hearts, 3-Diamonds
-    switch (m_mysuit) {
+    switch (m_suit) {
     case 0:
         return "Spades";
 
@@ -91,7 +91,7 @@ string Card::card_suit() const
 string Card::card_suit_short() const
 {
     // 0..3, 0-Spades, 1-Clubs, 2-Hearts, 3-Diamonds
-    switch (m_mysuit) {
+    switch (m_suit) {
     case 0:
         return "SP";
 
@@ -115,23 +115,23 @@ int Card::card_ranking(int suit) const
 
     int ret_val = 0;
 
-    if (m_myvalue != 5){
-        if (m_mysuit == suit) {
-            ret_val = m_myranking;
+    if (m_value != 5){
+        if (m_suit == suit) {
+            ret_val = m_ranking;
         } else {
             ret_val = 0;
         }
-    } else if(m_mysuit == suit){
+    } else if(m_suit == suit){
         ret_val = 5;
     } else {
         // 0..3, 0-Spades, 1-Clubs, 2-Hearts, 3-Diamonds
-        if (m_mysuit == 0 and suit == 1) {
+        if (m_suit == 0 and suit == 1) {
             ret_val = 4;
-        } else if (m_mysuit == 1 and suit == 0) {
+        } else if (m_suit == 1 and suit == 0) {
             ret_val = 4;
-        } else if (m_mysuit == 2 and suit == 3) {
+        } else if (m_suit == 2 and suit == 3) {
             ret_val = 4;
-        } else if (m_mysuit == 3 and suit == 2) {
+        } else if (m_suit == 3 and suit == 2) {
             ret_val = 4;
         }
     }
@@ -144,23 +144,23 @@ string Card::card_ranking_name(int suit) const
 {
     string ret_val = "";
 
-    if (m_myvalue != 5) {
-        if (m_mysuit == suit) {
+    if (m_value != 5) {
+        if (m_suit == suit) {
             ret_val = this->card_face_value();
         } else {
             ret_val = "";
         }
-    } else if(m_mysuit == suit){
+    } else if(m_suit == suit){
         ret_val = "V";
     } else {
         // 0..3, 0-Spades, 1-Clubs, 2-Hearts, 3-Diamonds
-        if (m_mysuit == 0 and suit == 1) {
+        if (m_suit == 0 and suit == 1) {
             ret_val = "v";
-        } else if (m_mysuit == 1 and suit == 0) {
+        } else if (m_suit == 1 and suit == 0) {
             ret_val = "v";
-        } else if (m_mysuit == 2 and suit == 3) {
+        } else if (m_suit == 2 and suit == 3) {
             ret_val = "v";
-        } else if (m_mysuit == 3 and suit == 2) {
+        } else if (m_suit == 3 and suit == 2) {
             ret_val = "v";
         }
     }

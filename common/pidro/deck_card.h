@@ -10,9 +10,9 @@ namespace Pidro
 //  CARD ==============================================================================
 
 class Card {
-    int m_myvalue;  // 2.. 14 (2,3,... 10,J,Q,K,A=14)
-    int m_mysuit;  // 0..3, 0-Spades, 1-Clubs, 2-Hearts, 3-Diamonds
-    int m_myranking; // which card is higher A=14,K=13,better Pidro=5, lower pidro=4, (4,3,2= 3,2,1)
+    int m_value;  // 2.. 14 (2,3,... 10,J,Q,K,A=14)
+    int m_suit;  // 0..3, 0-Spades, 1-Clubs, 2-Hearts, 3-Diamonds
+    int m_ranking; // which card is higher A=14,K=13,better Pidro=5, lower pidro=4, (4,3,2= 3,2,1)
 
     // Need something for sort order of the cards??
 
