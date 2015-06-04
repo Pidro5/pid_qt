@@ -1,6 +1,7 @@
 #include "qplayer.h"
 #include <cassert>
 #include <iostream>
+#include <QtQml>
 #include "qpidroevent.h"
 #include "qpidroresult.h"
 
@@ -13,6 +14,13 @@ QPlayer::QPlayer(QObject* pParent)
 
 QPlayer::~QPlayer()
 {
+}
+
+//static
+void QPlayer::declareQML()
+{
+    qmlRegisterUncreatableType<QPlayer>("pidro.components", 1, 0, "Player",
+                                        QString("Player cannot be instantiated from QML"));
 }
 
 bool QPlayer::event(QEvent *pEvent)

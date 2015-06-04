@@ -41,8 +41,6 @@ QPidroInfoEvent1::QPidroInfoEvent1(shared_ptr<QPidroResultBool> sResult, Pidro::
 
 bool QPidroInfoEvent1::doDeliverTo(QPlayer& player)
 {
-    LOG_D("Now should deliver!");
-
     return player.inform_event(m_event);
 }
 
@@ -57,8 +55,6 @@ QPidroInfoEvent2::QPidroInfoEvent2(shared_ptr<QPidroResultBool> sResult, Pidro::
 
 bool QPidroInfoEvent2::doDeliverTo(QPlayer& player)
 {
-    LOG_D("Now should deliver!");
-
     return player.inform_event(m_event, m_position);
 }
 
@@ -75,8 +71,6 @@ QPidroInfoEvent3::QPidroInfoEvent3(shared_ptr<QPidroResultBool> sResult,
 
 bool QPidroInfoEvent3::doDeliverTo(QPlayer& player)
 {
-    LOG_D("Now should deliver!");
-
     return player.inform_event(m_event, m_position, m_value);
 }
 
@@ -95,8 +89,6 @@ QPidroInfoEvent4::QPidroInfoEvent4(shared_ptr<QPidroResultBool> sResult,
 
 bool QPidroInfoEvent4::doDeliverTo(QPlayer& player)
 {
-    LOG_D("Now should deliver!");
-
     return player.inform_event(m_event, m_position, m_cards);
 }
 

@@ -1,6 +1,7 @@
 #include <QApplication>
 #include <QDir>
 #include <QQmlApplicationEngine>
+#include <QQmlContext>
 #include "gamethread.h"
 #include "qplayer.h"
 #include <iostream>
@@ -19,6 +20,8 @@ int main(int argc, char *argv[])
     gameThread.start();
 
     QQmlApplicationEngine engine;
+    QPlayer::declareQML();
+    engine.rootContext()->setContextProperty("player", &player);
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
     return app.exec();

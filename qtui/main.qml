@@ -3,6 +3,8 @@ import QtQuick.Controls 1.3
 import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
 
+import pidro.components 1.0
+
 ApplicationWindow {
     id: appWindow
     title: qsTr("Hello World")
@@ -15,7 +17,7 @@ ApplicationWindow {
             title: qsTr("&File")
             MenuItem {
                 text: qsTr("&Open")
-                onTriggered: messageDialog.show(qsTr("Open action triggered"));
+                onTriggered: messageDialog.show(player.hello);
             }
             MenuItem {
                 text: qsTr("E&xit")
@@ -33,6 +35,7 @@ ApplicationWindow {
         anchors.fill: parent
         buttonAbout.onClicked: messageDialog.show(qsTr("About Pidro"))
         buttonExit.onClicked: Qt.quit();
+        property int event: Player.GAME_OVER;
 
         Component.onCompleted: {
             var Card = Qt.createComponent("Card.qml");
