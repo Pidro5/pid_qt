@@ -1,6 +1,8 @@
 #include "qplayer.h"
 #include <cassert>
 #include <iostream>
+#include <QList>
+#include <QPoint>
 #include <QtQml>
 #include "qpidroevent.h"
 #include "qpidroresult.h"
@@ -69,6 +71,8 @@ bool QPlayer::inform_event(Pidro::Event et)
         assert(!true);
     }
 
+    emit event1(static_cast<Event>(et));
+
     return true;
 }
 
@@ -86,6 +90,8 @@ bool QPlayer::inform_event(Pidro::Event ev, int position)
     default:
         assert(!true);
     }
+
+    emit event2(static_cast<Event>(ev), position);
 
     return true;
 }
@@ -111,10 +117,12 @@ bool QPlayer::inform_event(Pidro::Event ev, int position, int value)
         assert(!true);
     }
 
+    emit event3(static_cast<Event>(ev), position, value);
+
     return true;
 }
 
-bool QPlayer::inform_event(Pidro::Event ev, int position, std::list<Pidro::Card*>& /*cards*/)
+bool QPlayer::inform_event(Pidro::Event ev, int position, std::list<Pidro::Card*>& cards)
 {
     LOG_D(ev << " " << position << " " << "...");
 
@@ -137,6 +145,22 @@ bool QPlayer::inform_event(Pidro::Event ev, int position, std::list<Pidro::Card*
     default:
         assert(!true);
     }
+
+    QVariantList qmlCards;
+
+    transform(cards.begin(),
+              cards.end(),
+              std::back_inserter(qmlCards),
+              [] (const Pidro::Card* pCard) {
+                  QMap<QString, QVariant> item;
+                  QString suit = QString::fromStdString(pCard->card_suit_short()).left(1);
+                  item.insert("suit", QVariant(suit));
+                  QString value = QString::fromStdString(pCard->card_face_value());
+                  item.insert("value", QVariant(value));
+                  return item;
+              });
+
+    emit event4(static_cast<Event>(ev), position, qmlCards);
 
     return true;
 }

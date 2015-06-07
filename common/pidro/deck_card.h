@@ -18,6 +18,8 @@ class Card {
 
 public:
     Card (int suite, int value);
+    int suit() const { return m_suit; }
+    int value() const { return m_value; }
     std::string card_face_value() const;
     std::string card_suit() const;
     std::string card_suit_short() const;

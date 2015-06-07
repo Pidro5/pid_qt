@@ -40,6 +40,14 @@ public:
         return "Hello World!";
     }
 
+signals:
+    void event1(Event event);
+    void event2(Event event, int position);
+    void event3(Event event, int position, int value);
+    // TODO: suit and value are represented as a point as that is understood
+    // TODO: by QML. UNACCEPTABLE!
+    void event4(Event event, int position, const QVariantList& cards);
+
 public:
     static void declareQML();
 
@@ -55,8 +63,6 @@ public:
     int give_bid(int minimum);
     int give_color();
     Pidro::Card* play_card(int color);
-
-signals:
 
 public slots:
 };

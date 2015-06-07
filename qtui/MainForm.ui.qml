@@ -13,6 +13,15 @@ Item {
     property alias rectangleAlice: rectangleAlice
     property alias rectangleAliceHiddenCards: rectangleAliceHiddenCards
 
+    property alias rectangleBob: rectangleBob
+    property alias rectangleBobHiddenCards: rectangleBobHiddenCards
+
+    property alias rectangleCarlos: rectangleCarlos
+    property alias rectangleCarlosHiddenCards: rectangleCarlosHiddenCards
+
+    property alias rectangleVictor: rectangleVictor
+    property alias rectangleVictorHiddenCards: rectangleVictorHiddenCards
+
     Rectangle {
         id: board
         color: "#2db612"

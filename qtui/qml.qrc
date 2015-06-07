@@ -4,5 +4,6 @@
         <file>MainForm.ui.qml</file>
         <file>Card.qml</file>
         <file>CardForm.ui.qml</file>
+        <file>CardFactory.js</file>
     </qresource>
 </RCC>
