@@ -60,7 +60,12 @@ ApplicationWindow {
             player.event2.connect(handleEvent2);
             player.event3.connect(handleEvent3);
             player.event4.connect(handleEvent4);
+            player.giveBid.connect(handleGiveBid);
 
+        }
+
+        function handleGiveBid(minimum) {
+            console.log("GIVE BID: " + minimum);
         }
 
         function handleEvent1(event) {
@@ -79,23 +84,23 @@ ApplicationWindow {
 
             switch (position) {
             case 0:
+                rectangle = rectangleVictorHiddenCards;
+                isHorizontal = true;
+                break;
+
+            case 1:
                 rectangle = rectangleAliceHiddenCards;
                 isHorizontal = false;
                 break;
 
-            case 1:
+            case 2:
                 rectangle = rectangleBobHiddenCards;
                 isHorizontal = true;
                 break;
 
-            case 2:
+            case 3:
                 rectangle = rectangleCarlosHiddenCards;
                 isHorizontal = false;
-                break;
-
-            case 3:
-                rectangle = rectangleVictorHiddenCards;
-                isHorizontal = true;
                 break;
 
             default:
@@ -123,23 +128,23 @@ ApplicationWindow {
 
             switch (position) {
             case 0:
+                rectangle = rectangleVictorHiddenCards;
+                isHorizontal = true;
+                break;
+
+            case 1:
                 rectangle = rectangleAliceHiddenCards;
                 isHorizontal = false;
                 break;
 
-            case 1:
+            case 2:
                 rectangle = rectangleBobHiddenCards;
                 isHorizontal = true;
                 break;
 
-            case 2:
+            case 3:
                 rectangle = rectangleCarlosHiddenCards;
                 isHorizontal = false;
-                break;
-
-            case 3:
-                rectangle = rectangleVictorHiddenCards;
-                isHorizontal = true;
                 break;
 
             default:

@@ -18,6 +18,16 @@ QPlayer::~QPlayer()
 {
 }
 
+void QPlayer::setBid(int bid)
+{
+    if (m_sIntResult) {
+        m_sIntResult->setValue(bid);
+        m_sIntResult.reset();
+    } else {
+        LOG_E("Int-result was not available.");
+    }
+}
+
 //static
 void QPlayer::declareQML()
 {
@@ -156,6 +166,9 @@ bool QPlayer::inform_event(Pidro::Event ev, int position, std::list<Pidro::Card*
                   QString suit = QString::fromStdString(pCard->card_suit_short()).left(1);
                   item.insert("suit", QVariant(suit));
                   QString value = QString::fromStdString(pCard->card_face_value());
+                  if (value == "V") {
+                      value = "5";
+                  }
                   item.insert("value", QVariant(value));
                   return item;
               });
@@ -165,10 +178,11 @@ bool QPlayer::inform_event(Pidro::Event ev, int position, std::list<Pidro::Card*
     return true;
 }
 
-int QPlayer::give_bid(int minimum)
+void QPlayer::give_bid(int minimum, shared_ptr<QPidroResultInt> sResult)
 {
     LOG_D("give_bid");
-    return 0;
+    m_sIntResult = sResult;
+    emit giveBid(minimum);
 }
 
 int QPlayer::give_color()

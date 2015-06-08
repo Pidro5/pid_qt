@@ -104,7 +104,7 @@ QPidroCommandGiveBid::QPidroCommandGiveBid(std::shared_ptr<QPidroResultInt> sRes
 
 void QPidroCommandGiveBid::deliverTo(QPlayer& player)
 {
-    result()->setValue(player.give_bid(m_minimum));
+    player.give_bid(m_minimum, result());
 }
 
 /*

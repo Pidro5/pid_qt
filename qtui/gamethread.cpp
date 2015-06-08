@@ -15,15 +15,15 @@ void GameThread::run()
     LOG_D("GameThread running");
     Pidro::Game g;
     
-    Pidro::PlayerComputer p1("Alice");
-    Pidro::PlayerComputer p2("Carlos");
-    Pidro::PlayerComputer p3("Bob");
-    PlayerProxy p4("Victor", m_pPlayer);
+    PlayerProxy victor("Victor", m_pPlayer);
+    Pidro::PlayerComputer alice("Alice");
+    Pidro::PlayerComputer bob("Bob");
+    Pidro::PlayerComputer carlos("Carlos");
 
-    g.register_with_game(&p1);
-    g.register_with_game(&p2);
-    g.register_with_game(&p3);
-    g.register_with_game(&p4,true);
+    g.register_with_game(&victor, true);
+    g.register_with_game(&alice);
+    g.register_with_game(&bob);
+    g.register_with_game(&carlos);
 
     g.run_game();
 }

@@ -2,8 +2,10 @@
 #define QPLAYER_H
 
 #include <QObject>
+#include <memory>
 #include <string>
 #include <pidro/player.h>
+#include "qpidroresult.h"
 
 class QPidroEvent;
 
@@ -40,13 +42,15 @@ public:
         return "Hello World!";
     }
 
+    Q_INVOKABLE void setBid(int);
+
 signals:
     void event1(Event event);
     void event2(Event event, int position);
     void event3(Event event, int position, int value);
-    // TODO: suit and value are represented as a point as that is understood
-    // TODO: by QML. UNACCEPTABLE!
     void event4(Event event, int position, const QVariantList& cards);
+
+    void giveBid(int minimum);
 
 public:
     static void declareQML();
@@ -60,11 +64,14 @@ public:
     bool inform_event(Pidro::Event et, int position, int value);
     bool inform_event(Pidro::Event et, int position, std::list<Pidro::Card*>& cards);
 
-    int give_bid(int minimum);
+    void give_bid(int minimum, std::shared_ptr<QPidroResultInt> sResult);
     int give_color();
     Pidro::Card* play_card(int color);
 
 public slots:
+
+private:
+    std::shared_ptr<QPidroResultInt> m_sIntResult;
 };
 
 #endif // QPLAYER_H
