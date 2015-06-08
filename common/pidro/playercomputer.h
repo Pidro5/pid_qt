@@ -20,8 +20,8 @@ public:
     ~PlayerComputer();
 
     int give_bid(int minimum);
-    int give_color();
-    Card* play_card(int color);
+    Card::Suit give_suit();
+    Card* play_card(Card::Suit suit);
 
     // this is a callback function and is called from the game after succesful registration
     void attached_to_game(Game* pGame, int position, bool rotate_to_south);

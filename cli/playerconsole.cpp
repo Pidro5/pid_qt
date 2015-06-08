@@ -240,7 +240,7 @@ int PlayerConsole::give_bid(int minimum){
 
 }
 
-int PlayerConsole::give_color(){
+Pidro::Card::Suit PlayerConsole::give_suit(){
 
     // color can be 0 ..3
 
@@ -250,9 +250,12 @@ int PlayerConsole::give_color(){
     cout << "(Enter -1 to quit the game)? ";
 
     cin >> mybid;
-    if (mybid < 0){m_pGame->quit_game();}
-    return mybid;
 
+    if (mybid < 0){
+        m_pGame->quit_game();
+    }
+
+    return static_cast<Pidro::Card::Suit>(mybid);
 }
 
 Card* PlayerConsole::play_card(int /*color*/){

@@ -12,7 +12,7 @@ using namespace std;
 namespace Pidro
 {
   
-Card::Card(int suit, int value)
+Card::Card(Card::Suit suit, int value)
 {
     m_card_points =0;
     m_suit = suit;
@@ -110,7 +110,7 @@ string Card::card_suit_short() const
     }
 }
 
-int Card::card_ranking(int suit) const
+int Card::card_ranking(Suit suit) const
 {
 
     int ret_val = 0;
@@ -140,7 +140,7 @@ int Card::card_ranking(int suit) const
 }
 
 
-string Card::card_ranking_name(int suit) const
+string Card::card_ranking_name(Suit suit) const
 {
     string ret_val = "";
 
@@ -249,6 +249,7 @@ int Card::convert_rank_name_to_value(const string& str)
     throw std::runtime_error("convert_rank_name_to_value - string not allowed");
 }
 
+constexpr Card::Suit Card::Suits[];
 
 //
 //  DECK ==============================================================================
@@ -256,12 +257,11 @@ int Card::convert_rank_name_to_value(const string& str)
 
 Deck::Deck()
 {
-    int i = 0;
     int j = 0;
 
-    for (i = 0; i < 4; i++) {
+    for (auto s : Card::Suits) {
         for (j = 2; j <= 14; j++) {
-            Card* pC = new Card(i, j);
+            Card* pC = new Card(s, j);
             m_list_of_all_cards.push_back(pC);
         }
 	}

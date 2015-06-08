@@ -54,20 +54,20 @@ int PlayerProxy::give_bid(int minimum)
     return Player::give_bid(minimum);
 }
 
-int PlayerProxy::give_color()
+Pidro::Card::Suit PlayerProxy::give_suit()
 {
     shared_ptr<QPidroResultInt> sResult(new QPidroResultInt);
 
     /*return*/ deliverEvent(new QPidroCommandGiveColor(sResult));
-    return Player::give_color();
+    return Player::give_suit();
 }
 
-Pidro::Card* PlayerProxy::play_card(int color)
+Pidro::Card* PlayerProxy::play_card(Pidro::Card::Suit suit)
 {
     shared_ptr<QPidroResultCard> sResult(new QPidroResultCard);
 
-    /*return*/ deliverEvent(new QPidroCommandPlayCard(sResult, color));
-    return Player::play_card(color);
+    /*return*/ deliverEvent(new QPidroCommandPlayCard(sResult, suit));
+    return Player::play_card(suit);
 }
 
 bool PlayerProxy::deliverEvent(QPidroEventT<bool>* pEvent)

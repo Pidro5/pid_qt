@@ -31,7 +31,7 @@ public:
     bool inform_event(Pidro::Event et, int position, std::list<Pidro::Card*>& cards);
 
     int give_bid(int minimum);
-    int give_color();
+    Pidro::Card::Suit give_suit();
     Pidro::Card* play_card(int color);
 
 };

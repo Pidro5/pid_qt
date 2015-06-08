@@ -57,8 +57,8 @@ public:
     virtual bool inform_event(Event et, int position, std::list<Card *>& cards) = 0;
 
     virtual int give_bid(int minimum);
-    virtual int give_color();
-    virtual Card* play_card(int color);
+    virtual Card::Suit give_suit();
+    virtual Card* play_card(Card::Suit suit);
 
 protected:
     // these variable are used to access the game and tells in which position the player is in the game

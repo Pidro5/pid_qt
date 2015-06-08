@@ -52,15 +52,15 @@ int Player::give_bid(int minimum)
     return minimum+1;
 }
 
-int Player::give_color()
+Card::Suit Player::give_suit()
 {
     // color can be 0 ..3
     int rnd = rand() % 4;
 
-    return rnd;
+    return static_cast<Card::Suit>(rnd);
 }
 
-Card* Player::play_card(int color)
+Card* Player::play_card(Card::Suit suit)
 {
     list<Card *> tmp_list_of_cards = m_pGame->get_my_cards_in_hand(this);
     list<Card *>::iterator it;
@@ -68,7 +68,7 @@ Card* Player::play_card(int color)
     // Find out how many
     int how_many =0;
     for (it = tmp_list_of_cards.begin(); it!=tmp_list_of_cards.end(); ++it) {
-        if ((*it)->card_ranking(color) != 0 ){
+        if ((*it)->card_ranking(suit) != 0 ){
             how_many++;
         }
     }
@@ -80,7 +80,7 @@ Card* Player::play_card(int color)
     // Use the iterator to pick the card
     int i =0;
     for (it = tmp_list_of_cards.begin(); it!=tmp_list_of_cards.end(); ++it) {
-        if ((*it)->card_ranking(color) != 0 ){
+        if ((*it)->card_ranking(suit) != 0 ){
             ++i;
         }
         if (i == rnd){ return *it;}

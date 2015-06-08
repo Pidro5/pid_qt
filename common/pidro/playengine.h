@@ -3,6 +3,7 @@
 
 #include <pidro/game.h>
 #include <pidro/player.h>
+#include <pidro/deck_card.h>
 
 extern "C" {
 #include "luah/lua.h"        //Lua main library (lua_*)
@@ -100,7 +101,7 @@ private:
 
 public:
     PlayData(Game *game, Player *player);
-    void populate_with_data(int color);
+    void populate_with_data(Card::Suit suit);
     void push_to_lua(lua_State *m_L);
 
 };
@@ -117,7 +118,7 @@ private:
 public:
     PlayEngine(Game *game, Player *player, std::string playrulefile);
     ~PlayEngine();
-    Card*  play_card(int color);
+    Card* play_card(Card::Suit suit);
 
 };
 

@@ -22,8 +22,8 @@ private:
     bool inform_event(Pidro::Event et, int position, std::list<Pidro::Card *>& cards) override;
 
     int give_bid(int minimum);
-    int give_color();
-    Pidro::Card* play_card(int color);
+    Pidro::Card::Suit give_suit();
+    Pidro::Card* play_card(Pidro::Card::Suit suit);
 
     bool deliverEvent(QPidroEventT<bool>* pEvent);
     int deliverEvent(QPidroEventT<int>* pEvent);

@@ -82,11 +82,15 @@ private:
     int m_bids[4];
     int m_higest_bid;
     int m_who_has_higest_bid;
-    int m_selected_color;
+    Card::Suit m_selected_suit;
     bool check_if_bid_is_valid(int bid, int highbid);
 
-    void throw_worthless_cards_on_the_table_do_not_keep_more_than_six(int who, int color, bool adjust_hand_to_six);
-    int check_if_player_has_cards_to_play(int m_who_plays,int m_selected_color );  // returns the number of cards the player has
+    // TODO: This method name is absurd:)
+    void throw_worthless_cards_on_the_table_do_not_keep_more_than_six(int who,
+                                                                      Card::Suit suit,
+                                                                      bool adjust_hand_to_six);
+    int check_if_player_has_cards_to_play(int who_plays,
+                                          Card::Suit selected_suit);  // returns the number of cards the player has
 
 
     // Rotators
@@ -124,7 +128,7 @@ private:
 
     int how_many_played_cards(int pos) const;
 
-    int who_had_the_higest_card_in_round(int round, int color) const;
+    int who_had_the_higest_card_in_round(int round, Card::Suit suit) const;
     int sum_round_points(bool NS_or_WE, int up_to_round) const;
     int sum_points_on_table(bool NS_or_WE) const ;
 

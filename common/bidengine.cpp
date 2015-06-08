@@ -24,14 +24,24 @@ namespace Pidro
 {
 
 BidEngine::BidEngine(Game *game, Player *player, string eaFile, string bidRuleFile)
-    : BidEngine(eaFile,bidRuleFile)
+    : m_theGame(game)
+    , m_me(player)
+    , m_my_suit(Card::SPADES)
 {
-    m_theGame=game;
-    m_me=player;
-    m_my_color = 0;
-}
+    //PidroBidRulesAI_Master013v1.txt
+    strcpy(m_eaFile, eaFile.c_str());
+    strcpy(m_eaBidRuleFile, bidRuleFile.c_str());
 
-BidEngine::BidEngine(string eaFile, string BidRuleFile) {
+    if (!readEAFile(m_eaFile))
+    {
+        LOG_D("rule file not correct.");
+        //cout << "rule file not correct.";
+        exit(-1);
+    }
+}
+/*
+BidEngine::BidEngine(string eaFile, string BidRuleFile)
+{
     //PidroBidRulesAI_Master013v1.txt
     strcpy(m_eaFile, eaFile.c_str());
     strcpy(m_eaBidRuleFile, BidRuleFile.c_str());
@@ -43,7 +53,7 @@ BidEngine::BidEngine(string eaFile, string BidRuleFile) {
         exit(-1);
     }
 }
-
+*/
 BidEngine::~BidEngine(){
    //  lua_close(m_L);   // close lua
 }
@@ -65,20 +75,21 @@ float BidEngine::getEABestValue(int bid) const {
     return bestEA;
 }
 
-int BidEngine::getEABestColor(int bid) const {
-   if (bid < 6 or bid > 14) {
+Card::Suit BidEngine::getEABestSuit(int bid) const {
+    if (bid < 6 or bid > 14) {
         LOG_F("FATAL - trying to ask for getEABestColor(int bid) with invalid bid");
     }
-    int bestColor=-1;
+
+    Card::Suit bestSuit = static_cast<Card::Suit>(-1);
     float bestEA=-200;
-    for (int suit=0; suit < 4; suit++) {
-        if (m_myEAs[suit]->m_eavalues[bid - 6] >bestEA)
+    for (auto suit : Card::Suits) {
+        if (m_myEAs[suit]->m_eavalues[bid - 6] > bestEA)
         {
             bestEA = m_myEAs[suit]->m_eavalues[bid - 6];
-            bestColor = suit;
+            bestSuit = suit;
           }
     }
-    return bestColor;
+    return bestSuit;
 }
 float BidEngine::getPLevel(int bid) const {
     // We search the best (== the highest) probability value for the given bid
@@ -96,20 +107,21 @@ float BidEngine::getPLevel(int bid) const {
     return bestPLevel;
 }
 
-int BidEngine::getPLevelColor(int bid) const {
+Card::Suit BidEngine::getPLevelSuit(int bid) const {
     if (bid < 6 or bid > 14) {
         LOG_F("FATAL - trying to ask for getPLevel(int bid) with invalid bid");
     }
 
-    float bestPLevel=-200;
-    int bestColor=-1;
-    for (int suit=0; suit < 4; suit++) {
+    float bestPLevel = -200;
+    Card::Suit bestSuit = static_cast<Card::Suit>(-1);
+
+    for (auto suit : Card::Suits) {
         if (m_myEAs[suit]->m_probability[bid - 6] > bestPLevel) {
             bestPLevel = m_myEAs[suit]->m_probability[bid - 6];
-            bestColor = suit;
+            bestSuit = suit;
         }
     }
-    return bestColor;
+    return bestSuit;
 }
 
 
@@ -259,7 +271,7 @@ cardsConfig BidEngine::examineHand(list<Card *> hand)
     int i_rank_to_remove;
 
     // loop though the colors and check cards by rank
-    for (int suit = 0; suit <= 3; suit++)
+    for (auto suit: Card::Suits)
     {
         // use this loop to reset the search keys
         no_of_cards[suit] = 0;
@@ -299,7 +311,7 @@ cardsConfig BidEngine::examineHand(list<Card *> hand)
 
     // need to check if a hand is has more than 6 cards
     // if so  - certain cards need to be omitted...
-    for (int suit = 0; suit <= 3; suit++)
+    for (auto suit : Card::Suits)
     {
         //TEST_display(array_hand[suit]);
         if (array_hand[suit].size() > 6)
@@ -336,7 +348,7 @@ cardsConfig BidEngine::examineHand(list<Card *> hand)
 
     // now the suits have not more than 6 cards
     // create the search keys for each suit
-    for (int suit = 0; suit <= 3; suit++)
+    for (auto suit : Card::Suits)
     {
         no_of_cards[suit] = array_hand[suit].size();  // record the number of cards in a suit
         no_of_unimportant_cards[suit] = 0;    // init to zero
@@ -345,7 +357,9 @@ cardsConfig BidEngine::examineHand(list<Card *> hand)
         // remove those cards from the array since they have been considered
 
         list<Card *>::iterator arrayHandIterator;
-        for (arrayHandIterator=array_hand[suit].begin();arrayHandIterator!=array_hand[suit].end();arrayHandIterator++)
+        for (arrayHandIterator = array_hand[suit].begin();
+             arrayHandIterator != array_hand[suit].end();
+             arrayHandIterator++)
         {
             if (array_hand[suit].size() >= 4)
             {
@@ -491,7 +505,7 @@ int BidEngine::give_bid(int minimum){
     lua_newtable(m_L);
     for (i = 1; i <= 9; i++) {
         lua_pushnumber(m_L, i);
-        lua_pushnumber(m_L, getEABestColor(i+5));
+        lua_pushnumber(m_L, getEABestSuit(i+5));
         lua_rawset(m_L, -3);
     }
     lua_setglobal(m_L, "BestEAColor");
@@ -508,7 +522,7 @@ int BidEngine::give_bid(int minimum){
     lua_newtable(m_L);
     for (i = 1; i <= 9; i++) {
         lua_pushnumber(m_L, i);
-        lua_pushnumber(m_L, getPLevelColor(i+5));
+        lua_pushnumber(m_L, getPLevelSuit(i+5));
         lua_rawset(m_L, -3);
     }
     lua_setglobal(m_L, "BestPColor");
@@ -569,7 +583,7 @@ int BidEngine::give_bid(int minimum){
     if (minimum == 5) {
         // this is the signal that i must take the bid
         // Get my best color
-        m_my_color = getEABestColor(6);
+        m_my_suit = getEABestSuit(6);
         return 6;
     }
 
@@ -578,7 +592,7 @@ int BidEngine::give_bid(int minimum){
     if (b_ea == false) {         //   a BID type vas requested
         // which color?
         if (bid > 0) {           //  if PASS, I cannot ask for a color
-            m_my_color = getEABestColor(bid);
+            m_my_suit = getEABestSuit(bid);
         }
     }
     else                            //   a EA type vas requested
@@ -589,7 +603,7 @@ int BidEngine::give_bid(int minimum){
                 // the requested ea value is matched and i is the bid i propose
                 bid = i;
                 // which color?
-                m_my_color = getEABestColor(bid);
+                m_my_suit = getEABestSuit(bid);
                 break;  //end loop
             }
         }
@@ -611,8 +625,9 @@ int BidEngine::give_bid(int minimum){
     return 0;
 }
 
-int BidEngine::give_color() const{
-    return m_my_color;
+Card::Suit BidEngine::give_suit() const
+{
+    return m_my_suit;
 }
 
 }

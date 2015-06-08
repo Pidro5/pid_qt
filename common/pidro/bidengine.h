@@ -11,6 +11,7 @@
 
 #include <pidro/game.h>
 #include <pidro/player.h>
+#include <pidro/deck_card.h>
 
 extern "C" {
 #include "luah/lua.h"        //Lua main library (lua_*)
@@ -78,12 +79,12 @@ private:
 
     oneHand *m_myEAs[4];
     float getEABestValue(int bid)const;
-    int getEABestColor(int bid) const;
+    Card::Suit getEABestSuit(int bid) const;
     float getPLevel(int bid) const;
-    int getPLevelColor(int bid) const;
+    Card::Suit getPLevelSuit(int bid) const;
     float getWorstEAuH(int pos) const;   //pos 0..3  South, West..
 
-    int m_my_color;
+    Card::Suit m_my_suit;
 
     char m_eaFile[FILENAME_MAX];
     char m_eaBidRuleFile[FILENAME_MAX];
@@ -103,13 +104,13 @@ private:
 
     cardsConfig examineHand(std::list<Card *> hand);
 
-    BidEngine(std::string rulefile, std::string bidRuleFile);
+    //BidEngine(std::string rulefile, std::string bidRuleFile);
 
 public:
     BidEngine(Game *game, Player *player, std::string rulefile, std::string bidRuleFile);
     ~BidEngine();
     int give_bid(int minimum);
-    int give_color() const;
+    Card::Suit give_suit() const;
 };
 
 }

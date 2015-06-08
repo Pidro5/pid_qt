@@ -25,7 +25,7 @@ PlayEngine::~PlayEngine()
    //  lua_close(m_L);   // close lua
 }
 
-Card * PlayEngine::play_card(int color)
+Card* PlayEngine::play_card(Card::Suit suit)
  {
     PlayData pd(m_theGame,m_me);
     int result;
@@ -49,7 +49,7 @@ Card * PlayEngine::play_card(int color)
      }
 
      // push values to lua
-     pd.populate_with_data(color);
+     pd.populate_with_data(suit);
      pd.push_to_lua(m_L);
 
 
@@ -95,7 +95,7 @@ Card * PlayEngine::play_card(int color)
      list<Card *> list_of_cards = m_theGame->get_my_cards_in_hand(m_me);
      list<Card *>::iterator it;
      for (it = list_of_cards.begin(); it!=list_of_cards.end(); ++it) {
-         if ((*it)->card_ranking (color) == lua_play_card )
+         if ((*it)->card_ranking (suit) == lua_play_card )
          {
              return (*it);
          }
@@ -453,16 +453,16 @@ PlayData::PlayData(Game *game, Player *player)
 
 }
 
-void PlayData::populate_with_data(int color){
+void PlayData::populate_with_data(Card::Suit suit){
     int i;
 
     list<Card *> list_of_cards = m_theGame->get_my_cards_in_hand(m_me);
     list<Card *>::iterator it;
     i=0;
     for (it = list_of_cards.begin(); it!=list_of_cards.end(); ++it) {
-        if ((*it)->card_ranking(color) > 0)
+        if ((*it)->card_ranking(suit) > 0)
         {
-            m_MyCards[i] =(*it)->card_ranking (color);
+            m_MyCards[i] =(*it)->card_ranking (suit);
             i++;
         }
     }

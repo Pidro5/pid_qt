@@ -72,21 +72,18 @@ int PlayerComputer::give_bid(int minimum)
 
 }
 
-int PlayerComputer::give_color()
+Card::Suit PlayerComputer::give_suit()
 {
-
     assert(m_sBidMachine.get());
-    return m_sBidMachine->give_color();
-
+    return m_sBidMachine->give_suit();
 }
 
 
-Card* PlayerComputer::play_card(int color){
+Card* PlayerComputer::play_card(Card::Suit suit){
     Card* pC;
 
-    assert( m_sPlayMachine.get());
-    pC =   m_sPlayMachine->play_card( color);
-
+    assert(m_sPlayMachine.get());
+    pC = m_sPlayMachine->play_card(suit);
 
     //assert(!pC);
     return pC;

@@ -207,12 +207,12 @@ void Game::run_game() {
 
             while (!bid_ok){
 
-                m_selected_color = m_pGame_player[m_who_has_higest_bid]->give_color();
+                m_selected_suit = m_pGame_player[m_who_has_higest_bid]->give_suit();
                 if(!m_bContinue_game){return;}
                 i_try++;
 
                 // do some sanity check about the color
-                if (m_selected_color >=0 && m_selected_color <=3) {
+                if (m_selected_suit >=0 && m_selected_suit <=3) {
                     bid_ok = true;
                 }
 
@@ -224,7 +224,7 @@ void Game::run_game() {
                 }
             }
 
-            post_event(Event::COLOR_SELECTED, m_who_has_higest_bid, m_selected_color);
+            post_event(Event::COLOR_SELECTED, m_who_has_higest_bid, m_selected_suit);
             if(!m_bContinue_game){return;}
 
             // ==========================================================================
@@ -235,7 +235,7 @@ void Game::run_game() {
 
             for (int i=0;i<3;i++){    // Note - only 3 - until we reach the deck
                 r++; //start with the next one after deck
-                throw_worthless_cards_on_the_table_do_not_keep_more_than_six(r.get_position(),m_selected_color, false);
+                throw_worthless_cards_on_the_table_do_not_keep_more_than_six(r.get_position(),m_selected_suit, false);
 
                 // note how many visible cards they have after color selection
                 m_how_many_cards_do_i_have[r.get_position()]=m_cards_in_hands[r.get_position()].size();
@@ -269,7 +269,7 @@ void Game::run_game() {
                     for (it = tmp_list_of_cards.begin(); it!=tmp_list_of_cards.end(); ++it) {
                         m_cards_in_hands[r.get_position()].push_back(*it);
 
-                        if ((*it)->card_ranking(m_selected_color)> 0){ // got one card
+                        if ((*it)->card_ranking(m_selected_suit)> 0){ // got one card
                             m_how_many_cards_do_i_have[r.get_position()]++;
                         }
                     }
@@ -307,7 +307,7 @@ void Game::run_game() {
             m_how_many_cards_do_i_have[m_who_has_deck.get_position()] = 0;
 
             for (it = m_cards_in_hands[m_who_has_deck.get_position()].begin(); it!=m_cards_in_hands[m_who_has_deck.get_position()].end(); ++it) {
-                if ((*it)->card_ranking(m_selected_color)> 0){ // got one card - need to update my knowhow
+                if ((*it)->card_ranking(m_selected_suit)> 0){ // got one card - need to update my knowhow
                     m_how_many_cards_do_i_have[m_who_has_deck.get_position()]++;
                 }
             }
@@ -317,7 +317,7 @@ void Game::run_game() {
             // The deck throws the unnecessary cards
             // ==========================================================================
 
-            throw_worthless_cards_on_the_table_do_not_keep_more_than_six(m_who_has_deck.get_position(),m_selected_color,true);
+            throw_worthless_cards_on_the_table_do_not_keep_more_than_six(m_who_has_deck.get_position(),m_selected_suit,true);
 
             // ==========================================================================
             // PLAY begins
@@ -338,7 +338,7 @@ void Game::run_game() {
                 for (int i_player=0;i_player<4;i_player++){  // 4 player
 
                     // Check if cold
-                    if(!m_player_is_cold[m_who_plays.get_position()] && check_if_player_has_cards_to_play(m_who_plays.get_position(), m_selected_color ) == 0){
+                    if(!m_player_is_cold[m_who_plays.get_position()] && check_if_player_has_cards_to_play(m_who_plays.get_position(), m_selected_suit ) == 0){
                         // this player just got cold - needs to be registered
 
                         m_player_is_cold[m_who_plays.get_position()] = true;
@@ -373,12 +373,12 @@ void Game::run_game() {
 
                         while (!play_ok){
 
-                            c = m_pGame_player[m_who_plays.get_position()]->play_card(m_selected_color);
+                            c = m_pGame_player[m_who_plays.get_position()]->play_card(m_selected_suit);
                             if(!m_bContinue_game){return;}
                             i_try++;
 
                             // do some sanity check
-                            if (c->card_ranking(m_selected_color)> 0) {  // ok card
+                            if (c->card_ranking(m_selected_suit)> 0) {  // ok card
                                 play_ok = true;
                             }
 
@@ -417,7 +417,7 @@ void Game::run_game() {
                 if(a_card_played) {post_event(Event::PLAY_ROUND_FINISH);}
                 if(!m_bContinue_game){return;}
 
-                m_who_plays.set_position(who_had_the_higest_card_in_round(i_round, m_selected_color));
+                m_who_plays.set_position(who_had_the_higest_card_in_round(i_round, m_selected_suit));
 
             }
 
@@ -492,12 +492,12 @@ void Game::run_game() {
     }  //  end of while() the complete game
 }
 
-int Game::check_if_player_has_cards_to_play(int who, int color){
+int Game::check_if_player_has_cards_to_play(int who, Card::Suit suit){
     list<Card *>::iterator it;
     int how_many =0;
 
     for (it = m_cards_in_hands[who].begin(); it!=m_cards_in_hands[who].end(); ++it) {
-        if ((*it)->card_ranking(color) != 0 ){
+        if ((*it)->card_ranking(suit) != 0 ){
             how_many++;
         }
     }
@@ -511,7 +511,9 @@ int Game::check_if_player_has_cards_to_play(int who, int color){
 
 
 
-void Game::throw_worthless_cards_on_the_table_do_not_keep_more_than_six(int who, int color, bool adjust_hand_to_six){
+void Game::throw_worthless_cards_on_the_table_do_not_keep_more_than_six(int who,
+                                                                        Card::Suit suit,
+                                                                        bool adjust_hand_to_six){
     list<Card *>::iterator it;
     list<Card *> tmp_list_of_cards;
 
@@ -520,7 +522,7 @@ void Game::throw_worthless_cards_on_the_table_do_not_keep_more_than_six(int who,
     while(!tmp_list_of_cards.empty()) {tmp_list_of_cards.pop_front(); }
 
     for (it = m_cards_in_hands[who].begin(); it!=m_cards_in_hands[who].end(); ++it) {
-        if ((*it)->card_ranking(color) == 0 ) {
+        if ((*it)->card_ranking(suit) == 0 ) {
             //Card is worthless in this suit. throw on table
             tmp_list_of_cards.push_back(*it);      // add to the list to be informed
             m_cards_on_table[who].push_back(*it);    // put it on the table
@@ -557,7 +559,7 @@ void Game::throw_worthless_cards_on_the_table_do_not_keep_more_than_six(int who,
         while  (i_cards_to_remove > 0)
         {
             for (it = m_cards_in_hands[who].begin(); it!=m_cards_in_hands[who].end(); ++it) {
-                if ((*it)->card_ranking(color) ==  i_rank_to_remove)
+                if ((*it)->card_ranking(suit) ==  i_rank_to_remove)
                 {
                     tmp_list_of_cards.push_back(*it);       // Put card to be discarded into a separate list
                     m_cards_discarded[who].push_back(*it);    // Add to discarded cards
@@ -652,7 +654,7 @@ void Game::round_init(){
     }
     m_higest_bid = 0;              // The highest bid for the round is zero
     m_who_has_higest_bid = -1;     // who = 0..3.  -1 = nobody
-    m_selected_color = -1;        // invalid color
+    m_selected_suit = static_cast<Card::Suit>(-1); // invalid color
 
     m_who_has_deck++;              // Move the deck  ++
     m_who_bids = m_who_has_deck;
@@ -862,7 +864,7 @@ bool Game::do_i_have_card_of_rank(Player * pl, int rank) const {
     int who = authorize_player(pl);
     if (who >=0){
         for (it = m_cards_in_hands[who].begin(); it!=m_cards_in_hands[who].end(); ++it) {
-            if ((*it)->card_ranking(m_selected_color) == rank ){ // got the card
+            if ((*it)->card_ranking(m_selected_suit) == rank ){ // got the card
                 return true;
             }
         }
@@ -881,7 +883,7 @@ bool Game::is_card_of_rank_played(int rank) const{
 
 
     for(int i =0;i <= m_played_idx ;i++) {
-        if(m_pPlayed_cards[i]->card_ranking(m_selected_color) == rank) {
+        if(m_pPlayed_cards[i]->card_ranking(m_selected_suit) == rank) {
             return true;    // is this card already played
         }
     }
@@ -1099,7 +1101,7 @@ void Game::register_card_as_played(Card * c, int who, int round){
     // inte tagit pidro säker som hög sist eller
 
     if (get_unplayed_pidro(m_pGame_player[who])){
-        if (c->card_ranking(m_selected_color) != 4  and c->card_ranking(m_selected_color) != 5) {  //' inte pidrat sjalv
+        if (c->card_ranking(m_selected_suit) != 4  and c->card_ranking(m_selected_suit) != 5) {  //' inte pidrat sjalv
             if (get_played_card((who + 2) % 4, round) == m_absolute_higest) {
                 //'partner abs hog - jag pidra inte
                 m_player_wihtout_pidro[who] = true;
@@ -1135,7 +1137,7 @@ int Game::how_many_played_cards_all() const{
 
 int Game::get_played_card_rank_idx(int idx) const{
 
-    return m_pPlayed_cards[idx]->card_ranking(m_selected_color);
+    return m_pPlayed_cards[idx]->card_ranking(m_selected_suit);
 }
 
 
@@ -1153,10 +1155,10 @@ void Game::play_round_completed(int round){
             m_points_left -= m_pPlayed_cards[i]->m_card_points;
             m_available_points_left -= m_pPlayed_cards[i]->m_card_points;
 
-            if (m_pPlayed_cards[i]->card_ranking(m_selected_color) == 14){  // this card was A
+            if (m_pPlayed_cards[i]->card_ranking(m_selected_suit) == 14){  // this card was A
                 m_available_points_left++;
             }
-            if (m_pPlayed_cards[i]->card_ranking(m_selected_color) == 1){  // this card was 2
+            if (m_pPlayed_cards[i]->card_ranking(m_selected_suit) == 1){  // this card was 2
                 m_points_left--;
             }
         }
@@ -1168,7 +1170,7 @@ void Game::play_round_completed(int round){
     for(int j =14;j > 0 ;--j) {   // try the cards from top down
         bfound = false;
         for(int i =0;i <= m_played_idx ;i++) {
-            if(m_pPlayed_cards[i]->card_ranking(m_selected_color) == j) {
+            if(m_pPlayed_cards[i]->card_ranking(m_selected_suit) == j) {
                 bfound = true;    // is this card already played
             }
         }
@@ -1210,7 +1212,7 @@ int Game::sum_round_points(bool NS_or_WE,int including_round) const {
         }
         // now decide who the sum_tmp points belongs to
         int i_who;
-        i_who = who_had_the_higest_card_in_round(round,m_selected_color);
+        i_who = who_had_the_higest_card_in_round(round,m_selected_suit);
         if (i_who ==0 || i_who == 2){
             sum_ns += sum_tmp;
         }
@@ -1251,7 +1253,7 @@ int Game::sum_points_on_table(bool NS_or_WE) const {
     }
     // now decide who the sum_tmp points belongs to
     int i_who;
-    i_who = who_had_the_higest_card_in_round(m_round_playing,m_selected_color);
+    i_who = who_had_the_higest_card_in_round(m_round_playing,m_selected_suit);
     if (i_who ==0 || i_who == 2){
         sum_ns += sum_tmp;
     }
@@ -1264,14 +1266,14 @@ int Game::sum_points_on_table(bool NS_or_WE) const {
 }
 
 
-int Game::who_had_the_higest_card_in_round(int round, int color) const {
+int Game::who_had_the_higest_card_in_round(int round, Card::Suit suit) const {
     int highest = -1;
     int retval = -1;
 
     for(int i =0;i <= m_played_idx ;i++) {
         if(m_played_in_round[i] == round){
-            if(m_pPlayed_cards[i]->card_ranking(color) > highest){
-                highest = m_pPlayed_cards[i]->card_ranking(color) ;
+            if(m_pPlayed_cards[i]->card_ranking(suit) > highest){
+                highest = m_pPlayed_cards[i]->card_ranking(suit) ;
                 retval = m_played_by_whom[i];
             }
         }
@@ -1294,7 +1296,7 @@ int Game::get_cards_left_in_my_hand(Player * pl) const{
     int who = authorize_player(pl);
     if (who >=0){
         for (it = m_cards_in_hands[who].begin(); it!=m_cards_in_hands[who].end(); ++it) {
-            if ((*it)->card_ranking(m_selected_color)> 0){ // got one card
+            if ((*it)->card_ranking(m_selected_suit)> 0){ // got one card
                 ret++;
             }
         }
@@ -1346,9 +1348,9 @@ int Game::get_my_highest_card(Player * pl)const {
     int who = authorize_player(pl);
     if (who >=0){
         for (it = m_cards_in_hands[who].begin(); it!=m_cards_in_hands[who].end(); ++it) {
-            if ((*it)->card_ranking(m_selected_color)> highcard){ // get the highest one in color
-                highcard = (*it)->card_ranking(m_selected_color);
-                val = (*it)->card_ranking(m_selected_color);   // get the string value A,K...V,v,4,3,2
+            if ((*it)->card_ranking(m_selected_suit)> highcard){ // get the highest one in color
+                highcard = (*it)->card_ranking(m_selected_suit);
+                val = (*it)->card_ranking(m_selected_suit);   // get the string value A,K...V,v,4,3,2
             }
         }
     }
@@ -1368,9 +1370,9 @@ int Game::get_the_highest_card_in_round()const{
     int val = 0;
     for(int i =0;i <= m_played_idx ;i++) {
         if(m_played_in_round[i] == m_round_playing){
-            if(m_pPlayed_cards[i]->card_ranking(m_selected_color) > highest){
-                highest = m_pPlayed_cards[i]->card_ranking(m_selected_color) ;
-                val = m_pPlayed_cards[i]->card_ranking(m_selected_color);
+            if(m_pPlayed_cards[i]->card_ranking(m_selected_suit) > highest){
+                highest = m_pPlayed_cards[i]->card_ranking(m_selected_suit) ;
+                val = m_pPlayed_cards[i]->card_ranking(m_selected_suit);
             }
         }
     }
@@ -1382,7 +1384,7 @@ int Game::get_played_card(int who, int round) const {
 
     for(int i =0;i <= m_played_idx ;i++) {
         if(m_played_in_round[i] == round && m_played_by_whom[i] == who){
-            rank = m_pPlayed_cards[i]->card_ranking(m_selected_color);
+            rank = m_pPlayed_cards[i]->card_ranking(m_selected_suit);
         }
     }
     return rank;
@@ -1428,8 +1430,8 @@ int Game::get_previous_card_highest_round() const {
 
     for(int i =0;i <= m_played_idx ;i++) {
         if(m_played_in_round[i] == m_round_playing - 1 ){
-            if (m_pPlayed_cards[i]->card_ranking(m_selected_color) > rank) {
-                rank = m_pPlayed_cards[i]->card_ranking(m_selected_color);
+            if (m_pPlayed_cards[i]->card_ranking(m_selected_suit) > rank) {
+                rank = m_pPlayed_cards[i]->card_ranking(m_selected_suit);
             }
         }
     }
@@ -1438,7 +1440,7 @@ int Game::get_previous_card_highest_round() const {
 
 
 int Game::get_selected_color()const{
-    return m_selected_color;
+    return m_selected_suit;
 }
 
 int Game::get_cards_initially_in_my_hand (Player * pl) const{
