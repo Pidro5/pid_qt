@@ -578,7 +578,7 @@ int BidEngine::give_bid(int minimum){
 
     //post process
 
-    cin.get();
+    //cin.get();
 
     if (minimum == 5) {
         // this is the signal that i must take the bid

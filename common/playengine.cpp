@@ -104,7 +104,7 @@ Card* PlayEngine::play_card(Card::Suit suit)
      // override in case no card found..
      //assert
      LOG_D("No card found - play the first ");
-     cin.get();
+     //cin.get();
      return (*list_of_cards.begin());
  }
 
