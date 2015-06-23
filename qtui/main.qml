@@ -62,10 +62,92 @@ ApplicationWindow {
             player.event4.connect(handleEvent4);
             player.giveBid.connect(handleGiveBid);
 
+            bid.buttonPass.clicked.connect(buttonPassedClicked);
+            bid.button6.clicked.connect(button6Clicked);
+            bid.button7.clicked.connect(button7Clicked);
+            bid.button8.clicked.connect(button8Clicked);
+            bid.button9.clicked.connect(button9Clicked);
+            bid.button10.clicked.connect(button10Clicked);
+            bid.button11.clicked.connect(button11Clicked);
+            bid.button12.clicked.connect(button12Clicked);
+            bid.button13.clicked.connect(button13Clicked);
+            bid.button14.clicked.connect(button14Clicked);
+        }
+
+        function buttonPassedClicked() {
+            console.log("PASS");
+            player.setBid(0)
+        }
+
+        function button6Clicked() {
+            console.log("6");
+            player.setBid(6);
+        }
+
+        function button7Clicked() {
+            console.log("7");
+            player.setBid(7);
+        }
+
+        function button8Clicked() {
+            console.log("8");
+            player.setBid(8);
+        }
+
+        function button9Clicked() {
+            console.log("9");
+            player.setBid(9);
+        }
+
+        function button10Clicked() {
+            console.log("10");
+            player.setBid(10);
+        }
+
+        function button11Clicked() {
+            console.log("11");
+            player.setBid(11);
+        }
+
+        function button12Clicked() {
+            console.log("12");
+            player.setBid(12);
+        }
+
+        function button13Clicked() {
+            console.log("13");
+            player.setBid(13);
+        }
+
+        function button14Clicked() {
+            console.log("14");
+            player.setBid(14);
         }
 
         function handleGiveBid(minimum) {
             console.log("GIVE BID: " + minimum);
+            switch (minimum) {
+            case 14:
+                bid.button13.enabled = false;
+            case 13:
+                bid.button12.enabled = false;
+            case 12:
+                bid.button11.enabled = false;
+            case 11:
+                bid.button10.enabled = false;
+            case 10:
+                bid.button9.enabled = false;
+            case 9:
+                bid.button8.enabled = false;
+            case 8:
+                bid.button7.enabled = false;
+            case 7:
+                bid.button6.enabled = false;
+            case 6:
+                break;
+            default:
+                console.log("Don't know what to do with a minimum of: " + minimum);
+            }
         }
 
         function handleEvent1(event) {

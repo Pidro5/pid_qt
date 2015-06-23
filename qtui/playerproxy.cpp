@@ -55,8 +55,7 @@ int PlayerProxy::give_bid(int minimum)
     LOG_D("giveBid: " << minimum);
     shared_ptr<QPidroResultInt> sResult(new QPidroResultInt);
 
-    /*return*/ deliverEvent(new QPidroCommandGiveBid(sResult, minimum));
-    return Player::give_bid(minimum);
+    return deliverEvent(new QPidroCommandGiveBid(sResult, minimum));
 }
 
 Pidro::Card::Suit PlayerProxy::give_suit()

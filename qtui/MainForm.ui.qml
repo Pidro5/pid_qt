@@ -22,6 +22,8 @@ Item {
     property alias rectangleVictor: rectangleVictor
     property alias rectangleVictorHiddenCards: rectangleVictorHiddenCards
 
+    property alias bid: rowLayoutBid;
+
     Rectangle {
         id: board
         color: "#2db612"
@@ -232,6 +234,17 @@ Item {
         anchors.rightMargin: 0
         anchors.left: rectangleAlice.right
         anchors.leftMargin: 0
+
+        property alias buttonPass : buttonPass;
+        property alias button6 : button6;
+        property alias button7 : button7;
+        property alias button8 : button8;
+        property alias button9 : button9;
+        property alias button10 : button10;
+        property alias button11 : button11;
+        property alias button12 : button12;
+        property alias button13 : button13;
+        property alias button14 : button14;
 
         Button {
             id: buttonPass
