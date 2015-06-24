@@ -25,9 +25,9 @@ private:
     Pidro::Card::Suit give_suit() override;
     Pidro::Card* play_card(Pidro::Card::Suit suit) override;
 
-    bool deliverEvent(QPidroEventT<bool>* pEvent);
-    int deliverEvent(QPidroEventT<int>* pEvent);
-    Pidro::Card* deliverEvent(QPidroEventT<Pidro::Card*>* pEvent);
+    bool postAndWait(QPidroEventT<bool>* pEvent);
+    int postAndWait(QPidroEventT<int>* pEvent);
+    Pidro::Card* postAndWait(QPidroEventT<Pidro::Card*>* pEvent);
 
 private:
     QPlayer* m_pPlayer;

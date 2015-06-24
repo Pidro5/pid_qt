@@ -117,7 +117,7 @@ QPidroCommandGiveColor::QPidroCommandGiveColor(std::shared_ptr<QPidroResultInt> 
 
 void QPidroCommandGiveColor::deliverTo(QPlayer& player)
 {
-    result()->setValue(player.give_color());
+    player.give_suit(result());
 }
 
 /*

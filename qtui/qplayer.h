@@ -19,21 +19,21 @@ public:
     ~QPlayer();
 
     enum Event {
-        GAME_INIT          = static_cast<unsigned int>(Pidro::Event::GAME_INIT),
-        ROUND_INIT         = static_cast<unsigned int>(Pidro::Event::ROUND_INIT),
-        DEAL_CARD          = static_cast<unsigned int>(Pidro::Event::DEAL_CARD),
-        ASK_FOR_BID        = static_cast<unsigned int>(Pidro::Event::ASK_FOR_BID),
-        BID_PLACED         = static_cast<unsigned int>(Pidro::Event::BID_PLACED),
-        GOT_BID            = static_cast<unsigned int>(Pidro::Event::GOT_BID),
-        COLOR_SELECTED     = static_cast<unsigned int>(Pidro::Event::COLOR_SELECTED),
-        PUT_CARDS_ON_TABLE = static_cast<unsigned int>(Pidro::Event::PUT_CARDS_ON_TABLE),
-        KILL_CARD          = static_cast<unsigned int>(Pidro::Event::KILL_CARD),
-        BEGIN_PLAY         = static_cast<unsigned int>(Pidro::Event::BEGIN_PLAY),
-        PLAY_CARD          = static_cast<unsigned int>(Pidro::Event::PLAY_CARD),
-        PLAY_ROUND_FINISH  = static_cast<unsigned int>(Pidro::Event::PLAY_ROUND_FINISH),
-        PLAYER_COLD        = static_cast<unsigned int>(Pidro::Event::PLAYER_COLD),
-        ROUND_OVER         = static_cast<unsigned int>(Pidro::Event::ROUND_OVER),
-        GAME_OVER          = static_cast<unsigned int>(Pidro::Event::GAME_OVER)
+        GAME_INIT          = static_cast<unsigned int>(Pidro::Event::GAME_INIT),          //  0
+        ROUND_INIT         = static_cast<unsigned int>(Pidro::Event::ROUND_INIT),         //  1
+        DEAL_CARD          = static_cast<unsigned int>(Pidro::Event::DEAL_CARD),          //  2
+        ASK_FOR_BID        = static_cast<unsigned int>(Pidro::Event::ASK_FOR_BID),        //  3
+        BID_PLACED         = static_cast<unsigned int>(Pidro::Event::BID_PLACED),         //  4
+        GOT_BID            = static_cast<unsigned int>(Pidro::Event::GOT_BID),            //  5
+        COLOR_SELECTED     = static_cast<unsigned int>(Pidro::Event::COLOR_SELECTED),     //  6
+        PUT_CARDS_ON_TABLE = static_cast<unsigned int>(Pidro::Event::PUT_CARDS_ON_TABLE), //  7
+        KILL_CARD          = static_cast<unsigned int>(Pidro::Event::KILL_CARD),          //  8
+        BEGIN_PLAY         = static_cast<unsigned int>(Pidro::Event::BEGIN_PLAY),         //  9
+        PLAY_CARD          = static_cast<unsigned int>(Pidro::Event::PLAY_CARD),          // 10
+        PLAY_ROUND_FINISH  = static_cast<unsigned int>(Pidro::Event::PLAY_ROUND_FINISH),  // 11
+        PLAYER_COLD        = static_cast<unsigned int>(Pidro::Event::PLAYER_COLD),        // 12
+        ROUND_OVER         = static_cast<unsigned int>(Pidro::Event::ROUND_OVER),         // 13
+        GAME_OVER          = static_cast<unsigned int>(Pidro::Event::GAME_OVER)           // 14
     };
     Q_ENUMS(Event)
 
@@ -42,7 +42,7 @@ public:
         return "Hello World!";
     }
 
-    Q_INVOKABLE void setBid(int);
+    Q_INVOKABLE void setIntResult(int);
 
 signals:
     void event1(Event event);
@@ -51,6 +51,7 @@ signals:
     void event4(Event event, int position, const QVariantList& cards);
 
     void giveBid(int minimum);
+    void giveSuit();
 
 public:
     static void declareQML();
@@ -65,7 +66,7 @@ public:
     bool inform_event(Pidro::Event et, int position, std::list<Pidro::Card*>& cards);
 
     void give_bid(int minimum, std::shared_ptr<QPidroResultInt> sResult);
-    int give_color();
+    void give_suit(std::shared_ptr<QPidroResultInt> sResult);
     Pidro::Card* play_card(int color);
 
 public slots:

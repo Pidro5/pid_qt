@@ -24,6 +24,11 @@ Item {
 
     property alias bid: rowLayoutBid;
 
+    property alias bidBob: bidBob;
+    property alias bidAlice: bidAlice;
+    property alias bidCarlos: bidCarlos;
+
+
     Rectangle {
         id: board
         color: "#2db612"
@@ -309,6 +314,34 @@ Item {
             width: 40
             text: qsTr("14")
         }
+    }
+
+    Text {
+        id: bidAlice
+        y: 473
+        text: qsTr("")
+        anchors.left: rectangleAlice.right
+        anchors.leftMargin: 0
+        font.pixelSize: 26
+    }
+
+    Text {
+        id: bidCarlos
+        x: 774
+        y: 473
+        text: qsTr("")
+        anchors.right: rectangleCarlos.left
+        anchors.rightMargin: 6
+        font.pixelSize: 26
+    }
+
+    Text {
+        id: bidBob
+        x: 487
+        text: qsTr("")
+        anchors.top: rectangleBob.bottom
+        anchors.topMargin: 0
+        font.pixelSize: 26
     }
 
     }

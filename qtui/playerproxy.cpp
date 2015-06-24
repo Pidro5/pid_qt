@@ -23,7 +23,7 @@ bool PlayerProxy::inform_event(Pidro::Event ev)
     LOG_D(ev);
     shared_ptr<QPidroResultBool> sResult(new QPidroResultBool);
 
-    return deliverEvent(new QPidroInfoEvent1(sResult, ev));
+    return postAndWait(new QPidroInfoEvent1(sResult, ev));
 }
 
 bool PlayerProxy::inform_event(Pidro::Event ev, int position)
@@ -31,7 +31,7 @@ bool PlayerProxy::inform_event(Pidro::Event ev, int position)
     LOG_D(ev << ", " << position);
     shared_ptr<QPidroResultBool> sResult(new QPidroResultBool);
 
-    return deliverEvent(new QPidroInfoEvent2(sResult, ev, position));
+    return postAndWait(new QPidroInfoEvent2(sResult, ev, position));
 }
 
 bool PlayerProxy::inform_event(Pidro::Event ev, int position, int value)
@@ -39,7 +39,7 @@ bool PlayerProxy::inform_event(Pidro::Event ev, int position, int value)
     LOG_D(ev << ", " << position << ", " << value);
     shared_ptr<QPidroResultBool> sResult(new QPidroResultBool);
 
-    return deliverEvent(new QPidroInfoEvent3(sResult, ev, position, value));
+    return postAndWait(new QPidroInfoEvent3(sResult, ev, position, value));
 }
 
 bool PlayerProxy::inform_event(Pidro::Event ev, int position, std::list<Pidro::Card*>& cards)
@@ -47,7 +47,7 @@ bool PlayerProxy::inform_event(Pidro::Event ev, int position, std::list<Pidro::C
     LOG_D(ev << ", " << position << ", " << "...");
     shared_ptr<QPidroResultBool> sResult(new QPidroResultBool);
 
-    return deliverEvent(new QPidroInfoEvent4(sResult, ev, position, cards));
+    return postAndWait(new QPidroInfoEvent4(sResult, ev, position, cards));
 }
 
 int PlayerProxy::give_bid(int minimum)
@@ -55,7 +55,7 @@ int PlayerProxy::give_bid(int minimum)
     LOG_D("giveBid: " << minimum);
     shared_ptr<QPidroResultInt> sResult(new QPidroResultInt);
 
-    return deliverEvent(new QPidroCommandGiveBid(sResult, minimum));
+    return postAndWait(new QPidroCommandGiveBid(sResult, minimum));
 }
 
 Pidro::Card::Suit PlayerProxy::give_suit()
@@ -63,8 +63,7 @@ Pidro::Card::Suit PlayerProxy::give_suit()
     LOG_D("giveSuit");
     shared_ptr<QPidroResultInt> sResult(new QPidroResultInt);
 
-    /*return*/ deliverEvent(new QPidroCommandGiveColor(sResult));
-    return Player::give_suit();
+    return static_cast<Pidro::Card::Suit>(postAndWait(new QPidroCommandGiveColor(sResult)));
 }
 
 Pidro::Card* PlayerProxy::play_card(Pidro::Card::Suit suit)
@@ -72,11 +71,11 @@ Pidro::Card* PlayerProxy::play_card(Pidro::Card::Suit suit)
     LOG_D("playCard:" << suit);
     shared_ptr<QPidroResultCard> sResult(new QPidroResultCard);
 
-    /*return*/ deliverEvent(new QPidroCommandPlayCard(sResult, suit));
+    /*return*/ postAndWait(new QPidroCommandPlayCard(sResult, suit));
     return Player::play_card(suit);
 }
 
-bool PlayerProxy::deliverEvent(QPidroEventT<bool>* pEvent)
+bool PlayerProxy::postAndWait(QPidroEventT<bool>* pEvent)
 {
     shared_ptr<QPidroResultBool> sResult = pEvent->result();
 
@@ -87,7 +86,7 @@ bool PlayerProxy::deliverEvent(QPidroEventT<bool>* pEvent)
     return sResult->value();
 }
 
-int PlayerProxy::deliverEvent(QPidroEventT<int>* pEvent)
+int PlayerProxy::postAndWait(QPidroEventT<int>* pEvent)
 {
     shared_ptr<QPidroResultInt> sResult = pEvent->result();
 
@@ -98,7 +97,7 @@ int PlayerProxy::deliverEvent(QPidroEventT<int>* pEvent)
     return sResult->value();
 }
 
-Pidro::Card* PlayerProxy::deliverEvent(QPidroEventT<Pidro::Card*>* pEvent)
+Pidro::Card* PlayerProxy::postAndWait(QPidroEventT<Pidro::Card*>* pEvent)
 {
     shared_ptr<QPidroResultCard> sResult = pEvent->result();
 

@@ -8,7 +8,7 @@ import "CardFactory.js" as CardFactory
 
 ApplicationWindow {
     id: appWindow
-    title: qsTr("Hello World")
+    title: qsTr("Pidro")
     width: 1290
     height: 960
     visible: true
@@ -61,6 +61,7 @@ ApplicationWindow {
             player.event3.connect(handleEvent3);
             player.event4.connect(handleEvent4);
             player.giveBid.connect(handleGiveBid);
+            player.giveSuit.connect(handleGiveSuit);
 
             bid.buttonPass.clicked.connect(buttonPassedClicked);
             bid.button6.clicked.connect(button6Clicked);
@@ -76,93 +77,103 @@ ApplicationWindow {
 
         function buttonPassedClicked() {
             console.log("PASS");
-            player.setBid(0)
+            player.setIntResult(0)
         }
 
         function button6Clicked() {
             console.log("6");
-            player.setBid(6);
+            player.setIntResult(6);
         }
 
         function button7Clicked() {
             console.log("7");
-            player.setBid(7);
+            player.setIntResult(7);
         }
 
         function button8Clicked() {
             console.log("8");
-            player.setBid(8);
+            player.setIntResult(8);
         }
 
         function button9Clicked() {
             console.log("9");
-            player.setBid(9);
+            player.setIntResult(9);
         }
 
         function button10Clicked() {
             console.log("10");
-            player.setBid(10);
+            player.setIntResult(10);
         }
 
         function button11Clicked() {
             console.log("11");
-            player.setBid(11);
+            player.setIntResult(11);
         }
 
         function button12Clicked() {
             console.log("12");
-            player.setBid(12);
+            player.setIntResult(12);
         }
 
         function button13Clicked() {
             console.log("13");
-            player.setBid(13);
+            player.setIntResult(13);
         }
 
         function button14Clicked() {
             console.log("14");
-            player.setBid(14);
+            player.setIntResult(14);
         }
 
         function handleGiveBid(minimum) {
             console.log("GIVE BID: " + minimum);
+            bid.buttonPass.enabled = true;
+
             switch (minimum) {
             case 14:
-                bid.button13.enabled = false;
             case 13:
-                bid.button12.enabled = false;
+                bid.button13.enabled = false;
             case 12:
-                bid.button11.enabled = false;
+                bid.button12.enabled = false;
             case 11:
-                bid.button10.enabled = false;
+                bid.button11.enabled = false;
             case 10:
-                bid.button9.enabled = false;
+                bid.button10.enabled = false;
             case 9:
-                bid.button8.enabled = false;
+                bid.button9.enabled = false;
             case 8:
-                bid.button7.enabled = false;
+                bid.button8.enabled = false;
             case 7:
-                bid.button6.enabled = false;
+                bid.button7.enabled = false;
             case 6:
+                bid.button6.enabled = false;
+                break;
+            case 5:
+                bid.buttonPass.enabled = false;
                 break;
             default:
                 console.log("Don't know what to do with a minimum of: " + minimum);
             }
         }
 
+        function handleGiveSuit() {
+            console.log("NOW ARRANGE THAT COLOR CAN BE CHOSEN");
+        }
+
         function handleEvent1(event) {
-            console.log("EVENT FROM QML");
+            console.log("1 EVENT FROM QML");
         }
 
         function handleEvent2(event, position) {
-            console.log("EVENT FROM QML: " + position);
+            console.log("2 EVENT FROM QML: " + position);
         }
 
         function handleEvent3(event, position, value) {
-            console.log("EVENT FROM QML: " + position + ", " + value);
+            console.log("3 EVENT FROM QML: " + position + ", " + value);
 
             var rectangle;
             var isHorizontal;
+            var bid;
 
             switch (position) {
             case 0:
@@ -173,38 +184,62 @@ ApplicationWindow {
             case 1:
                 rectangle = rectangleAliceHiddenCards;
                 isHorizontal = false;
+                bid = bidAlice;
                 break;
 
             case 2:
                 rectangle = rectangleBobHiddenCards;
                 isHorizontal = true;
+                bid = bidBob;
                 break;
 
             case 3:
                 rectangle = rectangleCarlosHiddenCards;
                 isHorizontal = false;
+                bid = bidCarlos;
                 break;
 
             default:
                 console.error("Unexpected position: " + position)
             }
 
-            console.log("CHILDREN: " + rectangle.children.length);
+            switch (event) {
+            case Player.DEAL_CARD:
+                console.log("DEAL_CARD");
+                var count = rectangle.children.length;
 
-            var count = rectangle.children.length;
+                for (var i = 0 ; i < value; ++i) {
+                    var card = CardFactory.createCard(rectangle);
 
-            for (var i = 0 ; i < value; ++i) {
-                var card = CardFactory.createCard(rectangle);
+                    card.source = "file:cards/BACK_BLUE1.png"
+                    card.visible = true;
+                    card.x = isHorizontal ? count * 20 : 0;
+                    card.y = isHorizontal ? 0 : count * 20;
+                    ++count;
+                }
+                break;
 
-                card.source = "file:cards/BACK_BLUE1.png"
-                card.visible = true;
-                card.x = isHorizontal ? count * 20 : 0;
-                card.y = isHorizontal ? 0 : count * 20;
-                ++count;
+            case Player.BID_PLACED:
+                if (bid) {
+                    if (value === 0) {
+                        value = "Pass";
+                    }
+
+                    bid.text = value;
+                } else {
+                    console.warn("Bid is null");
+                }
+
+                break;
+
+            default:
+                console.warn("3 Unhandled event: " + event);
             }
         }
 
         function handleEvent4(event, position, cards) {
+            console.log("4 EVENT FROM QML: " + event + ", " + position + ", " + cards);
+
             var rectangle;
             var isHorizontal;
 
@@ -233,21 +268,26 @@ ApplicationWindow {
                 console.error("Unexpected position: " + position)
             }
 
-            console.log("CHILDREN: " + rectangle.children.length);
+            switch (event) {
+            case Player.DEAL_CARD:
+                var count = rectangle.children.length;
 
-            var count = rectangle.children.length;
+                for (var i = 0 ; i < cards.length; ++i) {
+                    var c = cards[i];
+                    var name = "" + c.value + c.suit;
 
-            for (var i = 0 ; i < cards.length; ++i) {
-                var c = cards[i];
-                var name = "" + c.value + c.suit;
+                    var card = CardFactory.createCard(rectangle);
 
-                var card = CardFactory.createCard(rectangle);
+                    card.source = "file:cards/" + name + ".png";
+                    card.visible = true;
+                    card.x = isHorizontal ? count * 30 : 0;
+                    card.y = isHorizontal ? 0 : count * 30;
+                    ++count;
+                }
+                break;
 
-                card.source = "file:cards/" + name + ".png";
-                card.visible = true;
-                card.x = isHorizontal ? count * 30 : 0;
-                card.y = isHorizontal ? 0 : count * 30;
-                ++count;
+            default:
+                console.warn("4: Unhandled event: " + event);
             }
         }
     }

@@ -7,6 +7,15 @@ QT += qml quick widgets
 INCLUDEPATH += $$PWD/..
 INCLUDEPATH += $$PWD/../common
 
+HEADERS += ../common/pidro/bidengine.h
+HEADERS += ../common/pidro/deck_card.h
+HEADERS += ../common/pidro/event.h
+HEADERS += ../common/pidro/game.h
+HEADERS += ../common/pidro/log.h
+HEADERS += ../common/pidro/playengine.h
+HEADERS += ../common/pidro/player.h
+HEADERS += ../common/pidro/playercomputer.h
+HEADERS += ../common/pidro/rotator.h
 HEADERS += gamethread.h
 HEADERS += playerproxy.h
 HEADERS += qpidroevent.h

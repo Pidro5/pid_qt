@@ -18,10 +18,10 @@ QPlayer::~QPlayer()
 {
 }
 
-void QPlayer::setBid(int bid)
+void QPlayer::setIntResult(int value)
 {
     if (m_sIntResult) {
-        m_sIntResult->setValue(bid);
+        m_sIntResult->setValue(value);
         m_sIntResult.reset();
     } else {
         LOG_E("Int-result was not available.");
@@ -185,10 +185,11 @@ void QPlayer::give_bid(int minimum, shared_ptr<QPidroResultInt> sResult)
     emit giveBid(minimum);
 }
 
-int QPlayer::give_color()
+void QPlayer::give_suit(shared_ptr<QPidroResultInt> sResult)
 {
     LOG_D("give_color");
-    return 0;
+    m_sIntResult = sResult;
+    emit giveSuit();
 }
 
 Pidro::Card* QPlayer::play_card(int color)
