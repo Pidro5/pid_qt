@@ -75,58 +75,64 @@ ApplicationWindow {
             bid.button14.clicked.connect(button14Clicked);
         }
 
+        function buttonClicked(value) {
+            bid.visible = false;
+            player.setIntResult(value);
+        }
+
         function buttonPassedClicked() {
             console.log("PASS");
-            player.setIntResult(0)
+            buttonClicked(0)
         }
 
         function button6Clicked() {
             console.log("6");
-            player.setIntResult(6);
+            buttonClicked(6);
         }
 
         function button7Clicked() {
             console.log("7");
-            player.setIntResult(7);
+            buttonClicked(7);
         }
 
         function button8Clicked() {
             console.log("8");
-            player.setIntResult(8);
+            buttonClicked(8);
         }
 
         function button9Clicked() {
             console.log("9");
-            player.setIntResult(9);
+            buttonClicked(9);
         }
 
         function button10Clicked() {
             console.log("10");
-            player.setIntResult(10);
+            buttonClicked(10);
         }
 
         function button11Clicked() {
             console.log("11");
-            player.setIntResult(11);
+            buttonClicked(11);
         }
 
         function button12Clicked() {
             console.log("12");
-            player.setIntResult(12);
+            buttonClicked(12);
         }
 
         function button13Clicked() {
             console.log("13");
-            player.setIntResult(13);
+            buttonClicked(13);
         }
 
         function button14Clicked() {
             console.log("14");
-            player.setIntResult(14);
+            buttonClicked(14);
         }
 
         function handleGiveBid(minimum) {
             console.log("GIVE BID: " + minimum);
+            bid.visible = true;
             bid.buttonPass.enabled = true;
 
             switch (minimum) {

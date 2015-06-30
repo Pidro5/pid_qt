@@ -233,6 +233,7 @@ Item {
         id: rowLayoutBid
         y: 756
         height: 54
+        visible: false
         anchors.bottom: rectangleVictor.top
         anchors.bottomMargin: 0
         anchors.right: rectangleCarlos.left
