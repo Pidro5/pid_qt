@@ -34,8 +34,7 @@ BidEngine::BidEngine(Game *game, Player *player, string eaFile, string bidRuleFi
 
     if (!readEAFile(m_eaFile))
     {
-        LOG_D("rule file not correct.");
-        //cout << "rule file not correct.";
+        LOG_E("Rule file " << m_eaFile << " not found or not correct.");
         exit(-1);
     }
 }
@@ -140,10 +139,12 @@ float BidEngine::getWorstEAuH(int pos) const {
 }
 
 bool BidEngine::readEAFile(string filename) {
+    bool eaFileRead = false;
+
     ifstream infile(filename.c_str());
     bool notEOF;
-    try {
-        if (!infile.is_open()) throw 1;
+
+    if (infile.is_open()) {
         string line;
         getline(infile, line);
         do
@@ -201,14 +202,13 @@ bool BidEngine::readEAFile(string filename) {
             }
         }
         while (notEOF);
+
+        eaFileRead = true;
+    } else {
+        LOG_E("bidnet file was not found.");
     }
-    catch (int e)
-    {
-        if (e==1)
-            //cout << "bidnet File was not found";
-            LOG_D("bidnet file was not found.");
-    }
-    return true;
+
+    return eaFileRead;
 }
 
 float BidEngine::getEA(int cardsCount, int nonImportant, string cardsConfig, int bid) {
