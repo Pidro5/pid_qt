@@ -38,7 +38,8 @@ SOURCES += qpidroevent.cpp
 SOURCES += qpidroresult.cpp
 SOURCES += qplayer.cpp
 
-RESOURCES += qml.qrc
+RESOURCES += qml.qrc \
+    cards.qrc
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../lualib/ -llua51
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../lualib/ -llua51

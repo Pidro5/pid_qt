@@ -29,7 +29,7 @@ ApplicationWindow {
 
     Card {
         id: card
-        source: "file:cards/4H.png"
+        source: "cards/4H.png"
     }
 
     MainForm {
@@ -47,7 +47,7 @@ ApplicationWindow {
                 for (var i = 0; i < 14; ++i) {
                     var card = Card.createObject(rectangleAliceHiddenCards);
 
-                    card.source = "file:cards/BACK_BLUE1.png"
+                    card.source = "cards/BACK_BLUE1.png"
                     card.visible = true;
                     card.y = i * 20;
                 }
@@ -217,7 +217,7 @@ ApplicationWindow {
                 for (var i = 0 ; i < value; ++i) {
                     var card = CardFactory.createCard(rectangle);
 
-                    card.source = "file:cards/BACK_BLUE1.png"
+                    card.source = "cards/BACK_BLUE1.png"
                     card.visible = true;
                     card.x = isHorizontal ? count * 20 : 0;
                     card.y = isHorizontal ? 0 : count * 20;
@@ -284,7 +284,7 @@ ApplicationWindow {
 
                     var card = CardFactory.createCard(rectangle);
 
-                    card.source = "file:cards/" + name + ".png";
+                    card.source = "cards/" + name + ".png";
                     card.visible = true;
                     card.x = isHorizontal ? count * 30 : 0;
                     card.y = isHorizontal ? 0 : count * 30;

@@ -1,0 +1,60 @@
+<RCC>
+    <qresource prefix="/">
+        <file>cards/10C.png</file>
+        <file>cards/10D.png</file>
+        <file>cards/10H.png</file>
+        <file>cards/10S.png</file>
+        <file>cards/2C.png</file>
+        <file>cards/2D.png</file>
+        <file>cards/2H.png</file>
+        <file>cards/2S.png</file>
+        <file>cards/3C.png</file>
+        <file>cards/3D.png</file>
+        <file>cards/3H.png</file>
+        <file>cards/3S.png</file>
+        <file>cards/4C.png</file>
+        <file>cards/4D.png</file>
+        <file>cards/4H.png</file>
+        <file>cards/4S.png</file>
+        <file>cards/5C.png</file>
+        <file>cards/5D.png</file>
+        <file>cards/5H.png</file>
+        <file>cards/5S.png</file>
+        <file>cards/6C.png</file>
+        <file>cards/6D.png</file>
+        <file>cards/6H.png</file>
+        <file>cards/6S.png</file>
+        <file>cards/7C.png</file>
+        <file>cards/7D.png</file>
+        <file>cards/7H.png</file>
+        <file>cards/7S.png</file>
+        <file>cards/8C.png</file>
+        <file>cards/8D.png</file>
+        <file>cards/8H.png</file>
+        <file>cards/8S.png</file>
+        <file>cards/9C.png</file>
+        <file>cards/9D.png</file>
+        <file>cards/9H.png</file>
+        <file>cards/9S.png</file>
+        <file>cards/AC.png</file>
+        <file>cards/AD.png</file>
+        <file>cards/AH.png</file>
+        <file>cards/AS.png</file>
+        <file>cards/BACK_BLUE1.png</file>
+        <file>cards/BACK_RED1.png</file>
+        <file>cards/JC.png</file>
+        <file>cards/JD.png</file>
+        <file>cards/JH.png</file>
+        <file>cards/JS.png</file>
+        <file>cards/KC.png</file>
+        <file>cards/KD.png</file>
+        <file>cards/KH.png</file>
+        <file>cards/KS.png</file>
+        <file>cards/QC.png</file>
+        <file>cards/QD.png</file>
+        <file>cards/QH.png</file>
+        <file>cards/QS.png</file>
+    </qresource>
+</RCC>
+
+
