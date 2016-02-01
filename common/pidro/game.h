@@ -52,6 +52,8 @@ private:
     // ==================   GAME        DATA         ====================================
     // ==================================================================================
 
+    std::string m_gamepath;
+
     bool m_bContinue_game;
     int m_game_north_south_points;
     int m_game_east_west_points;
@@ -234,6 +236,8 @@ public:
     int get_cards_unknown(Player * pl);
     float get_expected_one_person (Player * pl, int offset);
 
+    void set_game_path(std::string s) {m_gamepath = s;}
+    std::string get_game_path() {return m_gamepath;}
 
    // ==================================================================================
 

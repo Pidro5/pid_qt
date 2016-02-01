@@ -60,9 +60,20 @@ string Card::card_face_value() const
     case 5:
         return "V";
 
-    default:
-        // TODO: Add assert?
+
+    case 10:
+    case 9:
+    case 8:
+    case 7:
+    case 6:
+    case 4:
+    case 3:
+    case 2:
         return std::to_string(m_value);
+
+    default:
+        assert(!true);
+        return "";
     }
 }
 

@@ -28,7 +28,6 @@ BidEngine::BidEngine(Game *game, Player *player, string eaFile, string bidRuleFi
     , m_me(player)
     , m_my_suit(Card::SPADES)
 {
-    //PidroBidRulesAI_Master013v1.txt
     strcpy(m_eaFile, eaFile.c_str());
     strcpy(m_eaBidRuleFile, bidRuleFile.c_str());
 
@@ -38,23 +37,9 @@ BidEngine::BidEngine(Game *game, Player *player, string eaFile, string bidRuleFi
         exit(-1);
     }
 }
-/*
-BidEngine::BidEngine(string eaFile, string BidRuleFile)
-{
-    //PidroBidRulesAI_Master013v1.txt
-    strcpy(m_eaFile, eaFile.c_str());
-    strcpy(m_eaBidRuleFile, BidRuleFile.c_str());
 
-    if (!readEAFile(m_eaFile))
-    {
-        LOG_D("rule file not correct.");
-        //cout << "rule file not correct.";
-        exit(-1);
-    }
-}
-*/
 BidEngine::~BidEngine(){
-   //  lua_close(m_L);   // close lua
+
 }
 
 
@@ -577,9 +562,6 @@ int BidEngine::give_bid(int minimum){
 
 
     //post process
-
-    //cin.get();
-
     if (minimum == 5) {
         // this is the signal that i must take the bid
         // Get my best color

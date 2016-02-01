@@ -1,5 +1,4 @@
 #include <QApplication>
-#include <QDir>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include "gamethread.h"
@@ -12,10 +11,7 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    Q_INIT_RESOURCE(cards);
-
-    // TODO: Use PIDRO_ROOT.
-    QDir::setCurrent("../qtui");
+   // Q_INIT_RESOURCE(cards);
 
     QPlayer player;
     GameThread gameThread(&player);

@@ -7,7 +7,7 @@
 
 namespace Pidro
 {
-  
+
 class BidEngine;
 
 class PlayerComputer : public Player

@@ -23,17 +23,14 @@ void PlayerComputer::attached_to_game(Game* pGame, int position, bool rotate_to_
     m_position = position;
     m_rotate_to_south = rotate_to_south;
 
-    //ea = new EA(g, this,
-    //            "T:\\_home\\SchachtnerTh\\RulesFiles\\Bidnet76Clean.txt",
-    //            "T:\\_home\\SchachtnerTh\\RulesFiles\\PidroBidRulesAI_Master013v1.txt");
-    char* pDir = getenv("PIDRO_AI_DIR");
+    string dir = pGame->get_game_path();
+    if (dir.empty()) {
+        dir = "C:";
+    }
 
-    string dir(pDir ? pDir : "C:");
-    string rulesFile(dir + "\\Bidnet76Clean.txt");
+    string rulesFile(dir + "\\Bidnet.txt");
     string bidRulesFile(dir + "\\PidroBidRulesAI.lua");
-
     string playRulesFile(dir + "\\PidroPlayRulesAI.lua");
-//    string playRulesFile("C:\\_Pidro\\AI_used\\PlaySnippet.lua");
 
     m_sBidMachine = make_shared<BidEngine>(pGame, this, rulesFile, bidRulesFile);
     m_sPlayMachine = make_shared<PlayEngine>(pGame, this, playRulesFile);

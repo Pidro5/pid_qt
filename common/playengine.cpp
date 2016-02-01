@@ -22,7 +22,7 @@ PlayEngine::PlayEngine(Game *game, Player *player, string playRuleFile)
 
 PlayEngine::~PlayEngine()
 {
-   //  lua_close(m_L);   // close lua
+
 }
 
 Card* PlayEngine::play_card(Card::Suit suit)
@@ -104,7 +104,7 @@ Card* PlayEngine::play_card(Card::Suit suit)
      // override in case no card found..
      //assert
      LOG_D("No card found - play the first ");
-     //cin.get();
+
      return (*list_of_cards.begin());
  }
 
@@ -709,63 +709,6 @@ void PlayData::push_to_lua(lua_State *m_L){
     lua_pushboolean (m_L,  m_NotColdSixthTurnThemExpected);
     lua_setglobal(m_L, "NotColdSixthTurnThemExpected");
 
-
-
-     /*
-        bool m_Cold[4];
-
-        int m_PointsToKill = 0;
-        int m_PointsTakenUs = 0;
-        int m_PointsTakenThem = 0;
-
-        int m_PreviousCardHighestRound = 0;
-        int m_PreviousCardHighestAbsolute = 0;
-
-        int m_Round;
-        string m_RoleBid;
-        int m_CardHighestAbsolute = 0;
-        int m_PointsLeft = 0;
-        int m_PreviousCardLeft = 0;
-        int m_PreviousCardPartner = 0;
-        int m_PreviousCardRight = 0;
-        int m_PreviousCardMe = 0;
-        int m_WhoPlays = 0;
-        int m_StartsRound = 0;
-
-        int m_CardsInitiallyInMyHand = 0;
-        int m_CardsBeforeBuyingLeft = 0;
-        int m_CardsBeforeBuyingPartner = 0;
-        int m_CardsBeforeBuyingRight = 0;
-        int m_CardsBeforeBuyingThemMax = 0;
-
-        int m_CardsLoose = 0;
-        int m_CardsUnknown = 0;
-
-        float m_CardsExpectedPartner = 0;
-        float m_CardsExpectedLeft = 0;
-        float m_CardsExpectedRight = 0;
-        float m_CardsExpectedUs = 0;
-        float m_CardsExpectedThem = 0;
-        float m_CardsExpectedThemMax = 0;
-
-        bool m_WithoutPidroLeft = false;
-        bool m_WithoutPidroRight = false;
-        bool m_WithoutPidroPartner = false;
-
-        bool m_SafeFifthTurn = false;
-        bool m_SafeSixthTurn = false;
-        bool m_NotSafeFifthTurn = false;
-        bool m_NotSafeSixthTurn = false;
-        bool m_NotColdFourthTurnThem = false;
-        bool m_NotColdFifthTurnThem = false;
-        bool m_NotColdSixthTurnThem = false;
-
-        bool m_NotColdFifthTurnThemExpected = false;
-        bool m_NotColdSixthTurnThemExpected = false;
-
-
-    */
-     //   cin.get();
 }
 
 }
